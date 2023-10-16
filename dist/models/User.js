@@ -26,6 +26,12 @@ const UserSchema = new mongoose_1.Schema({
         required: true,
     },
     password: { type: String, required: true },
+    isVerified: {
+        type: Boolean,
+        required: true,
+        default: false,
+    },
+    token: { type: String, required: true },
 }, { timestamps: true });
 /**
  * A promise to be either resolved with the encrypted data salt or rejected with an Error
