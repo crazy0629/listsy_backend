@@ -12,3 +12,9 @@ export interface IUser extends Document {
   isVerified: boolean;
   token: string;
 }
+
+export interface ICommunity extends Document {
+  userId: string;
+  title: string;
+  postDate: Date;
+}

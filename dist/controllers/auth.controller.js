@@ -12,9 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.signIn = exports.signUp = void 0;
+exports.resendVeriEmail = exports.signIn = exports.signUp = void 0;
 const User_1 = __importDefault(require("../models/User"));
+const helper_1 = require("../service/helper");
 const signupVeriEmail_1 = require("../service/signupVeriEmail");
+const bcrypt_1 = __importDefault(require("bcrypt"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const crypto = require("crypto");
@@ -45,7 +47,7 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (user && !user.isVerified) {
         yield sendVerificationEmail(user.token, user.email, user.userName);
         return res.json({
-            success: false,
+            success: true,
             message: "User already exists but not verified yet, Please check your email inbox and verify your email",
         });
     }
@@ -74,8 +76,69 @@ exports.signUp = signUp;
  * @param res
  * @returns
  */
-const signIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () { });
+const signIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    // Check if all the input values
+    if (!req.body.email || !req.body.password) {
+        return res.json({
+            success: false,
+            message: "No Input Data!",
+        });
+    }
+    // Check if user not exist
+    const user = yield User_1.default.findOne({ email: req.body.email });
+    if (!user) {
+        return res.json({
+            success: false,
+            message: "User does not exists!",
+        });
+    }
+    if (user && !user.isVerified) {
+        yield sendVerificationEmail(user.token, user.email, user.userName);
+        return res.json({
+            success: true,
+            message: "You need to verify your email, Please check your email inbox",
+            isVerified: false,
+        });
+    }
+    const isMatch = yield bcrypt_1.default.compare(req.body.password, user.password);
+    if (isMatch) {
+        return res.json({
+            success: true,
+            message: "Successfully signed!",
+            token: (0, helper_1.generateToken)(user),
+            isVerified: true,
+        });
+    }
+    return res.json({
+        success: false,
+        message: "The email or password are incorrect!",
+    });
+});
 exports.signIn = signIn;
+/**
+ * Email verification resend func
+ * @param req
+ * @param res
+ * @returns
+ */
+const resendVeriEmail = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let user = yield User_1.default.findOne({ email: req.body.email });
+    if (!user) {
+        return res.json({
+            success: false,
+            message: "Error happened while resending verification email",
+        });
+    }
+    const token = crypto.randomBytes(20).toString("hex");
+    user.token = token;
+    yield user.save();
+    yield sendVerificationEmail(user.token, user.email, user.userName);
+    return res.json({
+        success: true,
+        message: "Verification email is successfully resent",
+    });
+});
+exports.resendVeriEmail = resendVeriEmail;
 /**
  * Sends verification email to user's email address
  *  @param      {string}  token - The token info which is included to email verification link

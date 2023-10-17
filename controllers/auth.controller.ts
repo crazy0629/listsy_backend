@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import User from "../models/User";
 import { generateToken } from "../service/helper";
 import { signUpVerificationEmail } from "../service/signupVeriEmail";
-
+import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -42,7 +42,7 @@ export const signUp = async (req: Request, res: Response) => {
     await sendVerificationEmail(user.token, user.email, user.userName);
 
     return res.json({
-      success: false,
+      success: true,
       message:
         "User already exists but not verified yet, Please check your email inbox and verify your email",
     });
@@ -80,7 +80,75 @@ export const signUp = async (req: Request, res: Response) => {
  * @returns
  */
 
-export const signIn = async (req: Request, res: Response) => {};
+export const signIn = async (req: Request, res: Response) => {
+  // Check if all the input values
+
+  if (!req.body.email || !req.body.password) {
+    return res.json({
+      success: false,
+      message: "No Input Data!",
+    });
+  }
+
+  // Check if user not exist
+
+  const user = await User.findOne({ email: req.body.email });
+  if (!user) {
+    return res.json({
+      success: false,
+      message: "User does not exists!",
+    });
+  }
+
+  if (user && !user.isVerified) {
+    await sendVerificationEmail(user.token, user.email, user.userName);
+    return res.json({
+      success: true,
+      message: "You need to verify your email, Please check your email inbox",
+      isVerified: false,
+    });
+  }
+
+  const isMatch = await bcrypt.compare(req.body.password, user.password);
+  if (isMatch) {
+    return res.json({
+      success: true,
+      message: "Successfully signed!",
+      token: generateToken(user),
+      isVerified: true,
+    });
+  }
+
+  return res.json({
+    success: false,
+    message: "The email or password are incorrect!",
+  });
+};
+
+/**
+ * Email verification resend func
+ * @param req
+ * @param res
+ * @returns
+ */
+
+export const resendVeriEmail = async (req: Request, res: Response) => {
+  let user = await User.findOne({ email: req.body.email });
+  if (!user) {
+    return res.json({
+      success: false,
+      message: "Error happened while resending verification email",
+    });
+  }
+  const token = crypto.randomBytes(20).toString("hex");
+  user.token = token;
+  await user.save();
+  await sendVerificationEmail(user.token, user.email, user.userName);
+  return res.json({
+    success: true,
+    message: "Verification email is successfully resent",
+  });
+};
 
 /**
  * Sends verification email to user's email address
