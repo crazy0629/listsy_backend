@@ -32,6 +32,7 @@ const UserSchema = new mongoose_1.Schema({
         default: false,
     },
     token: { type: String, required: true },
+    passwordToken: { type: String, required: true },
 }, { timestamps: true });
 /**
  * A promise to be either resolved with the encrypted data salt or rejected with an Error

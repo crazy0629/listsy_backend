@@ -4,6 +4,7 @@ import { generateToken } from "../service/helper";
 import { signUpVerificationEmail } from "../service/signupVeriEmail";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
+import { passwordResetVerificationEmail } from "../service/passResetVeriEmail";
 dotenv.config();
 
 const crypto = require("crypto");
@@ -48,8 +49,9 @@ export const signUp = async (req: Request, res: Response) => {
     });
   }
 
-  //Generate Random 20 hex
+  //Generate Random hex
   const token = crypto.randomBytes(20).toString("hex");
+  const passwordToken = crypto.randomBytes(30).toString("hex");
 
   // Make new user object to the database
 
@@ -59,6 +61,7 @@ export const signUp = async (req: Request, res: Response) => {
     password: req.body.password,
     isVerified: false,
     token,
+    passwordToken,
   };
 
   const newUser = new User(payload);
@@ -151,6 +154,120 @@ export const resendVeriEmail = async (req: Request, res: Response) => {
 };
 
 /**
+ * forgetPassword Email Verification send function
+ *
+ *  @param req
+ *  @param res
+ *  @returns
+ */
+
+export const forgetPassword = async (req: Request, res: Response) => {
+  let user = await User.findOne({ email: req.body.email });
+
+  if (!user) {
+    return res.json({
+      success: false,
+      message: "Your email is not correct",
+    });
+  }
+
+  await sendForgetPasswordVerificationEmail(
+    req.body.email,
+    user.passwordToken,
+    user.userName
+  );
+
+  return res.json({
+    success: true,
+    message:
+      "Verification email is successfully sent to your email, please check your inbox and follow instructions to reset password",
+  });
+};
+
+/**
+ *  Password Reset function
+ *
+ *  @param req
+ *  @param res
+ *  @returns
+ */
+
+export const resetPassword = async (req: Request, res: Response) => {
+  let user = await User.findOne({ email: req.body.email });
+
+  if (!user) {
+    return res.json({
+      success: false,
+      message: "Your email verification link is not correct!",
+    });
+  }
+
+  const salt = await bcrypt.genSalt(10);
+  const hash = await bcrypt.hash(req.body.password, salt);
+  user.password = hash;
+  await user.save();
+
+  return res.json({
+    success: true,
+    message: "Password reset is successfully done",
+  });
+};
+
+/**
+ *  Check signup verification link is correct
+ *
+ *  @param req
+ *  @param res
+ *  @returns
+ */
+
+export const checkSignUpVerificationToken = (req: Request, res: Response) => {
+  let user = User.findOne({ email: req.body.email, token: req.body.token });
+
+  if (!user) {
+    return res.json({
+      success: false,
+      message: "Error happened while doing verification your email",
+    });
+  }
+
+  return res.json({
+    success: true,
+    message: "Your email is successfully verified",
+  });
+};
+
+/**
+ *  Check password reset verification link is correct
+ *
+ *  @param req
+ *  @param res
+ *  @returns
+ */
+
+export const checkForgetPasswordVerificationToken = (
+  req: Request,
+  res: Response
+) => {
+  let user = User.findOne({
+    email: req.body.email,
+    passwordToken: req.body.token,
+  });
+
+  if (!user) {
+    return res.json({
+      success: false,
+      message: "Error happened while doing verification your email",
+    });
+  }
+
+  return res.json({
+    success: true,
+    message: "Your email is successfully verified",
+  });
+};
+
+/**
  * Sends verification email to user's email address
  *  @param      {string}  token - The token info which is included to email verification link
  *  @param      {string}  email - user's email
@@ -169,6 +286,36 @@ const sendVerificationEmail = async (
     from: "Listsy <support@spyderreceipts.com>",
     to: email,
     subject: "Verify your email address",
+    html,
+  };
+
+  mailgun.messages().send(data, (error: Error, body) => {
+    if (error) {
+      return false;
+    }
+    return true;
+  });
+};
+
+/**
+ * Sends forget password verification email to user's email address
+ *  @param      {string}  token - The token info which is included to email verification link
+ *  @param      {string}  email - user's email
+ *  @returns    {boolean}
+ */
+
+const sendForgetPasswordVerificationEmail = async (
+  email: string,
+  token: string,
+  userName: string
+) => {
+  const link = `${process.env.HOST_URL}/verify?token=${token}&email=${email}`;
+  const html = passwordResetVerificationEmail(link, userName);
+
+  const data = {
+    from: "Listsy <support@spyderreceipts.com>",
+    to: email,
+    subject: "Verify your email address to reset your password",
     html,
   };
 

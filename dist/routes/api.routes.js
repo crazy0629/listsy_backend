@@ -34,4 +34,6 @@ const router = (0, express_1.Router)();
 router.post("/auth/signin", auth.signIn);
 router.post("/auth/signup", auth.signUp);
 router.post("/auth/resendVeriEmail", auth.resendVeriEmail);
+router.post("/auth/forgetPassword", auth.forgetPassword);
+router.post("/auth/resetPassword", auth.resetPassword);
 exports.default = router;

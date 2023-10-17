@@ -1,4 +1,4 @@
-export const signUpVerificationEmail = (link: string, name: string) => {
+export const passwordResetVerificationEmail = (link: string, name: string) => {
   return `<!DOCTYPE html>
   <html lang="en">
   
@@ -95,21 +95,20 @@ export const signUpVerificationEmail = (link: string, name: string) => {
   <body>
     <div class="root">
       <img src="https://www.listsy.app/public/img/front/logo.png" alt="logo" class="logo" />
-      <h1 class="title">Verify your email for registration</h1>
+      <h1 class="title">Verify your email to reset your password</h1>
       <div class="description">
-        <p>Hi ${name},</p>
+        <p>Hi, ${name},</p>
         <p>
-          Thanks for your interest in joining Listsy! To complete your
-          registration, we need you to verify your email address.
+          We're sending you this email because you requested a password reset. Click on this link to create a new
+          password:
         </p>
       </div>
       <a class="verify" href="${link}" target="_blank">
-        Verify Email for registration
+        Verify Email to reset password
       </a>
       <div class="description">
         <p>
-          Please note that not all applications to join Listsy are accepted. We
-          will notify you of our decision by email within 24 hours.
+          If you didn't request a password reset, you can ignore this email. Your password will not be changed.
         </p>
         <p>The Support Team</p>
       </div>
@@ -124,6 +123,5 @@ export const signUpVerificationEmail = (link: string, name: string) => {
       </div>
     </div>
   </body>
-  
   </html>`;
 };
