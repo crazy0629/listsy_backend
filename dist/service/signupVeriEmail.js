@@ -48,9 +48,9 @@ const signUpVerificationEmail = (link, name) => {
       }
   
       a.verify {
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        display: block;
+        padding: 31px 0;
+        text-align: center;
         border-radius: 100px;
         background: #ff6f00;
         text-decoration: none;
@@ -60,7 +60,6 @@ const signUpVerificationEmail = (link, name) => {
         max-width: 648px;
         width: 100%;
         margin: auto;
-        height: 71px;
         margin-bottom: 64px;
         color: #fff;
         font-size: 16px;
@@ -98,10 +97,10 @@ const signUpVerificationEmail = (link, name) => {
   
   <body>
     <div class="root">
-      <img src="./logo.png" alt="logo" class="logo" />
+      <img src="https://www.listsy.app/public/img/front/logo.png" alt="logo" class="logo" />
       <h1 class="title">Verify your email for registration</h1>
       <div class="description">
-        <p>Hi, ${name},</p>
+        <p>Hi ${name},</p>
         <p>
           Thanks for your interest in joining Listsy! To complete your
           registration, we need you to verify your email address.
