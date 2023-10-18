@@ -107,7 +107,7 @@ const signUpVerificationEmail = (link, name) => {
         </p>
       </div>
       <a class="verify" href="${link}" target="_blank">
-        Verify Email
+        Verify Email for registration
       </a>
       <div class="description">
         <p>

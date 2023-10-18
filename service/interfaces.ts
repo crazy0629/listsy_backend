@@ -11,6 +11,7 @@ export interface IUser extends Document {
   password: string;
   isVerified: boolean;
   token: string;
+  passwordToken: string;
 }
 
 export interface ICommunity extends Document {

@@ -12,12 +12,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.resendVeriEmail = exports.signIn = exports.signUp = void 0;
+exports.checkForgetPasswordVerificationToken = exports.checkSignUpVerificationToken = exports.resetPassword = exports.forgetPassword = exports.resendVeriEmail = exports.signIn = exports.signUp = void 0;
 const User_1 = __importDefault(require("../models/User"));
 const helper_1 = require("../service/helper");
 const signupVeriEmail_1 = require("../service/signupVeriEmail");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const passResetVeriEmail_1 = require("../service/passResetVeriEmail");
 dotenv_1.default.config();
 const crypto = require("crypto");
 const fs = require("fs");
@@ -51,8 +52,9 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             message: "User already exists but not verified yet, Please check your email inbox and verify your email",
         });
     }
-    //Generate Random 20 hex
+    //Generate Random hex
     const token = crypto.randomBytes(20).toString("hex");
+    const passwordToken = crypto.randomBytes(30).toString("hex");
     // Make new user object to the database
     const payload = {
         userName: req.body.userName,
@@ -60,6 +62,7 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         password: req.body.password,
         isVerified: false,
         token,
+        passwordToken,
     };
     const newUser = new User_1.default(payload);
     yield newUser.save();
@@ -140,6 +143,98 @@ const resendVeriEmail = (req, res) => __awaiter(void 0, void 0, void 0, function
 });
 exports.resendVeriEmail = resendVeriEmail;
 /**
+ * forgetPassword Email Verification send function
+ *
+ *  @param req
+ *  @param res
+ *  @returns
+ */
+const forgetPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let user = yield User_1.default.findOne({ email: req.body.email });
+    if (!user) {
+        return res.json({
+            success: false,
+            message: "Your email is not correct",
+        });
+    }
+    yield sendForgetPasswordVerificationEmail(req.body.email, user.passwordToken, user.userName);
+    return res.json({
+        success: true,
+        message: "Verification email is successfully sent to your email, please check your inbox and follow instructions to reset password",
+    });
+});
+exports.forgetPassword = forgetPassword;
+/**
+ *  Password Reset function
+ *
+ *  @param req
+ *  @param res
+ *  @returns
+ */
+const resetPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let user = yield User_1.default.findOne({ email: req.body.email });
+    if (!user) {
+        return res.json({
+            success: false,
+            message: "Your email verification link is not correct!",
+        });
+    }
+    const salt = yield bcrypt_1.default.genSalt(10);
+    const hash = yield bcrypt_1.default.hash(req.body.password, salt);
+    user.password = hash;
+    yield user.save();
+    return res.json({
+        success: true,
+        message: "Password reset is successfully done",
+    });
+});
+exports.resetPassword = resetPassword;
+/**
+ *  Check signup verification link is correct
+ *
+ *  @param req
+ *  @param res
+ *  @returns
+ */
+const checkSignUpVerificationToken = (req, res) => {
+    let user = User_1.default.findOne({ email: req.body.email, token: req.body.token });
+    if (!user) {
+        return res.json({
+            success: false,
+            message: "Error happened while doing verification your email",
+        });
+    }
+    return res.json({
+        success: true,
+        message: "Your email is successfully verified",
+    });
+};
+exports.checkSignUpVerificationToken = checkSignUpVerificationToken;
+/**
+ *  Check password reset verification link is correct
+ *
+ *  @param req
+ *  @param res
+ *  @returns
+ */
+const checkForgetPasswordVerificationToken = (req, res) => {
+    let user = User_1.default.findOne({
+        email: req.body.email,
+        passwordToken: req.body.token,
+    });
+    if (!user) {
+        return res.json({
+            success: false,
+            message: "Error happened while doing verification your email",
+        });
+    }
+    return res.json({
+        success: true,
+        message: "Your email is successfully verified",
+    });
+};
+exports.checkForgetPasswordVerificationToken = checkForgetPasswordVerificationToken;
+/**
  * Sends verification email to user's email address
  *  @param      {string}  token - The token info which is included to email verification link
  *  @param      {string}  email - user's email
@@ -153,6 +248,28 @@ const sendVerificationEmail = (token, email, userName) => __awaiter(void 0, void
         from: "Listsy <support@spyderreceipts.com>",
         to: email,
         subject: "Verify your email address",
+        html,
+    };
+    mailgun.messages().send(data, (error, body) => {
+        if (error) {
+            return false;
+        }
+        return true;
+    });
+});
+/**
+ * Sends forget password verification email to user's email address
+ *  @param      {string}  token - The token info which is included to email verification link
+ *  @param      {string}  email - user's email
+ *  @returns    {boolean}
+ */
+const sendForgetPasswordVerificationEmail = (email, token, userName) => __awaiter(void 0, void 0, void 0, function* () {
+    const link = `${process.env.HOST_URL}/verify?token=${token}&email=${email}`;
+    const html = (0, passResetVeriEmail_1.passwordResetVerificationEmail)(link, userName);
+    const data = {
+        from: "Listsy <support@spyderreceipts.com>",
+        to: email,
+        subject: "Verify your email address to reset your password",
         html,
     };
     mailgun.messages().send(data, (error, body) => {

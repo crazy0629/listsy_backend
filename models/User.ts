@@ -21,6 +21,7 @@ const UserSchema = new Schema(
       default: false,
     },
     token: { type: String, required: true },
+    passwordToken: { type: String, required: true },
   },
   { timestamps: true }
 );
