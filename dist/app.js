@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const fs_1 = __importDefault(require("fs"));
+const path_1 = __importDefault(require("path"));
 const passport_1 = __importDefault(require("passport"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
@@ -22,6 +23,7 @@ app.use(express_1.default.urlencoded({ extended: false }));
 app.use(passport_1.default.initialize());
 // Routes
 app.use("/api", api_routes_1.default);
+app.use("/uploadsAvatar", express_1.default.static(path_1.default.join(__dirname, "uploadsAvatar")));
 app.get("*", (req, res) => {
     fs_1.default.readFile("./client/build/index.html", { encoding: "utf-8" }, (err, data) => {
         if (!data)

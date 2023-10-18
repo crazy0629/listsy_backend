@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import fs from "fs";
+import path from "path";
 import passport from "passport";
 import dotenv from "dotenv";
 dotenv.config();
@@ -23,6 +24,10 @@ app.use(passport.initialize());
 
 // Routes
 app.use("/api", apiRoutes);
+app.use(
+  "/uploadsAvatar",
+  express.static(path.join(__dirname, "uploadsAvatar"))
+);
 
 app.get("*", (req, res) => {
   fs.readFile(

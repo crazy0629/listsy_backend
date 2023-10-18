@@ -28,6 +28,7 @@ const UserSchema = new Schema(
     telephoneNumber: { type: String },
     addressCity: { type: String },
     addressCountry: { type: String },
+    avatar: { type: String },
   },
   { timestamps: true }
 );

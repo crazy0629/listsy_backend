@@ -39,6 +39,7 @@ const UserSchema = new mongoose_1.Schema({
     telephoneNumber: { type: String },
     addressCity: { type: String },
     addressCountry: { type: String },
+    avatar: { type: String },
 }, { timestamps: true });
 /**
  * A promise to be either resolved with the encrypted data salt or rejected with an Error
