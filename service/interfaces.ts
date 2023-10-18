@@ -13,6 +13,7 @@ export interface IUser extends Document {
   isVerified: boolean;
   token: string;
   passwordToken: string;
+  avatar: string;
   bio: string;
   userName: string;
   telephoneNumber: string;
@@ -25,3 +26,5 @@ export interface ICommunity extends Document {
   title: string;
   postDate: Date;
 }
+
+export interface IEstate extends Document {}

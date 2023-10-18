@@ -12,16 +12,48 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.changePassword = exports.deleteAccount = exports.editProfile = void 0;
+exports.changePassword = exports.deleteAccount = exports.editProfile = exports.setAvatar = void 0;
 const User_1 = __importDefault(require("../models/User"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const mongoose_1 = __importDefault(require("mongoose"));
+const setAvatar = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    User_1.default.findById(req.body.userId)
+        .then((user) => __awaiter(void 0, void 0, void 0, function* () {
+        if (user) {
+            const multerReq = req;
+            if (!(multerReq === null || multerReq === void 0 ? void 0 : multerReq.file)) {
+                // No file was uploaded, handle error
+                res.status(400).json({ success: false, message: "No file uploaded" });
+                return;
+            }
+            // Access the uploaded file using req.file
+            const { filename, originalname } = multerReq.file;
+            user.avatar = filename;
+            yield user.save();
+            // Process the file as needed (e.g., save the filename to the user's profile)
+            res.json({
+                success: true,
+                message: "Avatar uploaded successfully",
+                filename,
+                originalname,
+            });
+        }
+        else {
+            res.status(404).json({ success: false, message: "User not found" });
+        }
+    }))
+        .catch((error) => {
+        console.error("Database error:", error);
+        res.status(500).json({ success: false, message: "An error occurred" });
+    });
+});
+exports.setAvatar = setAvatar;
 const editProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     User_1.default.findById(new mongoose_1.default.Types.ObjectId(req.body.userId)).then((model) => __awaiter(void 0, void 0, void 0, function* () {
         if (!model) {
             return res.json({
                 success: false,
-                message: "Error happened while changing your password!",
+                message: "Error happened while changing setting your profile!",
             });
         }
         model.firstName = req.body.firstName;

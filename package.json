@@ -24,12 +24,14 @@
     "jsonwebtoken": "^9.0.2",
     "mailgun-js": "^0.22.0",
     "mongoose": "^7.4.3",
+    "multer": "^1.4.5-lts.1",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
     "path": "^0.12.7",
     "ts-node": "^10.9.1",
     "tsc-watch": "^6.0.4",
-    "typescript": "^5.1.6"
+    "typescript": "^5.1.6",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@types/express": "^4.17.17",
