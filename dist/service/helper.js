@@ -15,7 +15,8 @@ const generateToken = (user) => {
     return jsonwebtoken_1.default.sign({
         id: user.id,
         email: user.email,
-        username: user.userName,
+        firstName: user.firstName,
+        lastName: user.lastName,
         password: user.password,
         isVerified: user.isVerified,
         token: user.token,

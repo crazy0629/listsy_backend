@@ -24,13 +24,17 @@ export const addCommunity = async (req: Request, res: Response) => {
 export const getCommunityOffset = async (req: Request, res: Response) => {
   try {
     const latestCommunity = await Community.find()
-      .sort({ postDate: -1 })
-      .skip(req.body.index * 20)
-      .limit(20);
+      .sort({ postDate: 1 })
+      .skip(req.body.index * 2)
+      .limit(2);
     if (!latestCommunity) {
       return res.json({ success: false, message: "Community not exist" });
     }
-    return res.json({ success: true, message: "Successfully loaded!" });
+    return res.json({
+      success: true,
+      message: "Successfully loaded!",
+      data: latestCommunity,
+    });
   } catch (error) {
     return res.json({
       success: false,
