@@ -37,7 +37,9 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (!req.body.email ||
         !req.body.password ||
         !req.body.firstName ||
-        !req.body.lastName) {
+        !req.body.lastName ||
+        !req.body.addressCity ||
+        !req.body.addressCountry) {
         return res.json({
             success: false,
             message: "Please input your registration data",
@@ -67,6 +69,8 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         isVerified: false,
         token,
         passwordToken,
+        addressCity: req.body.addressCity,
+        addressCountry: req.body.addressCountry,
     };
     const newUser = new User_1.default(payload);
     yield newUser.save();

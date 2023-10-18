@@ -12,11 +12,35 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.changePassword = exports.deleteAccount = void 0;
+exports.changePassword = exports.deleteAccount = exports.editProfile = void 0;
 const User_1 = __importDefault(require("../models/User"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const mongoose_1 = __importDefault(require("mongoose"));
-const deleteAccount = (req, res) => {
+const editProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    User_1.default.findById(new mongoose_1.default.Types.ObjectId(req.body.userId)).then((model) => __awaiter(void 0, void 0, void 0, function* () {
+        if (!model) {
+            return res.json({
+                success: false,
+                message: "Error happened while changing your password!",
+            });
+        }
+        model.firstName = req.body.firstName;
+        model.lastName = req.body.lastName;
+        model.userName = req.body.userName;
+        model.bio = req.body.bio;
+        model.telephoneNumber = req.body.telephoneNumber;
+        model.addressCity = req.body.addressCity;
+        model.addressCountry = req.body.addressCountry;
+        yield model.save();
+        return res.json({
+            success: true,
+            message: "Your profile is successfully edited",
+            data: model,
+        });
+    }));
+});
+exports.editProfile = editProfile;
+const deleteAccount = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     User_1.default.findByIdAndDelete(new mongoose_1.default.Types.ObjectId(req.body.userId)).then((model) => {
         if (!model)
             return res.json({
@@ -25,9 +49,9 @@ const deleteAccount = (req, res) => {
             });
         res.json({ success: true, model });
     });
-};
+});
 exports.deleteAccount = deleteAccount;
-const changePassword = (req, res) => {
+const changePassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     User_1.default.findById(new mongoose_1.default.Types.ObjectId(req.body.userId)).then((model) => __awaiter(void 0, void 0, void 0, function* () {
         if (!model) {
             return res.json({
@@ -49,5 +73,5 @@ const changePassword = (req, res) => {
             message: "Password is successfully changed",
         });
     }));
-};
+});
 exports.changePassword = changePassword;

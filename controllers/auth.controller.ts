@@ -27,7 +27,9 @@ export const signUp = async (req: Request, res: Response) => {
     !req.body.email ||
     !req.body.password ||
     !req.body.firstName ||
-    !req.body.lastName
+    !req.body.lastName ||
+    !req.body.addressCity ||
+    !req.body.addressCountry
   ) {
     return res.json({
       success: false,
@@ -67,6 +69,8 @@ export const signUp = async (req: Request, res: Response) => {
     isVerified: false,
     token,
     passwordToken,
+    addressCity: req.body.addressCity,
+    addressCountry: req.body.addressCountry,
   };
 
   const newUser = new User(payload);
