@@ -38,13 +38,17 @@ exports.addCommunity = addCommunity;
 const getCommunityOffset = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const latestCommunity = yield Community_1.default.find()
-            .sort({ postDate: -1 })
-            .skip(req.body.index * 20)
-            .limit(20);
+            .sort({ postDate: 1 })
+            .skip(req.body.index * 2)
+            .limit(2);
         if (!latestCommunity) {
             return res.json({ success: false, message: "Community not exist" });
         }
-        return res.json({ success: true, message: "Successfully loaded!" });
+        return res.json({
+            success: true,
+            message: "Successfully loaded!",
+            data: latestCommunity,
+        });
     }
     catch (error) {
         return res.json({

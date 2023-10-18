@@ -33,8 +33,11 @@ const mailgun = require("mailgun-js")({
  * @returns
  */
 const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    // Check if all registration infos are valid
-    if (!req.body.email || !req.body.password || !req.body.userName) {
+    // Check if all registration infos are
+    if (!req.body.email ||
+        !req.body.password ||
+        !req.body.firstName ||
+        !req.body.lastName) {
         return res.json({
             success: false,
             message: "Please input your registration data",
@@ -46,7 +49,7 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         return res.json({ success: false, message: "User already exists!" });
     }
     if (user && !user.isVerified) {
-        yield sendVerificationEmail(user.token, user.email, user.userName);
+        yield sendVerificationEmail(user.token, user.email, user.firstName);
         return res.json({
             success: true,
             message: "User already exists but not verified yet, Please check your email inbox and verify your email",
@@ -57,7 +60,8 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const passwordToken = crypto.randomBytes(30).toString("hex");
     // Make new user object to the database
     const payload = {
-        userName: req.body.userName,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
         email: req.body.email,
         password: req.body.password,
         isVerified: false,
@@ -66,7 +70,7 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     };
     const newUser = new User_1.default(payload);
     yield newUser.save();
-    yield sendVerificationEmail(token, req.body.email, req.body.userName);
+    yield sendVerificationEmail(token, req.body.email, req.body.firstName);
     return res.json({
         success: true,
         message: "Successfully registered, Please check your email inbox and verify your email.",
@@ -96,7 +100,7 @@ const signIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         });
     }
     if (user && !user.isVerified) {
-        yield sendVerificationEmail(user.token, user.email, user.userName);
+        yield sendVerificationEmail(user.token, user.email, user.firstName);
         return res.json({
             success: true,
             message: "You need to verify your email, Please check your email inbox",
@@ -135,7 +139,7 @@ const resendVeriEmail = (req, res) => __awaiter(void 0, void 0, void 0, function
     const token = crypto.randomBytes(20).toString("hex");
     user.token = token;
     yield user.save();
-    yield sendVerificationEmail(user.token, user.email, user.userName);
+    yield sendVerificationEmail(user.token, user.email, user.firstName);
     return res.json({
         success: true,
         message: "Verification email is successfully resent",
@@ -157,7 +161,7 @@ const forgetPassword = (req, res) => __awaiter(void 0, void 0, void 0, function*
             message: "Your email is not correct",
         });
     }
-    yield sendForgetPasswordVerificationEmail(req.body.email, user.passwordToken, user.userName);
+    yield sendForgetPasswordVerificationEmail(req.body.email, user.passwordToken, user.firstName);
     return res.json({
         success: true,
         message: "Verification email is successfully sent to your email, please check your inbox and follow instructions to reset password",

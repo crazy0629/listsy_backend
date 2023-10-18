@@ -13,7 +13,8 @@ export const generateToken = (user: IUser) => {
     {
       id: user.id,
       email: user.email,
-      username: user.userName,
+      firstName: user.firstName,
+      lastName: user.lastName,
       password: user.password,
       isVerified: user.isVerified,
       token: user.token,

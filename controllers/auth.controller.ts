@@ -22,9 +22,13 @@ const mailgun = require("mailgun-js")({
  */
 
 export const signUp = async (req: Request, res: Response) => {
-  // Check if all registration infos are valid
-
-  if (!req.body.email || !req.body.password || !req.body.userName) {
+  // Check if all registration infos are
+  if (
+    !req.body.email ||
+    !req.body.password ||
+    !req.body.firstName ||
+    !req.body.lastName
+  ) {
     return res.json({
       success: false,
       message: "Please input your registration data",
@@ -40,7 +44,7 @@ export const signUp = async (req: Request, res: Response) => {
   }
 
   if (user && !user.isVerified) {
-    await sendVerificationEmail(user.token, user.email, user.userName);
+    await sendVerificationEmail(user.token, user.email, user.firstName);
 
     return res.json({
       success: true,
@@ -56,7 +60,8 @@ export const signUp = async (req: Request, res: Response) => {
   // Make new user object to the database
 
   const payload = {
-    userName: req.body.userName,
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
     email: req.body.email,
     password: req.body.password,
     isVerified: false,
@@ -67,7 +72,7 @@ export const signUp = async (req: Request, res: Response) => {
   const newUser = new User(payload);
   await newUser.save();
 
-  await sendVerificationEmail(token, req.body.email, req.body.userName);
+  await sendVerificationEmail(token, req.body.email, req.body.firstName);
 
   return res.json({
     success: true,
@@ -104,7 +109,7 @@ export const signIn = async (req: Request, res: Response) => {
   }
 
   if (user && !user.isVerified) {
-    await sendVerificationEmail(user.token, user.email, user.userName);
+    await sendVerificationEmail(user.token, user.email, user.firstName);
     return res.json({
       success: true,
       message: "You need to verify your email, Please check your email inbox",
@@ -146,7 +151,7 @@ export const resendVeriEmail = async (req: Request, res: Response) => {
   const token = crypto.randomBytes(20).toString("hex");
   user.token = token;
   await user.save();
-  await sendVerificationEmail(user.token, user.email, user.userName);
+  await sendVerificationEmail(user.token, user.email, user.firstName);
   return res.json({
     success: true,
     message: "Verification email is successfully resent",
@@ -174,7 +179,7 @@ export const forgetPassword = async (req: Request, res: Response) => {
   await sendForgetPasswordVerificationEmail(
     req.body.email,
     user.passwordToken,
-    user.userName
+    user.firstName
   );
 
   return res.json({

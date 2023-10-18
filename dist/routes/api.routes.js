@@ -25,6 +25,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const auth = __importStar(require("../controllers/auth.controller"));
+const community = __importStar(require("../controllers/community.controller"));
+const profile = __importStar(require("../controllers/profile.controller"));
 /**
  * Router
  * Using Passport
@@ -36,4 +38,11 @@ router.post("/auth/signup", auth.signUp);
 router.post("/auth/resendVeriEmail", auth.resendVeriEmail);
 router.post("/auth/forgetPassword", auth.forgetPassword);
 router.post("/auth/resetPassword", auth.resetPassword);
+// Community
+router.post("/community/add", community.addCommunity);
+router.post("/community/getGroup", community.getCommunityOffset);
+router.post("/community/delete", community.deleteCommunity);
+// Profile
+router.post("/profile/deleteAccount", profile.deleteAccount);
+router.post("/profile/changePassword", profile.changePassword);
 exports.default = router;
