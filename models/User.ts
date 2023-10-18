@@ -23,6 +23,11 @@ const UserSchema = new Schema(
     },
     token: { type: String, required: true },
     passwordToken: { type: String, required: true },
+    bio: { type: String },
+    userName: { type: String },
+    telephoneNumber: { type: String },
+    addressCity: { type: String },
+    addressCountry: { type: String },
   },
   { timestamps: true }
 );

@@ -34,6 +34,11 @@ const UserSchema = new mongoose_1.Schema({
     },
     token: { type: String, required: true },
     passwordToken: { type: String, required: true },
+    bio: { type: String },
+    userName: { type: String },
+    telephoneNumber: { type: String },
+    addressCity: { type: String },
+    addressCountry: { type: String },
 }, { timestamps: true });
 /**
  * A promise to be either resolved with the encrypted data salt or rejected with an Error
