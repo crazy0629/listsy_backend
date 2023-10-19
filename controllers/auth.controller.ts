@@ -27,9 +27,7 @@ export const signUp = async (req: Request, res: Response) => {
     !req.body.email ||
     !req.body.password ||
     !req.body.firstName ||
-    !req.body.lastName ||
-    !req.body.addressCity ||
-    !req.body.addressCountry
+    !req.body.lastName
   ) {
     return res.json({
       success: false,
@@ -69,8 +67,6 @@ export const signUp = async (req: Request, res: Response) => {
     isVerified: false,
     token,
     passwordToken,
-    addressCity: req.body.addressCity,
-    addressCountry: req.body.addressCountry,
   };
 
   const newUser = new User(payload);
@@ -176,7 +172,7 @@ export const forgetPassword = async (req: Request, res: Response) => {
   if (!user) {
     return res.json({
       success: false,
-      message: "Your email is not correct",
+      message: "Your email is not registered",
     });
   }
 
@@ -202,7 +198,10 @@ export const forgetPassword = async (req: Request, res: Response) => {
  */
 
 export const resetPassword = async (req: Request, res: Response) => {
-  let user = await User.findOne({ email: req.body.email });
+  let user = await User.findOne({
+    email: req.body.email,
+    passwordToken: req.body.token,
+  });
 
   if (!user) {
     return res.json({
@@ -211,9 +210,7 @@ export const resetPassword = async (req: Request, res: Response) => {
     });
   }
 
-  const salt = await bcrypt.genSalt(10);
-  const hash = await bcrypt.hash(req.body.password, salt);
-  user.password = hash;
+  user.password = req.body.password;
   await user.save();
 
   return res.json({
@@ -230,37 +227,13 @@ export const resetPassword = async (req: Request, res: Response) => {
  *  @returns
  */
 
-export const checkSignUpVerificationToken = (req: Request, res: Response) => {
-  let user = User.findOne({ email: req.body.email, token: req.body.token });
-
-  if (!user) {
-    return res.json({
-      success: false,
-      message: "Error happened while doing verification your email",
-    });
-  }
-
-  return res.json({
-    success: true,
-    message: "Your email is successfully verified",
-  });
-};
-
-/**
- *  Check password reset verification link is correct
- *
- *  @param req
- *  @param res
- *  @returns
- */
-
-export const checkForgetPasswordVerificationToken = (
+export const checkSignUpVerificationToken = async (
   req: Request,
   res: Response
 ) => {
-  let user = User.findOne({
+  let user = await User.findOne({
     email: req.body.email,
-    passwordToken: req.body.token,
+    token: req.body.token,
   });
 
   if (!user) {
@@ -269,6 +242,9 @@ export const checkForgetPasswordVerificationToken = (
       message: "Error happened while doing verification your email",
     });
   }
+
+  user.isVerified = true;
+  await user.save();
 
   return res.json({
     success: true,
@@ -289,7 +265,7 @@ const sendVerificationEmail = async (
   email: string,
   userName: string
 ) => {
-  const link = `${process.env.HOST_URL}/verify?token=${token}&email=${email}`;
+  const link = `${process.env.HOST_URL}/auth/verify?token=${token}&email=${email}`;
   const html = signUpVerificationEmail(link, userName);
   const data = {
     from: "Listsy <support@spyderreceipts.com>",
@@ -318,7 +294,7 @@ const sendForgetPasswordVerificationEmail = async (
   token: string,
   userName: string
 ) => {
-  const link = `${process.env.HOST_URL}/verify?token=${token}&email=${email}`;
+  const link = `${process.env.HOST_URL}/auth/reset-password?token=${token}&email=${email}`;
   const html = passwordResetVerificationEmail(link, userName);
 
   const data = {

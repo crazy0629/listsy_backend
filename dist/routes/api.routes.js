@@ -30,6 +30,7 @@ const express_1 = require("express");
 const auth = __importStar(require("../controllers/auth.controller"));
 const community = __importStar(require("../controllers/community.controller"));
 const profile = __importStar(require("../controllers/profile.controller"));
+const estate = __importStar(require("../controllers/estate.controller"));
 const multer_1 = __importDefault(require("multer"));
 const uuid_1 = require("uuid");
 const path_1 = __importDefault(require("path"));
@@ -38,7 +39,9 @@ const path_1 = __importDefault(require("path"));
  * Using Passport
  */
 const router = (0, express_1.Router)();
-const uploadDir = path_1.default.join(__dirname, "../uploadsAvatar");
+const uploadDir = path_1.default.join(__dirname, "../uploads/avatar");
+const videoDir = path_1.default.join(__dirname, "../uploads/video");
+const extraImageDir = path_1.default.join(__dirname, "../uploads/images");
 // Create a storage engine for Multer
 const storage = multer_1.default.diskStorage({
     destination: uploadDir,
@@ -49,14 +52,35 @@ const storage = multer_1.default.diskStorage({
         cb(null, fileName);
     },
 });
+const videoStorage = multer_1.default.diskStorage({
+    destination: videoDir,
+    filename: (req, file, cb) => {
+        const uniqueSuffix = (0, uuid_1.v4)();
+        const fileExtension = path_1.default.extname(file.originalname);
+        const fileName = `${uniqueSuffix}${fileExtension}`;
+        cb(null, fileName);
+    },
+});
+const imageStorage = multer_1.default.diskStorage({
+    destination: extraImageDir,
+    filename: (req, file, cb) => {
+        const uniqueSuffix = (0, uuid_1.v4)();
+        const fileExtension = path_1.default.extname(file.originalname);
+        const fileName = `${uniqueSuffix}${fileExtension}`;
+        cb(null, fileName);
+    },
+});
 // Configure Multer with the storage engine
 const upload = (0, multer_1.default)({ storage });
+const uploadVideo = (0, multer_1.default)({ videoStorage });
+const uploadImages = (0, multer_1.default)({ imageStorage });
 // Authentication
 router.post("/auth/signin", auth.signIn);
 router.post("/auth/signup", auth.signUp);
 router.post("/auth/resendVeriEmail", auth.resendVeriEmail);
 router.post("/auth/forgetPassword", auth.forgetPassword);
 router.post("/auth/resetPassword", auth.resetPassword);
+router.post("/auth/checkSignUpVerificationToken", auth.checkSignUpVerificationToken);
 // Community
 router.post("/community/add", community.addCommunity);
 router.post("/community/getGroup", community.getCommunityOffset);
@@ -66,4 +90,8 @@ router.post("/profile/deleteAccount", profile.deleteAccount);
 router.post("/profile/changePassword", profile.changePassword);
 router.post("/profile/editProfile", profile.editProfile);
 router.post("/profile/avatar", upload.single("avatar"), profile.setAvatar);
+// Real Estate Video
+router.post("/estate/uploadVideo", uploadVideo.single("video"), estate.uploadVideo);
+router.post("/estate/getEstateInfo", estate.getEstateInfo);
+router.post("/estate/uploadImages", upload.array("images"), estate.uploadImages);
 exports.default = router;
