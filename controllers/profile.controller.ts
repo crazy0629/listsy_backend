@@ -3,6 +3,7 @@ import User from "../models/User";
 import bcrypt from "bcrypt";
 import mongoose from "mongoose";
 import Multer from "multer";
+import { generateToken } from "../service/helper";
 
 export const setAvatar = async (req: Request, res: Response) => {
   User.findById(new mongoose.Types.ObjectId(req.body.userId))
@@ -53,8 +54,8 @@ export const editProfile = async (req: Request, res: Response) => {
       model.userName = req.body.userName;
       model.bio = req.body.bio;
       model.telephoneNumber = req.body.telephoneNumber;
-      model.addressCity = req.body.addressCity;
-      model.addressCountry = req.body.addressCountry;
+      // model.addressCity = req.body.addressCity;
+      // model.addressCountry = req.body.addressCountry;
 
       await model.save();
 
@@ -62,6 +63,7 @@ export const editProfile = async (req: Request, res: Response) => {
         success: true,
         message: "Your profile is successfully edited",
         data: model,
+        token: generateToken(model),
       });
     }
   );

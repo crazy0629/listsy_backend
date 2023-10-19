@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import Estate from "../models/Estate";
+import Vehicle from "../models/Vehicle";
 import Multer from "multer";
 import mongoose from "mongoose";
 
@@ -14,24 +14,24 @@ export const uploadVideo = async (req: Request, res: Response) => {
 
   const { filename, originalname } = multerReq.file;
 
-  const newEstate = new Estate();
-  newEstate.userId = req.body.userId;
-  newEstate.isVideoAds = req.body.isVideo;
-  newEstate.videoFileName = filename;
-  newEstate.uploadDate = new Date();
+  const newVehicle = new Vehicle();
+  newVehicle.userId = req.body.userId;
+  newVehicle.isVideoAds = req.body.isVideo;
+  newVehicle.videoFileName = filename;
+  newVehicle.uploadDate = new Date();
 
-  await newEstate.save();
+  await newVehicle.save();
   res.json({
     success: true,
     message: "Video uploaded successfully",
     filename,
     originalname,
-    model: newEstate,
+    model: newVehicle,
   });
 };
 
-export const getEstateInfo = async (req: Request, res: Response) => {
-  Estate.findById(new mongoose.Types.ObjectId(req.body.videoId)).then(
+export const getVehicleInfo = async (req: Request, res: Response) => {
+  Vehicle.findById(new mongoose.Types.ObjectId(req.body.videoId)).then(
     async (model: any) => {
       if (!model) {
         return res.json({
@@ -46,32 +46,32 @@ export const getEstateInfo = async (req: Request, res: Response) => {
       model.price = req.body.price;
       model.priceUnit = req.body.priceUnit;
       model.viewCount = 0;
-      model.listingType = req.body.listingType;
-      model.propertyType = req.body.propertyType;
-      model.bedroomCount = req.body.bedroomCount;
-      model.tenure = req.body.tenure;
-      model.propertyCondition = req.body.propertyCondition;
-      model.postCode = req.body.postCode;
-      model.yearBuilt = req.body.yearBuilt;
-      model.builtSurface = req.body.builtSurface;
-      model.builtSurfaceUnit = req.body.builtSurfaceUnit;
-      model.plotSurface = req.body.plotSurface;
-      model.plotSurfaceUnit = req.body.plotSurfaceUnit;
-      model.keyFeatures = req.body.keyFeatures;
-      model.nearestAttraction = req.body.nearestAttraction;
-      model.facilities = req.body.facilities;
+      model.vehicleType = req.body.vehicleType;
+      model.saleType = req.body.saleType;
+      model.condition = req.body.condition;
+      model.vehicleMake = req.body.vehicleMake;
+      model.vehicleModel = req.body.vehicleModel;
+      model.year = req.body.year;
+      model.mileage = req.body.mileage;
+      model.mileageUnit = req.body.mileageUnit;
+      model.gearbox = req.body.gearbox;
+      model.fuelType = req.body.fuelType;
+      model.doors = req.body.doors;
+      model.color = req.body.color;
+      model.bodyType = req.body.bodyType;
+      model.seat = req.body.seat;
 
       await model.save();
       return res.json({
         success: true,
-        message: "successfully loaded real estate video information",
+        message: "successfully loaded vehicle ads information",
       });
     }
   );
 };
 
 export const uploadImages = async (req: Request, res: Response) => {
-  Estate.findById(new mongoose.Types.ObjectId(req.body.videoId)).then(
+  Vehicle.findById(new mongoose.Types.ObjectId(req.body.videoId)).then(
     async (model: any) => {
       if (!model) {
         return res.json({

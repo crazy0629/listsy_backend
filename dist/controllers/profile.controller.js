@@ -16,6 +16,7 @@ exports.changePassword = exports.deleteAccount = exports.editProfile = exports.s
 const User_1 = __importDefault(require("../models/User"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const mongoose_1 = __importDefault(require("mongoose"));
+const helper_1 = require("../service/helper");
 const setAvatar = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     User_1.default.findById(new mongoose_1.default.Types.ObjectId(req.body.userId))
         .then((user) => __awaiter(void 0, void 0, void 0, function* () {
@@ -61,13 +62,14 @@ const editProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         model.userName = req.body.userName;
         model.bio = req.body.bio;
         model.telephoneNumber = req.body.telephoneNumber;
-        model.addressCity = req.body.addressCity;
-        model.addressCountry = req.body.addressCountry;
+        // model.addressCity = req.body.addressCity;
+        // model.addressCountry = req.body.addressCountry;
         yield model.save();
         return res.json({
             success: true,
             message: "Your profile is successfully edited",
             data: model,
+            token: (0, helper_1.generateToken)(model),
         });
     }));
 });
