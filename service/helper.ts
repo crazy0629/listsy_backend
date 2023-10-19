@@ -19,6 +19,10 @@ export const generateToken = (user: IUser) => {
       isVerified: user.isVerified,
       token: user.token,
       passwordToken: user.passwordToken,
+      bio: user.bio,
+      userName: user.userName,
+      telephoneNumber: user.telephoneNumber,
+      avatar: user.avatar,
     },
     SECRET_KEY,
     {

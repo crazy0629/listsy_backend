@@ -21,6 +21,10 @@ const generateToken = (user) => {
         isVerified: user.isVerified,
         token: user.token,
         passwordToken: user.passwordToken,
+        bio: user.bio,
+        userName: user.userName,
+        telephoneNumber: user.telephoneNumber,
+        avatar: user.avatar,
     }, config_1.SECRET_KEY, {
         expiresIn: 60 * 60 * 24,
     });

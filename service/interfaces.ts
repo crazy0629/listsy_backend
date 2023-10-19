@@ -28,6 +28,7 @@ export interface ICommunity extends Document {
 }
 
 export interface IEstate extends Document {
+  isVideoAds: number;
   videoFileName: string;
   imagesFileName: Array<string>;
   price: number;
@@ -56,6 +57,7 @@ export interface IEstate extends Document {
 }
 
 export interface IVehicle extends Document {
+  isVideoAds: number;
   videoFileName: string;
   imagesFileName: Array<string>;
   price: number;
@@ -80,4 +82,12 @@ export interface IVehicle extends Document {
   color: string;
   bodyType: string;
   seat: number;
+}
+
+export interface IJob extends Document {
+  jobTitle: string;
+  jobDescription: string;
+  postDate: Date;
+  compensation: number;
+  fixed: boolean;
 }
