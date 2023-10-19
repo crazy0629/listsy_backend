@@ -24,10 +24,7 @@ app.use(passport.initialize());
 
 // Routes
 app.use("/api", apiRoutes);
-app.use(
-  "/uploadsAvatar",
-  express.static(path.join(__dirname, "uploadsAvatar"))
-);
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.get("*", (req, res) => {
   fs.readFile(

@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 import Multer from "multer";
 
 export const setAvatar = async (req: Request, res: Response) => {
-  User.findById(req.body.userId)
+  User.findById(new mongoose.Types.ObjectId(req.body.userId))
     .then(async (user: any) => {
       if (user) {
         const multerReq = req as Request & { file?: Multer.File };

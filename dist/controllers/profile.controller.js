@@ -17,7 +17,7 @@ const User_1 = __importDefault(require("../models/User"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const setAvatar = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    User_1.default.findById(req.body.userId)
+    User_1.default.findById(new mongoose_1.default.Types.ObjectId(req.body.userId))
         .then((user) => __awaiter(void 0, void 0, void 0, function* () {
         if (user) {
             const multerReq = req;

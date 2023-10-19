@@ -23,7 +23,7 @@ app.use(express_1.default.urlencoded({ extended: false }));
 app.use(passport_1.default.initialize());
 // Routes
 app.use("/api", api_routes_1.default);
-app.use("/uploadsAvatar", express_1.default.static(path_1.default.join(__dirname, "uploadsAvatar")));
+app.use("/uploads", express_1.default.static(path_1.default.join(__dirname, "uploads")));
 app.get("*", (req, res) => {
     fs_1.default.readFile("./client/build/index.html", { encoding: "utf-8" }, (err, data) => {
         if (!data)

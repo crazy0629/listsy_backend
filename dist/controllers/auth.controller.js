@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkForgetPasswordVerificationToken = exports.checkSignUpVerificationToken = exports.resetPassword = exports.forgetPassword = exports.resendVeriEmail = exports.signIn = exports.signUp = void 0;
+exports.checkSignUpVerificationToken = exports.resetPassword = exports.forgetPassword = exports.resendVeriEmail = exports.signIn = exports.signUp = void 0;
 const User_1 = __importDefault(require("../models/User"));
 const helper_1 = require("../service/helper");
 const signupVeriEmail_1 = require("../service/signupVeriEmail");
@@ -37,9 +37,7 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (!req.body.email ||
         !req.body.password ||
         !req.body.firstName ||
-        !req.body.lastName ||
-        !req.body.addressCity ||
-        !req.body.addressCountry) {
+        !req.body.lastName) {
         return res.json({
             success: false,
             message: "Please input your registration data",
@@ -69,8 +67,6 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         isVerified: false,
         token,
         passwordToken,
-        addressCity: req.body.addressCity,
-        addressCountry: req.body.addressCountry,
     };
     const newUser = new User_1.default(payload);
     yield newUser.save();
@@ -162,7 +158,7 @@ const forgetPassword = (req, res) => __awaiter(void 0, void 0, void 0, function*
     if (!user) {
         return res.json({
             success: false,
-            message: "Your email is not correct",
+            message: "Your email is not registered",
         });
     }
     yield sendForgetPasswordVerificationEmail(req.body.email, user.passwordToken, user.firstName);
@@ -180,16 +176,17 @@ exports.forgetPassword = forgetPassword;
  *  @returns
  */
 const resetPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let user = yield User_1.default.findOne({ email: req.body.email });
+    let user = yield User_1.default.findOne({
+        email: req.body.email,
+        passwordToken: req.body.token,
+    });
     if (!user) {
         return res.json({
             success: false,
             message: "Your email verification link is not correct!",
         });
     }
-    const salt = yield bcrypt_1.default.genSalt(10);
-    const hash = yield bcrypt_1.default.hash(req.body.password, salt);
-    user.password = hash;
+    user.password = req.body.password;
     yield user.save();
     return res.json({
         success: true,
@@ -204,31 +201,10 @@ exports.resetPassword = resetPassword;
  *  @param res
  *  @returns
  */
-const checkSignUpVerificationToken = (req, res) => {
-    let user = User_1.default.findOne({ email: req.body.email, token: req.body.token });
-    if (!user) {
-        return res.json({
-            success: false,
-            message: "Error happened while doing verification your email",
-        });
-    }
-    return res.json({
-        success: true,
-        message: "Your email is successfully verified",
-    });
-};
-exports.checkSignUpVerificationToken = checkSignUpVerificationToken;
-/**
- *  Check password reset verification link is correct
- *
- *  @param req
- *  @param res
- *  @returns
- */
-const checkForgetPasswordVerificationToken = (req, res) => {
-    let user = User_1.default.findOne({
+const checkSignUpVerificationToken = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let user = yield User_1.default.findOne({
         email: req.body.email,
-        passwordToken: req.body.token,
+        token: req.body.token,
     });
     if (!user) {
         return res.json({
@@ -236,12 +212,14 @@ const checkForgetPasswordVerificationToken = (req, res) => {
             message: "Error happened while doing verification your email",
         });
     }
+    user.isVerified = true;
+    yield user.save();
     return res.json({
         success: true,
         message: "Your email is successfully verified",
     });
-};
-exports.checkForgetPasswordVerificationToken = checkForgetPasswordVerificationToken;
+});
+exports.checkSignUpVerificationToken = checkSignUpVerificationToken;
 /**
  * Sends verification email to user's email address
  *  @param      {string}  token - The token info which is included to email verification link
@@ -250,7 +228,7 @@ exports.checkForgetPasswordVerificationToken = checkForgetPasswordVerificationTo
  *  @returns    {boolean}
  */
 const sendVerificationEmail = (token, email, userName) => __awaiter(void 0, void 0, void 0, function* () {
-    const link = `${process.env.HOST_URL}/verify?token=${token}&email=${email}`;
+    const link = `${process.env.HOST_URL}/auth/verify?token=${token}&email=${email}`;
     const html = (0, signupVeriEmail_1.signUpVerificationEmail)(link, userName);
     const data = {
         from: "Listsy <support@spyderreceipts.com>",
@@ -272,7 +250,7 @@ const sendVerificationEmail = (token, email, userName) => __awaiter(void 0, void
  *  @returns    {boolean}
  */
 const sendForgetPasswordVerificationEmail = (email, token, userName) => __awaiter(void 0, void 0, void 0, function* () {
-    const link = `${process.env.HOST_URL}/verify?token=${token}&email=${email}`;
+    const link = `${process.env.HOST_URL}/auth/reset-password?token=${token}&email=${email}`;
     const html = (0, passResetVeriEmail_1.passwordResetVerificationEmail)(link, userName);
     const data = {
         from: "Listsy <support@spyderreceipts.com>",
