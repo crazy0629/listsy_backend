@@ -71,12 +71,20 @@ export const editProfile = async (req: Request, res: Response) => {
 
 export const deleteAccount = async (req: Request, res: Response) => {
   User.findByIdAndDelete(new mongoose.Types.ObjectId(req.body.userId)).then(
-    (model: any) => {
-      if (!model)
+    async (model: any) => {
+      if (!model) {
         return res.json({
           success: false,
           message: "Error happend why deleting your account!",
         });
+      }
+      const isMatch = await bcrypt.compare(req.body.password, model.password);
+      if (!isMatch) {
+        return res.json({
+          success: false,
+          message: "Your password is not correct",
+        });
+      }
       res.json({ success: true, model });
     }
   );

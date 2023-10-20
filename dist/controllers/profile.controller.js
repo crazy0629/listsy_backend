@@ -75,14 +75,22 @@ const editProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 });
 exports.editProfile = editProfile;
 const deleteAccount = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    User_1.default.findByIdAndDelete(new mongoose_1.default.Types.ObjectId(req.body.userId)).then((model) => {
-        if (!model)
+    User_1.default.findByIdAndDelete(new mongoose_1.default.Types.ObjectId(req.body.userId)).then((model) => __awaiter(void 0, void 0, void 0, function* () {
+        if (!model) {
             return res.json({
                 success: false,
                 message: "Error happend why deleting your account!",
             });
+        }
+        const isMatch = yield bcrypt_1.default.compare(req.body.password, model.password);
+        if (!isMatch) {
+            return res.json({
+                success: false,
+                message: "Your password is not correct",
+            });
+        }
         res.json({ success: true, model });
-    });
+    }));
 });
 exports.deleteAccount = deleteAccount;
 const changePassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
