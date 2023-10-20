@@ -6,7 +6,7 @@ import { IJob } from "../service/interfaces";
  */
 const JobSchema = new Schema(
   {
-    userId: { type: String },
+    userId: { type: Schema.Types.ObjectId, ref: "User" },
     jobTitle: { type: String },
     jobDescription: { type: String },
     postDate: { type: Date },

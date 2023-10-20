@@ -39,12 +39,12 @@ const path_1 = __importDefault(require("path"));
  * Using Passport
  */
 const router = (0, express_1.Router)();
-const uploadDir = path_1.default.join(__dirname, "../uploads/avatar");
-const videoDir = path_1.default.join(__dirname, "../uploads/video");
+const avatarDir = path_1.default.join(__dirname, "../uploads/avatar");
+const adDir = path_1.default.join(__dirname, "../uploads/ads");
 const extraImageDir = path_1.default.join(__dirname, "../uploads/images");
 // Create a storage engine for Multer
 const storage = multer_1.default.diskStorage({
-    destination: uploadDir,
+    destination: avatarDir,
     filename: (req, file, cb) => {
         const uniqueSuffix = (0, uuid_1.v4)();
         const fileExtension = path_1.default.extname(file.originalname);
@@ -53,7 +53,7 @@ const storage = multer_1.default.diskStorage({
     },
 });
 const videoStorage = multer_1.default.diskStorage({
-    destination: videoDir,
+    destination: adDir,
     filename: (req, file, cb) => {
         const uniqueSuffix = (0, uuid_1.v4)();
         const fileExtension = path_1.default.extname(file.originalname);
@@ -92,7 +92,7 @@ router.post("/profile/changePassword", profile.changePassword);
 router.post("/profile/editProfile", profile.editProfile);
 router.post("/profile/avatar", upload.single("avatar"), profile.setAvatar);
 // Real Estate Video
-router.post("/estate/uploadVideo", uploadVideo.single("video"), estate.uploadVideo);
+router.post("/estate/uploadAd", uploadVideo.single("ad"), estate.uploadAd);
 router.post("/estate/getEstateInfo", estate.getEstateInfo);
 router.post("/estate/uploadImages", upload.array("images"), estate.uploadImages);
 exports.default = router;

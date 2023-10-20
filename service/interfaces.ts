@@ -27,28 +27,16 @@ export interface ICommunity extends Document {
   userId: Schema.Types.ObjectId;
   title: string;
   postDate: Date;
-  // userAvatar: string;
-  // userFirstName: string;
-  // userLastName: string;
-  // userReivewCount: number;
-  // userReivewMark: number;
 }
 
 export interface IEstate extends Document {
   isVideoAds: number;
-  videoFileName: string;
+  adFileName: string;
   imagesFileName: Array<string>;
   price: number;
   priceUnit: string;
   uploadDate: Date;
-  userId: string;
-  userAvatar: string;
-  userFirstName: string;
-  userLastName: string;
-  userReviewCount: number;
-  userReviewMark: number;
-  userCountry: string;
-  userCity: string;
+  userId: Schema.Types.ObjectId;
   title: string;
   subTitle: string;
   description: string;
@@ -77,7 +65,7 @@ export interface IVehicle extends Document {
   price: number;
   priceUnit: string;
   uploadDate: Date;
-  userId: string;
+  userId: Schema.Types.ObjectId;
   title: string;
   subTitle: string;
   description: string;
@@ -99,7 +87,7 @@ export interface IVehicle extends Document {
 }
 
 export interface IJob extends Document {
-  userId: string;
+  userId: Schema.Types.ObjectId;
   jobTitle: string;
   jobDescription: string;
   postDate: Date;

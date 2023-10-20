@@ -23,7 +23,7 @@ const addCommunity = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         yield newCommunity.save();
         const latestCommunity = yield Community_1.default.find()
             .populate("userId", "firstName lastName avatar reviewCount reviewMark")
-            .sort({ postDate: 1 })
+            .sort({ postDate: -1 })
             .limit(6);
         res.json({
             success: true,
@@ -63,13 +63,25 @@ const getLatesetCommunity = (req, res) => __awaiter(void 0, void 0, void 0, func
 });
 exports.getLatesetCommunity = getLatesetCommunity;
 const getMoreCommunity = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const condition = { title: { $regex: req.body.searchString, $options: "i" } };
+    const condition = {
+        title: { $regex: req.body.searchString, $options: "i" },
+    };
     try {
-        const latestCommunity = yield Community_1.default.find(condition)
-            .populate("userId", "firstName lastName avatar reviewCount reviewMark")
-            .sort({ postDate: -1 })
-            .skip(req.body.index * 20)
-            .limit(20);
+        let latestCommunity;
+        if (req.body.searchString == "") {
+            latestCommunity = yield Community_1.default.find()
+                .populate("userId", "firstName lastName avatar reviewCount reviewMark")
+                .sort({ postDate: -1 })
+                .skip(req.body.index * 20)
+                .limit(20);
+        }
+        else {
+            latestCommunity = yield Community_1.default.find(condition)
+                .populate("userId", "firstName lastName avatar reviewCount reviewMark")
+                .sort({ postDate: -1 })
+                .skip(req.body.index * 20)
+                .limit(20);
+        }
         if (!latestCommunity) {
             return res.json({ success: false, message: "Community not exist" });
         }
@@ -80,6 +92,7 @@ const getMoreCommunity = (req, res) => __awaiter(void 0, void 0, void 0, functio
         });
     }
     catch (error) {
+        console.log(error);
         return res.json({
             success: false,
             message: "Error found while loading more community",
