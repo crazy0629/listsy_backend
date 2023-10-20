@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getEstateAds = exports.uploadImages = exports.getEstateInfo = exports.uploadAd = void 0;
+exports.getEstateAds = exports.uploadImages = exports.getEstateInfo = exports.getMoreEstateAds = exports.uploadAd = void 0;
 const Estate_1 = __importDefault(require("../models/Estate"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const uploadAd = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -26,18 +26,44 @@ const uploadAd = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const newEstate = new Estate_1.default();
     newEstate.userId = req.body.userId;
     newEstate.isVideoAds = req.body.isVideo;
-    newEstate.adFileName = filename;
+    newEstate.adFileName = "/uploads/ads/" + filename;
     newEstate.uploadDate = new Date();
     yield newEstate.save();
+    const nextEstateAds = yield Estate_1.default.find()
+        .populate("userId", "avatar reviewCount reviewMark")
+        .sort({ postDate: -1 })
+        .limit(50);
     res.json({
         success: true,
         message: "Ad is uploaded successfully",
         filename,
         originalname,
         model: newEstate,
+        data: nextEstateAds,
     });
 });
 exports.uploadAd = uploadAd;
+const getMoreEstateAds = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const nextEstateAds = yield Estate_1.default.find()
+            .populate("userId", "avatar reviewCount reviewMark")
+            .sort({ postDate: -1 })
+            .skip(req.body.index * 50)
+            .limit(50);
+        return res.json({
+            success: true,
+            message: "Successfully loaded!",
+            data: nextEstateAds,
+        });
+    }
+    catch (error) {
+        return res.json({
+            success: false,
+            message: "Error found while loading more estate ads",
+        });
+    }
+});
+exports.getMoreEstateAds = getMoreEstateAds;
 const getEstateInfo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     Estate_1.default.findById(new mongoose_1.default.Types.ObjectId(req.body.videoId)).then((model) => __awaiter(void 0, void 0, void 0, function* () {
         if (!model) {

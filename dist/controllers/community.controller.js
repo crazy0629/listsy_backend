@@ -82,9 +82,6 @@ const getMoreCommunity = (req, res) => __awaiter(void 0, void 0, void 0, functio
                 .skip(req.body.index * 20)
                 .limit(20);
         }
-        if (!latestCommunity) {
-            return res.json({ success: false, message: "Community not exist" });
-        }
         return res.json({
             success: true,
             message: "Successfully loaded!",

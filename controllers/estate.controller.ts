@@ -17,17 +17,45 @@ export const uploadAd = async (req: Request, res: Response) => {
   const newEstate = new Estate();
   newEstate.userId = req.body.userId;
   newEstate.isVideoAds = req.body.isVideo;
-  newEstate.adFileName = filename;
+  newEstate.adFileName = "/uploads/ads/" + filename;
   newEstate.uploadDate = new Date();
 
   await newEstate.save();
+
+  const nextEstateAds = await Estate.find()
+    .populate("userId", "avatar reviewCount reviewMark")
+    .sort({ postDate: -1 })
+    .limit(50);
+
   res.json({
     success: true,
     message: "Ad is uploaded successfully",
     filename,
     originalname,
     model: newEstate,
+    data: nextEstateAds,
   });
+};
+
+export const getMoreEstateAds = async (req: Request, res: Response) => {
+  try {
+    const nextEstateAds = await Estate.find()
+      .populate("userId", "avatar reviewCount reviewMark")
+      .sort({ postDate: -1 })
+      .skip(req.body.index * 50)
+      .limit(50);
+
+    return res.json({
+      success: true,
+      message: "Successfully loaded!",
+      data: nextEstateAds,
+    });
+  } catch (error) {
+    return res.json({
+      success: false,
+      message: "Error found while loading more estate ads",
+    });
+  }
 };
 
 export const getEstateInfo = async (req: Request, res: Response) => {

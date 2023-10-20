@@ -3,6 +3,8 @@ import User from "../models/User";
 import bcrypt from "bcrypt";
 import mongoose from "mongoose";
 import Multer from "multer";
+import path from "path";
+import fs from "fs";
 import { generateToken } from "../service/helper";
 
 export const setAvatar = async (req: Request, res: Response) => {
@@ -15,6 +17,16 @@ export const setAvatar = async (req: Request, res: Response) => {
           // No file was uploaded, handle error
           res.status(400).json({ success: false, message: "No file uploaded" });
           return;
+        }
+
+        if (user.avatar) {
+          const prevAvatarPath = path.join(__dirname, "/.." + user.avatar);
+          fs.unlink(prevAvatarPath, (err) => {
+            if (err) {
+              console.error("Error deleting file:", err);
+            }
+            console.log("File deleted successfully");
+          });
         }
 
         // Access the uploaded file using req.file
