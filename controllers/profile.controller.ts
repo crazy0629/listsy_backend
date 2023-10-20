@@ -19,7 +19,7 @@ export const setAvatar = async (req: Request, res: Response) => {
 
         // Access the uploaded file using req.file
         const { filename, originalname } = multerReq.file;
-        user.avatar = filename;
+        user.avatar = "/uploads/avatar/" + filename;
         await user.save();
 
         // Process the file as needed (e.g., save the filename to the user's profile)
@@ -27,8 +27,8 @@ export const setAvatar = async (req: Request, res: Response) => {
         res.json({
           success: true,
           message: "Avatar uploaded successfully",
-          filename,
-          originalname,
+          data: user,
+          token: generateToken(user),
         });
       } else {
         res.status(404).json({ success: false, message: "User not found" });
@@ -70,7 +70,7 @@ export const editProfile = async (req: Request, res: Response) => {
 };
 
 export const deleteAccount = async (req: Request, res: Response) => {
-  User.findByIdAndDelete(new mongoose.Types.ObjectId(req.body.userId)).then(
+  User.findById(new mongoose.Types.ObjectId(req.body.userId)).then(
     async (model: any) => {
       if (!model) {
         return res.json({
@@ -85,7 +85,14 @@ export const deleteAccount = async (req: Request, res: Response) => {
           message: "Your password is not correct",
         });
       }
-      res.json({ success: true, model });
+      User.findByIdAndDelete(new mongoose.Types.ObjectId(req.body.userId)).then(
+        (model: any) => {
+          return res.json({
+            success: true,
+            message: "Your account is successfully deleted!",
+          });
+        }
+      );
     }
   );
 };
