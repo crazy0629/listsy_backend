@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.uploadImages = exports.getEstateInfo = exports.uploadVideo = void 0;
+exports.getEstateAds = exports.uploadImages = exports.getEstateInfo = exports.uploadVideo = void 0;
 const Estate_1 = __importDefault(require("../models/Estate"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const uploadVideo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -25,6 +25,13 @@ const uploadVideo = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     const { filename, originalname } = multerReq.file;
     const newEstate = new Estate_1.default();
     newEstate.userId = req.body.userId;
+    newEstate.userAvatar = req.body.userAvatar;
+    newEstate.userFirstName = req.body.userFirstName;
+    newEstate.userLastName = req.body.userLastName;
+    newEstate.userReviewCount = req.body.userReivewCount;
+    newEstate.userReviewMark = req.body.userReivewMark;
+    newEstate.userCountry = req.body.userCountry;
+    newEstate.userCity = req.body.userCity;
     newEstate.isVideoAds = req.body.isVideo;
     newEstate.videoFileName = filename;
     newEstate.uploadDate = new Date();
@@ -55,6 +62,7 @@ const getEstateInfo = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         model.listingType = req.body.listingType;
         model.propertyType = req.body.propertyType;
         model.bedroomCount = req.body.bedroomCount;
+        model.bathroomCount = req.body.bathroomCount;
         model.tenure = req.body.tenure;
         model.propertyCondition = req.body.propertyCondition;
         model.postCode = req.body.postCode;
@@ -97,3 +105,14 @@ const uploadImages = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }));
 });
 exports.uploadImages = uploadImages;
+const getEstateAds = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const condition = {
+        listingType: { $in: req.body.listingType },
+        propertyType: { $in: req.body.propertyType },
+    };
+    Estate_1.default.find(condition).then((model) => __awaiter(void 0, void 0, void 0, function* () {
+        const filterData = model.filter((item) => item.bedroomCount == req.body.bedroomCount &&
+            item.bathroomCount == req.body.bathroomCount);
+    }));
+});
+exports.getEstateAds = getEstateAds;

@@ -69,8 +69,9 @@ router.post(
 // Community
 
 router.post("/community/add", community.addCommunity);
-router.post("/community/getGroup", community.getCommunityOffset);
+router.post("/community/getLatest", community.getLatesetCommunity);
 router.post("/community/delete", community.deleteCommunity);
+router.post("/community/getMore", community.getMoreCommunity);
 
 // Profile
 

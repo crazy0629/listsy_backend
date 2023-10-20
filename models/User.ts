@@ -23,6 +23,8 @@ const UserSchema = new Schema(
     },
     token: { type: String, required: true },
     passwordToken: { type: String, required: true },
+    reviewCount: { type: Number, required: true, default: 0 },
+    reviewMark: { type: Number, required: true, default: 0 },
     bio: { type: String },
     userName: { type: String },
     telephoneNumber: { type: String },

@@ -6,9 +6,14 @@ import { ICommunity } from "../service/interfaces";
  */
 const CommunitySchema = new Schema(
   {
-    userId: { type: String, require: true },
+    userId: { type: Schema.Types.ObjectId, ref: "User" },
     title: { type: String, require: true },
     postDate: { type: Date, require: true },
+    // userAvatar: { type: String, required: true },
+    // userFirstName: { type: String, required: true },
+    // userLastName: { type: String, required: true },
+    // userReviewCount: { type: Number, required: true },
+    // userReviewMark: { type: Number, required: true },
   },
   { timestamps: true }
 );

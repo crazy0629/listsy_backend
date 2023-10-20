@@ -6,12 +6,19 @@ export const addCommunity = async (req: Request, res: Response) => {
     const newCommunity = new Community();
     newCommunity.userId = req.body.userId;
     newCommunity.title = req.body.title;
-    newCommunity.postDate = new Date();
+    newCommunity.postDate = req.body.postDate;
+
     await newCommunity.save();
+
+    const latestCommunity = await Community.find()
+      .populate("userId", "firstName lastName avatar reviewCount reviewMark")
+      .sort({ postDate: 1 })
+      .limit(6);
+
     res.json({
       success: true,
       message: "Community is sucessfully added!",
-      model: newCommunity,
+      model: latestCommunity,
     });
   } catch (error) {
     res.json({
@@ -21,12 +28,12 @@ export const addCommunity = async (req: Request, res: Response) => {
   }
 };
 
-export const getCommunityOffset = async (req: Request, res: Response) => {
+export const getLatesetCommunity = async (req: Request, res: Response) => {
   try {
     const latestCommunity = await Community.find()
-      .sort({ postDate: 1 })
-      .skip(req.body.index * 2)
-      .limit(2);
+      .populate("userId", "firstName lastName avatar")
+      .sort({ postDate: -1 })
+      .limit(6);
     if (!latestCommunity) {
       return res.json({ success: false, message: "Community not exist" });
     }
@@ -39,6 +46,31 @@ export const getCommunityOffset = async (req: Request, res: Response) => {
     return res.json({
       success: false,
       message: "Error found while loading community",
+    });
+  }
+};
+
+export const getMoreCommunity = async (req: Request, res: Response) => {
+  const condition = { title: { $regex: req.body.searchString, $options: "i" } };
+
+  try {
+    const latestCommunity = await Community.find(condition)
+      .populate("userId", "firstName lastName avatar reviewCount reviewMark")
+      .sort({ postDate: -1 })
+      .skip(req.body.index * 20)
+      .limit(20);
+    if (!latestCommunity) {
+      return res.json({ success: false, message: "Community not exist" });
+    }
+    return res.json({
+      success: true,
+      message: "Successfully loaded!",
+      data: latestCommunity,
+    });
+  } catch (error) {
+    return res.json({
+      success: false,
+      message: "Error found while loading more community",
     });
   }
 };
