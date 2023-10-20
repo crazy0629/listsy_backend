@@ -85,9 +85,14 @@ export interface IVehicle extends Document {
 }
 
 export interface IJob extends Document {
+  userId: string;
   jobTitle: string;
   jobDescription: string;
   postDate: Date;
-  compensation: number;
-  fixed: boolean;
+  price: number;
+  priceUnit: string;
+  fixedPrice: boolean;
+  workTimeType: string;
+  workRemoteType: string;
+  jobIndustry: string;
 }

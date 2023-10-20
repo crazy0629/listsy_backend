@@ -29,14 +29,14 @@ const setAvatar = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             }
             // Access the uploaded file using req.file
             const { filename, originalname } = multerReq.file;
-            user.avatar = filename;
+            user.avatar = "/uploads/avatar/" + filename;
             yield user.save();
             // Process the file as needed (e.g., save the filename to the user's profile)
             res.json({
                 success: true,
                 message: "Avatar uploaded successfully",
-                filename,
-                originalname,
+                data: user,
+                token: (0, helper_1.generateToken)(user),
             });
         }
         else {
@@ -75,7 +75,7 @@ const editProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 });
 exports.editProfile = editProfile;
 const deleteAccount = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    User_1.default.findByIdAndDelete(new mongoose_1.default.Types.ObjectId(req.body.userId)).then((model) => __awaiter(void 0, void 0, void 0, function* () {
+    User_1.default.findById(new mongoose_1.default.Types.ObjectId(req.body.userId)).then((model) => __awaiter(void 0, void 0, void 0, function* () {
         if (!model) {
             return res.json({
                 success: false,
@@ -89,7 +89,12 @@ const deleteAccount = (req, res) => __awaiter(void 0, void 0, void 0, function* 
                 message: "Your password is not correct",
             });
         }
-        res.json({ success: true, model });
+        User_1.default.findByIdAndDelete(new mongoose_1.default.Types.ObjectId(req.body.userId)).then((model) => {
+            return res.json({
+                success: true,
+                message: "Your account is successfully deleted!",
+            });
+        });
     }));
 });
 exports.deleteAccount = deleteAccount;
