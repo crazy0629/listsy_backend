@@ -16,6 +16,8 @@ exports.changePassword = exports.deleteAccount = exports.editProfile = exports.s
 const User_1 = __importDefault(require("../models/User"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const mongoose_1 = __importDefault(require("mongoose"));
+const path_1 = __importDefault(require("path"));
+const fs_1 = __importDefault(require("fs"));
 const helper_1 = require("../service/helper");
 const setAvatar = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     User_1.default.findById(new mongoose_1.default.Types.ObjectId(req.body.userId))
@@ -26,6 +28,15 @@ const setAvatar = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 // No file was uploaded, handle error
                 res.status(400).json({ success: false, message: "No file uploaded" });
                 return;
+            }
+            if (user.avatar) {
+                const prevAvatarPath = path_1.default.join(__dirname, "/.." + user.avatar);
+                fs_1.default.unlink(prevAvatarPath, (err) => {
+                    if (err) {
+                        console.error("Error deleting file:", err);
+                    }
+                    console.log("File deleted successfully");
+                });
             }
             // Access the uploaded file using req.file
             const { filename, originalname } = multerReq.file;

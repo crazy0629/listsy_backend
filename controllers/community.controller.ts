@@ -70,9 +70,6 @@ export const getMoreCommunity = async (req: Request, res: Response) => {
         .skip(req.body.index * 20)
         .limit(20);
     }
-    if (!latestCommunity) {
-      return res.json({ success: false, message: "Community not exist" });
-    }
 
     return res.json({
       success: true,
