@@ -14,13 +14,13 @@ import path from "path";
 
 const router = Router();
 
-const uploadDir = path.join(__dirname, "../uploads/avatar");
-const videoDir = path.join(__dirname, "../uploads/video");
+const avatarDir = path.join(__dirname, "../uploads/avatar");
+const adDir = path.join(__dirname, "../uploads/ads");
 const extraImageDir = path.join(__dirname, "../uploads/images");
 
 // Create a storage engine for Multer
 const storage = multer.diskStorage({
-  destination: uploadDir,
+  destination: avatarDir,
   filename: (req, file, cb) => {
     const uniqueSuffix = uuidv4();
     const fileExtension = path.extname(file.originalname);
@@ -30,7 +30,7 @@ const storage = multer.diskStorage({
 });
 
 const videoStorage = multer.diskStorage({
-  destination: videoDir,
+  destination: adDir,
   filename: (req, file, cb) => {
     const uniqueSuffix = uuidv4();
     const fileExtension = path.extname(file.originalname);
@@ -82,11 +82,7 @@ router.post("/profile/avatar", upload.single("avatar"), profile.setAvatar);
 
 // Real Estate Video
 
-router.post(
-  "/estate/uploadVideo",
-  uploadVideo.single("video"),
-  estate.uploadVideo
-);
+router.post("/estate/uploadAd", uploadVideo.single("ad"), estate.uploadAd);
 router.post("/estate/getEstateInfo", estate.getEstateInfo);
 router.post(
   "/estate/uploadImages",

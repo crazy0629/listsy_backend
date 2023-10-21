@@ -12,10 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getEstateAds = exports.uploadImages = exports.getEstateInfo = exports.uploadVideo = void 0;
+exports.getEstateAds = exports.uploadImages = exports.getEstateInfo = exports.uploadAd = void 0;
 const Estate_1 = __importDefault(require("../models/Estate"));
 const mongoose_1 = __importDefault(require("mongoose"));
-const uploadVideo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const uploadAd = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const multerReq = req;
     if (!(multerReq === null || multerReq === void 0 ? void 0 : multerReq.file)) {
         // No file was uploaded, handle error
@@ -25,26 +25,19 @@ const uploadVideo = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     const { filename, originalname } = multerReq.file;
     const newEstate = new Estate_1.default();
     newEstate.userId = req.body.userId;
-    newEstate.userAvatar = req.body.userAvatar;
-    newEstate.userFirstName = req.body.userFirstName;
-    newEstate.userLastName = req.body.userLastName;
-    newEstate.userReviewCount = req.body.userReivewCount;
-    newEstate.userReviewMark = req.body.userReivewMark;
-    newEstate.userCountry = req.body.userCountry;
-    newEstate.userCity = req.body.userCity;
     newEstate.isVideoAds = req.body.isVideo;
-    newEstate.videoFileName = filename;
+    newEstate.adFileName = filename;
     newEstate.uploadDate = new Date();
     yield newEstate.save();
     res.json({
         success: true,
-        message: "Video uploaded successfully",
+        message: "Ad is uploaded successfully",
         filename,
         originalname,
         model: newEstate,
     });
 });
-exports.uploadVideo = uploadVideo;
+exports.uploadAd = uploadAd;
 const getEstateInfo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     Estate_1.default.findById(new mongoose_1.default.Types.ObjectId(req.body.videoId)).then((model) => __awaiter(void 0, void 0, void 0, function* () {
         if (!model) {

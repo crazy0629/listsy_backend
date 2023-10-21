@@ -5,7 +5,7 @@ const mongoose_1 = require("mongoose");
  * Create a new Schema from mongoose
  */
 const JobSchema = new mongoose_1.Schema({
-    userId: { type: String },
+    userId: { type: mongoose_1.Schema.Types.ObjectId, ref: "User" },
     jobTitle: { type: String },
     jobDescription: { type: String },
     postDate: { type: Date },

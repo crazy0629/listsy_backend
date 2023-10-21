@@ -12,7 +12,7 @@ const VehicleSchema = new Schema(
     price: { type: Number },
     priceUnit: { type: String },
     uploadDate: { type: Date },
-    userId: { type: String },
+    userId: { type: Schema.Types.ObjectId, ref: "User" },
     title: { type: String },
     subTitle: { type: String },
     description: { type: String },

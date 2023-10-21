@@ -3,7 +3,7 @@ import Estate from "../models/Estate";
 import Multer from "multer";
 import mongoose from "mongoose";
 
-export const uploadVideo = async (req: Request, res: Response) => {
+export const uploadAd = async (req: Request, res: Response) => {
   const multerReq = req as Request & { file?: Multer.File };
 
   if (!multerReq?.file) {
@@ -16,21 +16,14 @@ export const uploadVideo = async (req: Request, res: Response) => {
 
   const newEstate = new Estate();
   newEstate.userId = req.body.userId;
-  newEstate.userAvatar = req.body.userAvatar;
-  newEstate.userFirstName = req.body.userFirstName;
-  newEstate.userLastName = req.body.userLastName;
-  newEstate.userReviewCount = req.body.userReivewCount;
-  newEstate.userReviewMark = req.body.userReivewMark;
-  newEstate.userCountry = req.body.userCountry;
-  newEstate.userCity = req.body.userCity;
   newEstate.isVideoAds = req.body.isVideo;
-  newEstate.videoFileName = filename;
+  newEstate.adFileName = filename;
   newEstate.uploadDate = new Date();
 
   await newEstate.save();
   res.json({
     success: true,
-    message: "Video uploaded successfully",
+    message: "Ad is uploaded successfully",
     filename,
     originalname,
     model: newEstate,
