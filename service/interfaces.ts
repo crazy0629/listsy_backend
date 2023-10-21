@@ -1,4 +1,4 @@
-import { Document } from "mongoose";
+import { Document, Schema } from "mongoose";
 
 /**
  * IUser Interface
@@ -13,6 +13,8 @@ export interface IUser extends Document {
   isVerified: boolean;
   token: string;
   passwordToken: string;
+  reviewCount: number;
+  reviewMark: number;
   avatar: string;
   bio: string;
   userName: string;
@@ -22,9 +24,14 @@ export interface IUser extends Document {
 }
 
 export interface ICommunity extends Document {
-  userId: string;
+  userId: Schema.Types.ObjectId;
   title: string;
   postDate: Date;
+  // userAvatar: string;
+  // userFirstName: string;
+  // userLastName: string;
+  // userReivewCount: number;
+  // userReivewMark: number;
 }
 
 export interface IEstate extends Document {
@@ -35,6 +42,13 @@ export interface IEstate extends Document {
   priceUnit: string;
   uploadDate: Date;
   userId: string;
+  userAvatar: string;
+  userFirstName: string;
+  userLastName: string;
+  userReviewCount: number;
+  userReviewMark: number;
+  userCountry: string;
+  userCity: string;
   title: string;
   subTitle: string;
   description: string;

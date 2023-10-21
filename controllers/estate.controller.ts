@@ -16,6 +16,13 @@ export const uploadVideo = async (req: Request, res: Response) => {
 
   const newEstate = new Estate();
   newEstate.userId = req.body.userId;
+  newEstate.userAvatar = req.body.userAvatar;
+  newEstate.userFirstName = req.body.userFirstName;
+  newEstate.userLastName = req.body.userLastName;
+  newEstate.userReviewCount = req.body.userReivewCount;
+  newEstate.userReviewMark = req.body.userReivewMark;
+  newEstate.userCountry = req.body.userCountry;
+  newEstate.userCity = req.body.userCity;
   newEstate.isVideoAds = req.body.isVideo;
   newEstate.videoFileName = filename;
   newEstate.uploadDate = new Date();
@@ -49,6 +56,7 @@ export const getEstateInfo = async (req: Request, res: Response) => {
       model.listingType = req.body.listingType;
       model.propertyType = req.body.propertyType;
       model.bedroomCount = req.body.bedroomCount;
+      model.bathroomCount = req.body.bathroomCount;
       model.tenure = req.body.tenure;
       model.propertyCondition = req.body.propertyCondition;
       model.postCode = req.body.postCode;
@@ -96,4 +104,18 @@ export const uploadImages = async (req: Request, res: Response) => {
       });
     }
   );
+};
+
+export const getEstateAds = async (req: Request, res: Response) => {
+  const condition = {
+    listingType: { $in: req.body.listingType },
+    propertyType: { $in: req.body.propertyType },
+  };
+  Estate.find(condition).then(async (model: any) => {
+    const filterData = model.filter(
+      (item) =>
+        item.bedroomCount == req.body.bedroomCount &&
+        item.bathroomCount == req.body.bathroomCount
+    );
+  });
 };

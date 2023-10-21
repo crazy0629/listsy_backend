@@ -83,8 +83,9 @@ router.post("/auth/resetPassword", auth.resetPassword);
 router.post("/auth/checkSignUpVerificationToken", auth.checkSignUpVerificationToken);
 // Community
 router.post("/community/add", community.addCommunity);
-router.post("/community/getGroup", community.getCommunityOffset);
+router.post("/community/getLatest", community.getLatesetCommunity);
 router.post("/community/delete", community.deleteCommunity);
+router.post("/community/getMore", community.getMoreCommunity);
 // Profile
 router.post("/profile/deleteAccount", profile.deleteAccount);
 router.post("/profile/changePassword", profile.changePassword);

@@ -67,6 +67,8 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         isVerified: false,
         token,
         passwordToken,
+        reviewCount: 0,
+        reviewMark: 0,
     };
     const newUser = new User_1.default(payload);
     yield newUser.save();

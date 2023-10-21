@@ -67,6 +67,8 @@ export const signUp = async (req: Request, res: Response) => {
     isVerified: false,
     token,
     passwordToken,
+    reviewCount: 0,
+    reviewMark: 0,
   };
 
   const newUser = new User(payload);
