@@ -7,7 +7,7 @@ import { IVehicle } from "../service/interfaces";
 const VehicleSchema = new Schema(
   {
     isVideoAds: { type: Number },
-    videoFileName: { type: String },
+    adFileName: { type: String },
     imagesFileName: { type: Array },
     price: { type: Number },
     priceUnit: { type: String },

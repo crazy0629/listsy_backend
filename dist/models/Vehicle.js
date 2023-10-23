@@ -6,7 +6,7 @@ const mongoose_1 = require("mongoose");
  */
 const VehicleSchema = new mongoose_1.Schema({
     isVideoAds: { type: Number },
-    videoFileName: { type: String },
+    adFileName: { type: String },
     imagesFileName: { type: Array },
     price: { type: Number },
     priceUnit: { type: String },

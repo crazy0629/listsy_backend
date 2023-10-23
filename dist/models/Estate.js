@@ -5,7 +5,7 @@ const mongoose_1 = require("mongoose");
  * Create a new Schema from mongoose
  */
 const EstateSchema = new mongoose_1.Schema({
-    isVideoAds: { type: Number },
+    fileType: { type: String },
     adFileName: { type: String },
     imagesFileName: { type: Array },
     price: { type: Number },
