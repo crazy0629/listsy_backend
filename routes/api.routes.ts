@@ -3,7 +3,7 @@ import * as auth from "../controllers/auth.controller";
 import * as community from "../controllers/community.controller";
 import * as profile from "../controllers/profile.controller";
 import * as estate from "../controllers/estate.controller";
-
+import * as ad from "../controllers/ad.controller";
 import multer from "multer";
 import { v4 as uuidv4 } from "uuid";
 import path from "path";
@@ -85,14 +85,12 @@ router.post(
   profile.setAvatar
 );
 
-// Real Estate Video
+// Ad upload
+router.post("/ad/upload", uploadAds.single("ad"), ad.uploadAd);
+router.post("/ad/uploadImages", uploadImages.array("images"), ad.uploadImages);
 
-router.post("/estate/uploadAd", uploadAds.single("ad"), estate.uploadAd);
+// Real Estate
+
 router.post("/estate/getEstateInfo", estate.getEstateInfo);
-router.post(
-  "/estate/uploadImages",
-  uploadImages.array("images"),
-  estate.uploadImages
-);
 
 export default router;
