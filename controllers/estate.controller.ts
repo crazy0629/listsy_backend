@@ -3,20 +3,51 @@ import Estate from "../models/Estate";
 import Multer from "multer";
 import mongoose from "mongoose";
 
+export const getAdDetailInfo = async (req: Request, res: Response) => {
+  const estateObj = await Estate.findOne({ adId: req.body.adId })
+    .populate(
+      "userId",
+      "firstName lastName avatar reviewCount reviewMark telephoneNumber"
+    )
+    .populate("adId", "adFileName imagesFileName uploadDate duration");
+
+  if (!estateObj)
+    return res.json({
+      success: false,
+      message: "Error found while loading deail info!",
+    });
+
+  return res.json({ success: true, message: "Success", data: estateObj });
+};
+
 export const getMoreEstateAds = async (req: Request, res: Response) => {
   try {
-    const condition = {
-      listingType: { $in: req.body.listingType },
-      propertyType: { $in: req.body.propertyType },
-      bedroomCount: { $in: req.body.bedroomCount },
-      bathroomCount: { $in: req.body.bathroomCount },
+    let condition: any = {
+      // listingType: { $in: req.body.listingType },
+      // propertyType: { $in: req.body.propertyType },
+      // bedroomCount: { $in: req.body.bedroomCount },
+      // bathroomCount: { $in: req.body.bathroomCount },
     };
+    if (req.body.listingType.length) {
+      condition.listingType = { $in: req.body.listingType };
+    }
+    if (req.body.propertyType.length) {
+      condition.propertyType = { $in: req.body.propertyType };
+    }
+    if (req.body.bedroomCount.length) {
+      condition.bedroomCount = { $in: req.body.bedroomCount };
+    }
+    if (req.body.bathroomCount.length) {
+      condition.bathroomCount = { $in: req.body.bathroomCount };
+    }
+    console.log(condition);
     const nextEstateAds = await Estate.find(condition)
       .populate("userId", "avatar reviewCount reviewMark")
+      .populate("adId", "adFileName imagesFileName uploadDate duration")
       .sort({ postDate: -1 })
       .skip(req.body.index * 50)
       .limit(50);
-
+    console.log(nextEstateAds.length);
     return res.json({
       success: true,
       message: "Successfully loaded!",
