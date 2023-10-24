@@ -93,8 +93,9 @@ router.post("/profile/changePassword", profile.changePassword);
 router.post("/profile/editProfile", profile.editProfile);
 router.post("/profile/avatar", uploadAvatar.single("avatar"), profile.setAvatar);
 // Ad upload
-router.post("/ad/upload", uploadAds.single("ad"), ad.uploadAd);
-router.post("/ad/uploadImages", uploadImages.array("images"), ad.uploadImages);
+router.post("/asset/upload", uploadAds.single("ad"), ad.uploadAd);
+router.post("/asset/uploadImages", uploadImages.array("images"), ad.uploadImages);
+router.post("/upload/cancel", ad.cancelUpload);
 // Real Estate
-router.post("/estate/getEstateInfo", estate.getEstateInfo);
+router.post("/estate/loadEstateInfo", estate.loadEstateInfo);
 exports.default = router;

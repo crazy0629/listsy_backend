@@ -16,6 +16,8 @@ exports.cancelUpload = exports.uploadImages = exports.uploadAd = void 0;
 const Ad_1 = __importDefault(require("../models/Ad"));
 const Estate_1 = __importDefault(require("../models/Estate"));
 const mongoose_1 = __importDefault(require("mongoose"));
+const path_1 = __importDefault(require("path"));
+const fs_1 = __importDefault(require("fs"));
 const uploadAd = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const multerReq = req;
     if (!(multerReq === null || multerReq === void 0 ? void 0 : multerReq.file)) {
@@ -39,7 +41,7 @@ const uploadAd = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.uploadAd = uploadAd;
 const uploadImages = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    Ad_1.default.findById(new mongoose_1.default.Types.ObjectId(req.body.videoId)).then((model) => __awaiter(void 0, void 0, void 0, function* () {
+    Ad_1.default.findById(new mongoose_1.default.Types.ObjectId(req.body.adId)).then((model) => __awaiter(void 0, void 0, void 0, function* () {
         if (!model) {
             return res.json({
                 success: false,
@@ -49,8 +51,8 @@ const uploadImages = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         const multerReq = req;
         let imageNames = [];
         for (let index = 0; index < multerReq.files.length; index++) {
-            const { fileName, originalname } = multerReq.files[index];
-            imageNames.push(fileName);
+            const { filename } = multerReq.files[index];
+            imageNames.push("/uploads/images/" + filename);
         }
         model.imagesFileName = imageNames;
         yield model.save();
@@ -62,25 +64,23 @@ const uploadImages = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 });
 exports.uploadImages = uploadImages;
 const cancelUpload = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    Ad_1.default.findById(new mongoose_1.default.Types.ObjectId(req.body.videoId)).then((model) => __awaiter(void 0, void 0, void 0, function* () {
+    Ad_1.default.findById(new mongoose_1.default.Types.ObjectId(req.body.adId)).then((model) => __awaiter(void 0, void 0, void 0, function* () {
         if (!model) {
             return res.json({
                 success: false,
                 message: "Error happened while getting data!",
             });
         }
-        const adObj = yield Ad_1.default.deleteOne({ id: req.body.videoId });
-        if (!adObj) {
-            return res.json({ success: false, message: "Ad not exist" });
-        }
-        if (req.body.adType == "estate") {
-            const estateObj = yield Estate_1.default.deleteOne({ adId: req.body.videoId });
-            if (!estateObj) {
-                return res.json({
-                    success: false,
-                    message: "Erro found while canceling upload!",
-                });
+        const adFilePath = path_1.default.join(__dirname, "/.." + model.adFileName);
+        fs_1.default.unlink(adFilePath, (err) => {
+            if (err) {
+                console.error("Error deleting file:", err);
             }
+            console.log("File deleted successfully");
+        });
+        const adObj = yield Ad_1.default.findByIdAndDelete(new mongoose_1.default.Types.ObjectId(req.body.adId));
+        if (req.body.adType == "estate") {
+            const estateObj = yield Estate_1.default.deleteOne({ adId: req.body.adId });
         }
         return res.json({
             success: true,

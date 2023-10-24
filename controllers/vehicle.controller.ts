@@ -3,33 +3,6 @@ import Vehicle from "../models/Vehicle";
 import Multer from "multer";
 import mongoose from "mongoose";
 
-export const uploadVideo = async (req: Request, res: Response) => {
-  const multerReq = req as Request & { file?: Multer.File };
-
-  if (!multerReq?.file) {
-    // No file was uploaded, handle error
-    res.status(400).json({ success: false, message: "No file uploaded" });
-    return;
-  }
-
-  const { filename, originalname } = multerReq.file;
-
-  const newVehicle = new Vehicle();
-  newVehicle.userId = req.body.userId;
-  newVehicle.isVideoAds = req.body.isVideo;
-  newVehicle.adFileName = "/uploads/ads/" + filename;
-  newVehicle.uploadDate = new Date();
-
-  await newVehicle.save();
-  res.json({
-    success: true,
-    message: "Ad is uploaded successfully",
-    filename,
-    originalname,
-    model: newVehicle,
-  });
-};
-
 export const getVehicleInfo = async (req: Request, res: Response) => {
   Vehicle.findById(new mongoose.Types.ObjectId(req.body.videoId)).then(
     async (model: any) => {
@@ -65,34 +38,6 @@ export const getVehicleInfo = async (req: Request, res: Response) => {
       return res.json({
         success: true,
         message: "successfully loaded vehicle ads information",
-      });
-    }
-  );
-};
-
-export const uploadImages = async (req: Request, res: Response) => {
-  Vehicle.findById(new mongoose.Types.ObjectId(req.body.videoId)).then(
-    async (model: any) => {
-      if (!model) {
-        return res.json({
-          success: false,
-          message: "Error happened while loading data!",
-        });
-      }
-
-      const multerReq = req as Request & { files?: Multer.Files };
-
-      let imageNames: any = [];
-      for (let index = 0; index < multerReq.files.length; index++) {
-        const { fileName, originalname } = multerReq.files[index];
-        imageNames.push(fileName);
-      }
-      model.imagesFileName = imageNames;
-      await model.save();
-
-      return res.json({
-        success: true,
-        message: "Images are successfully uploaded",
       });
     }
   );

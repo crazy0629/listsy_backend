@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getEstateInfo = exports.getMoreEstateAds = void 0;
+exports.loadEstateInfo = exports.getMoreEstateAds = void 0;
 const Estate_1 = __importDefault(require("../models/Estate"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const getMoreEstateAds = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -20,18 +20,8 @@ const getMoreEstateAds = (req, res) => __awaiter(void 0, void 0, void 0, functio
         const condition = {
             listingType: { $in: req.body.listingType },
             propertyType: { $in: req.body.propertyType },
-            bedroomCount: {
-                $gte: req.body.minBedroomCount,
-                $lte: req.body.maxBedroomCount,
-            },
-            bathroomCount: {
-                $gte: req.body.minBathroomCount,
-                $lte: req.body.maxBathroomCount,
-            },
-            price: {
-                $gte: req.body.minPrice,
-                $lte: req.body.maxPrice,
-            },
+            bedroomCount: { $in: req.body.bedroomCount },
+            bathroomCount: { $in: req.body.bathroomCount },
         };
         const nextEstateAds = yield Estate_1.default.find(condition)
             .populate("userId", "avatar reviewCount reviewMark")
@@ -52,42 +42,43 @@ const getMoreEstateAds = (req, res) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.getMoreEstateAds = getMoreEstateAds;
-const getEstateInfo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const loadEstateInfo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     Estate_1.default.find({ adId: new mongoose_1.default.Types.ObjectId(req.body.adId) }).then((model) => __awaiter(void 0, void 0, void 0, function* () {
-        if (model) {
+        if (model.length) {
             return res.json({
                 success: false,
                 message: "Error found!",
             });
         }
-        model.adId = req.body.adId;
-        model.userId = req.body.userId;
-        model.title = req.body.title;
-        model.subTitle = req.body.subTitle;
-        model.description = req.body.description;
-        model.price = req.body.price;
-        model.priceUnit = req.body.priceUnit;
-        model.viewCount = 0;
-        model.listingType = req.body.listingType;
-        model.propertyType = req.body.propertyType;
-        model.bedroomCount = req.body.bedroomCount;
-        model.bathroomCount = req.body.bathroomCount;
-        model.tenure = req.body.tenure;
-        model.propertyCondition = req.body.propertyCondition;
-        model.postCode = req.body.postCode;
-        model.yearBuilt = req.body.yearBuilt;
-        model.builtSurface = req.body.builtSurface;
-        model.builtSurfaceUnit = req.body.builtSurfaceUnit;
-        model.plotSurface = req.body.plotSurface;
-        model.plotSurfaceUnit = req.body.plotSurfaceUnit;
-        model.keyFeatures = req.body.keyFeatures;
-        model.nearestAttraction = req.body.nearestAttraction;
-        model.facilities = req.body.facilities;
-        yield model.save();
+        const newEstate = new Estate_1.default();
+        newEstate.adId = req.body.adId;
+        newEstate.userId = req.body.userId;
+        newEstate.title = req.body.title;
+        newEstate.subTitle = req.body.subTitle;
+        newEstate.description = req.body.description;
+        newEstate.price = req.body.price;
+        newEstate.priceUnit = req.body.priceUnit;
+        newEstate.viewCount = 0;
+        newEstate.listingType = req.body.listingType;
+        newEstate.propertyType = req.body.propertyType;
+        newEstate.bedroomCount = req.body.bedroomCount;
+        newEstate.bathroomCount = req.body.bathroomCount;
+        newEstate.tenure = req.body.tenure;
+        newEstate.propertyCondition = req.body.propertyCondition;
+        newEstate.postCode = req.body.postCode;
+        newEstate.yearBuilt = req.body.yearBuilt;
+        newEstate.builtSurface = req.body.builtSurface;
+        newEstate.builtSurfaceUnit = req.body.builtSurfaceUnit;
+        newEstate.plotSurface = req.body.plotSurface;
+        newEstate.plotSurfaceUnit = req.body.plotSurfaceUnit;
+        newEstate.keyFeatures = req.body.keyFeatures;
+        newEstate.nearestAttraction = req.body.nearestAttraction;
+        newEstate.facilities = req.body.facilities;
+        yield newEstate.save();
         return res.json({
             success: true,
-            message: "successfully loaded real estate video information",
+            message: "Successfully loaded real estate media information!",
         });
     }));
 });
-exports.getEstateInfo = getEstateInfo;
+exports.loadEstateInfo = loadEstateInfo;
