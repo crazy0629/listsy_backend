@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getEstateAds = exports.uploadImages = exports.getEstateInfo = exports.getMoreEstateAds = exports.uploadAd = void 0;
+exports.uploadImages = exports.getEstateInfo = exports.getMoreEstateAds = exports.uploadAd = void 0;
 const Estate_1 = __importDefault(require("../models/Estate"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const uploadAd = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -25,27 +25,38 @@ const uploadAd = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { filename, originalname } = multerReq.file;
     const newEstate = new Estate_1.default();
     newEstate.userId = req.body.userId;
-    newEstate.isVideoAds = req.body.isVideo;
+    newEstate.fileType = req.body.fileType;
     newEstate.adFileName = "/uploads/ads/" + filename;
     newEstate.uploadDate = new Date();
     yield newEstate.save();
-    const nextEstateAds = yield Estate_1.default.find()
-        .populate("userId", "avatar reviewCount reviewMark")
-        .sort({ postDate: -1 })
-        .limit(50);
     res.json({
         success: true,
         message: "Ad is uploaded successfully",
         filename,
         originalname,
         model: newEstate,
-        data: nextEstateAds,
     });
 });
 exports.uploadAd = uploadAd;
 const getMoreEstateAds = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const nextEstateAds = yield Estate_1.default.find()
+        const condition = {
+            listingType: { $in: req.body.listingType },
+            propertyType: { $in: req.body.propertyType },
+            bedroomCount: {
+                $gte: req.body.minBedroomCount,
+                $lte: req.body.maxBedroomCount,
+            },
+            bathroomCount: {
+                $gte: req.body.minBathroomCount,
+                $lte: req.body.maxBathroomCount,
+            },
+            price: {
+                $gte: req.body.minPrice,
+                $lte: req.body.maxPrice,
+            },
+        };
+        const nextEstateAds = yield Estate_1.default.find(condition)
             .populate("userId", "avatar reviewCount reviewMark")
             .sort({ postDate: -1 })
             .skip(req.body.index * 50)
@@ -117,6 +128,10 @@ const uploadImages = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         }
         model.imagesFileName = imageNames;
         yield model.save();
+        const nextEstateAds = yield Estate_1.default.find()
+            .populate("userId", "avatar reviewCount reviewMark")
+            .sort({ postDate: -1 })
+            .limit(50);
         return res.json({
             success: true,
             message: "Images are successfully uploaded",
@@ -124,14 +139,3 @@ const uploadImages = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }));
 });
 exports.uploadImages = uploadImages;
-const getEstateAds = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const condition = {
-        listingType: { $in: req.body.listingType },
-        propertyType: { $in: req.body.propertyType },
-    };
-    Estate_1.default.find(condition).then((model) => __awaiter(void 0, void 0, void 0, function* () {
-        const filterData = model.filter((item) => item.bedroomCount == req.body.bedroomCount &&
-            item.bathroomCount == req.body.bathroomCount);
-    }));
-});
-exports.getEstateAds = getEstateAds;

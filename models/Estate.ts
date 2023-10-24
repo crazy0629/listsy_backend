@@ -6,7 +6,7 @@ import { IEstate } from "../service/interfaces";
  */
 const EstateSchema = new Schema(
   {
-    isVideoAds: { type: Number },
+    fileType: { type: String },
     adFileName: { type: String },
     imagesFileName: { type: Array },
     price: { type: Number },

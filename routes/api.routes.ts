@@ -14,13 +14,14 @@ import path from "path";
 
 const router = Router();
 
-const avatarDir = path.join(__dirname, "../uploads/avatar");
-const adDir = path.join(__dirname, "../uploads/ads");
-const extraImageDir = path.join(__dirname, "../uploads/images");
+const avatar_dir = path.join(__dirname, "../uploads/avatar");
+const ad_dir = path.join(__dirname, "../uploads/ads");
+const extraImage_dir = path.join(__dirname, "../uploads/images");
 
 // Create a storage engine for Multer
-const storage = multer.diskStorage({
-  destination: avatarDir,
+
+const avatarStorage = multer.diskStorage({
+  destination: avatar_dir,
   filename: (req, file, cb) => {
     const uniqueSuffix = uuidv4();
     const fileExtension = path.extname(file.originalname);
@@ -29,8 +30,8 @@ const storage = multer.diskStorage({
   },
 });
 
-const videoStorage = multer.diskStorage({
-  destination: adDir,
+const adStorage = multer.diskStorage({
+  destination: ad_dir,
   filename: (req, file, cb) => {
     const uniqueSuffix = uuidv4();
     const fileExtension = path.extname(file.originalname);
@@ -40,7 +41,7 @@ const videoStorage = multer.diskStorage({
 });
 
 const imageStorage = multer.diskStorage({
-  destination: extraImageDir,
+  destination: extraImage_dir,
   filename: (req, file, cb) => {
     const uniqueSuffix = uuidv4();
     const fileExtension = path.extname(file.originalname);
@@ -50,9 +51,9 @@ const imageStorage = multer.diskStorage({
 });
 
 // Configure Multer with the storage engine
-const upload = multer({ storage });
-const uploadVideo = multer({ videoStorage });
-const uploadImages = multer({ imageStorage });
+const uploadAvatar = multer({ storage: avatarStorage });
+const uploadAds = multer({ storage: adStorage });
+const uploadImages = multer({ storage: imageStorage });
 
 // Authentication
 
@@ -78,15 +79,19 @@ router.post("/community/getMore", community.getMoreCommunity);
 router.post("/profile/deleteAccount", profile.deleteAccount);
 router.post("/profile/changePassword", profile.changePassword);
 router.post("/profile/editProfile", profile.editProfile);
-router.post("/profile/avatar", upload.single("avatar"), profile.setAvatar);
+router.post(
+  "/profile/avatar",
+  uploadAvatar.single("avatar"),
+  profile.setAvatar
+);
 
 // Real Estate Video
 
-router.post("/estate/uploadAd", uploadVideo.single("ad"), estate.uploadAd);
+router.post("/estate/uploadAd", uploadAds.single("ad"), estate.uploadAd);
 router.post("/estate/getEstateInfo", estate.getEstateInfo);
 router.post(
   "/estate/uploadImages",
-  upload.array("images"),
+  uploadImages.array("images"),
   estate.uploadImages
 );
 

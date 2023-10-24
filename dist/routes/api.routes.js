@@ -39,12 +39,12 @@ const path_1 = __importDefault(require("path"));
  * Using Passport
  */
 const router = (0, express_1.Router)();
-const avatarDir = path_1.default.join(__dirname, "../uploads/avatar");
-const adDir = path_1.default.join(__dirname, "../uploads/ads");
-const extraImageDir = path_1.default.join(__dirname, "../uploads/images");
+const avatar_dir = path_1.default.join(__dirname, "../uploads/avatar");
+const ad_dir = path_1.default.join(__dirname, "../uploads/ads");
+const extraImage_dir = path_1.default.join(__dirname, "../uploads/images");
 // Create a storage engine for Multer
-const storage = multer_1.default.diskStorage({
-    destination: avatarDir,
+const avatarStorage = multer_1.default.diskStorage({
+    destination: avatar_dir,
     filename: (req, file, cb) => {
         const uniqueSuffix = (0, uuid_1.v4)();
         const fileExtension = path_1.default.extname(file.originalname);
@@ -52,8 +52,8 @@ const storage = multer_1.default.diskStorage({
         cb(null, fileName);
     },
 });
-const videoStorage = multer_1.default.diskStorage({
-    destination: adDir,
+const adStorage = multer_1.default.diskStorage({
+    destination: ad_dir,
     filename: (req, file, cb) => {
         const uniqueSuffix = (0, uuid_1.v4)();
         const fileExtension = path_1.default.extname(file.originalname);
@@ -62,7 +62,7 @@ const videoStorage = multer_1.default.diskStorage({
     },
 });
 const imageStorage = multer_1.default.diskStorage({
-    destination: extraImageDir,
+    destination: extraImage_dir,
     filename: (req, file, cb) => {
         const uniqueSuffix = (0, uuid_1.v4)();
         const fileExtension = path_1.default.extname(file.originalname);
@@ -71,9 +71,9 @@ const imageStorage = multer_1.default.diskStorage({
     },
 });
 // Configure Multer with the storage engine
-const upload = (0, multer_1.default)({ storage });
-const uploadVideo = (0, multer_1.default)({ videoStorage });
-const uploadImages = (0, multer_1.default)({ imageStorage });
+const uploadAvatar = (0, multer_1.default)({ storage: avatarStorage });
+const uploadAds = (0, multer_1.default)({ storage: adStorage });
+const uploadImages = (0, multer_1.default)({ storage: imageStorage });
 // Authentication
 router.post("/auth/signin", auth.signIn);
 router.post("/auth/signup", auth.signUp);
@@ -90,9 +90,9 @@ router.post("/community/getMore", community.getMoreCommunity);
 router.post("/profile/deleteAccount", profile.deleteAccount);
 router.post("/profile/changePassword", profile.changePassword);
 router.post("/profile/editProfile", profile.editProfile);
-router.post("/profile/avatar", upload.single("avatar"), profile.setAvatar);
+router.post("/profile/avatar", uploadAvatar.single("avatar"), profile.setAvatar);
 // Real Estate Video
-router.post("/estate/uploadAd", uploadVideo.single("ad"), estate.uploadAd);
+router.post("/estate/uploadAd", uploadAds.single("ad"), estate.uploadAd);
 router.post("/estate/getEstateInfo", estate.getEstateInfo);
-router.post("/estate/uploadImages", upload.array("images"), estate.uploadImages);
+router.post("/estate/uploadImages", uploadImages.array("images"), estate.uploadImages);
 exports.default = router;

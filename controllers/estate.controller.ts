@@ -5,7 +5,6 @@ import mongoose from "mongoose";
 
 export const uploadAd = async (req: Request, res: Response) => {
   const multerReq = req as Request & { file?: Multer.File };
-
   if (!multerReq?.file) {
     // No file was uploaded, handle error
     res.status(400).json({ success: false, message: "No file uploaded" });
@@ -16,16 +15,12 @@ export const uploadAd = async (req: Request, res: Response) => {
 
   const newEstate = new Estate();
   newEstate.userId = req.body.userId;
-  newEstate.isVideoAds = req.body.isVideo;
+  newEstate.fileType = req.body.fileType;
   newEstate.adFileName = "/uploads/ads/" + filename;
+
   newEstate.uploadDate = new Date();
 
   await newEstate.save();
-
-  const nextEstateAds = await Estate.find()
-    .populate("userId", "avatar reviewCount reviewMark")
-    .sort({ postDate: -1 })
-    .limit(50);
 
   res.json({
     success: true,
@@ -33,13 +28,28 @@ export const uploadAd = async (req: Request, res: Response) => {
     filename,
     originalname,
     model: newEstate,
-    data: nextEstateAds,
   });
 };
 
 export const getMoreEstateAds = async (req: Request, res: Response) => {
   try {
-    const nextEstateAds = await Estate.find()
+    const condition = {
+      listingType: { $in: req.body.listingType },
+      propertyType: { $in: req.body.propertyType },
+      bedroomCount: {
+        $gte: req.body.minBedroomCount,
+        $lte: req.body.maxBedroomCount,
+      },
+      bathroomCount: {
+        $gte: req.body.minBathroomCount,
+        $lte: req.body.maxBathroomCount,
+      },
+      price: {
+        $gte: req.body.minPrice,
+        $lte: req.body.maxPrice,
+      },
+    };
+    const nextEstateAds = await Estate.find(condition)
       .populate("userId", "avatar reviewCount reviewMark")
       .sort({ postDate: -1 })
       .skip(req.body.index * 50)
@@ -119,24 +129,15 @@ export const uploadImages = async (req: Request, res: Response) => {
       model.imagesFileName = imageNames;
       await model.save();
 
+      const nextEstateAds = await Estate.find()
+        .populate("userId", "avatar reviewCount reviewMark")
+        .sort({ postDate: -1 })
+        .limit(50);
+
       return res.json({
         success: true,
         message: "Images are successfully uploaded",
       });
     }
   );
-};
-
-export const getEstateAds = async (req: Request, res: Response) => {
-  const condition = {
-    listingType: { $in: req.body.listingType },
-    propertyType: { $in: req.body.propertyType },
-  };
-  Estate.find(condition).then(async (model: any) => {
-    const filterData = model.filter(
-      (item) =>
-        item.bedroomCount == req.body.bedroomCount &&
-        item.bathroomCount == req.body.bathroomCount
-    );
-  });
 };

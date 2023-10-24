@@ -30,7 +30,7 @@ export interface ICommunity extends Document {
 }
 
 export interface IEstate extends Document {
-  isVideoAds: number;
+  fileType: string;
   adFileName: string;
   imagesFileName: Array<string>;
   price: number;
@@ -60,7 +60,7 @@ export interface IEstate extends Document {
 
 export interface IVehicle extends Document {
   isVideoAds: number;
-  videoFileName: string;
+  adFileName: string;
   imagesFileName: Array<string>;
   price: number;
   priceUnit: string;

@@ -17,13 +17,13 @@ export const uploadVideo = async (req: Request, res: Response) => {
   const newVehicle = new Vehicle();
   newVehicle.userId = req.body.userId;
   newVehicle.isVideoAds = req.body.isVideo;
-  newVehicle.videoFileName = filename;
+  newVehicle.adFileName = "/uploads/ads/" + filename;
   newVehicle.uploadDate = new Date();
 
   await newVehicle.save();
   res.json({
     success: true,
-    message: "Video uploaded successfully",
+    message: "Ad is uploaded successfully",
     filename,
     originalname,
     model: newVehicle,
