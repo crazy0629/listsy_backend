@@ -31,6 +31,7 @@ const auth = __importStar(require("../controllers/auth.controller"));
 const community = __importStar(require("../controllers/community.controller"));
 const profile = __importStar(require("../controllers/profile.controller"));
 const estate = __importStar(require("../controllers/estate.controller"));
+const ad = __importStar(require("../controllers/ad.controller"));
 const multer_1 = __importDefault(require("multer"));
 const uuid_1 = require("uuid");
 const path_1 = __importDefault(require("path"));
@@ -91,8 +92,9 @@ router.post("/profile/deleteAccount", profile.deleteAccount);
 router.post("/profile/changePassword", profile.changePassword);
 router.post("/profile/editProfile", profile.editProfile);
 router.post("/profile/avatar", uploadAvatar.single("avatar"), profile.setAvatar);
-// Real Estate Video
-router.post("/estate/uploadAd", uploadAds.single("ad"), estate.uploadAd);
+// Ad upload
+router.post("/ad/upload", uploadAds.single("ad"), ad.uploadAd);
+router.post("/ad/uploadImages", uploadImages.array("images"), ad.uploadImages);
+// Real Estate
 router.post("/estate/getEstateInfo", estate.getEstateInfo);
-router.post("/estate/uploadImages", uploadImages.array("images"), estate.uploadImages);
 exports.default = router;

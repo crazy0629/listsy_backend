@@ -29,22 +29,26 @@ export interface ICommunity extends Document {
   postDate: Date;
 }
 
-export interface IEstate extends Document {
+export interface IAd extends Document {
   fileType: string;
   adFileName: string;
   imagesFileName: Array<string>;
+  uploadDate: Date;
+}
+
+export interface IEstate extends Document {
+  userId: Schema.Types.ObjectId;
+  adId: Schema.Types.ObjectId;
   price: number;
   priceUnit: string;
-  uploadDate: Date;
-  userId: Schema.Types.ObjectId;
   title: string;
   subTitle: string;
   description: string;
   viewCount: number;
   listingType: string;
   propertyType: string;
-  bedroomCount: number;
-  bathroomCount: number;
+  bedroomCount: string;
+  bathroomCount: string;
   tenure: string;
   propertyCondition: string;
   postCode: string;

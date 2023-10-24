@@ -12,32 +12,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.uploadImages = exports.getEstateInfo = exports.getMoreEstateAds = exports.uploadAd = void 0;
+exports.getEstateInfo = exports.getMoreEstateAds = void 0;
 const Estate_1 = __importDefault(require("../models/Estate"));
 const mongoose_1 = __importDefault(require("mongoose"));
-const uploadAd = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const multerReq = req;
-    if (!(multerReq === null || multerReq === void 0 ? void 0 : multerReq.file)) {
-        // No file was uploaded, handle error
-        res.status(400).json({ success: false, message: "No file uploaded" });
-        return;
-    }
-    const { filename, originalname } = multerReq.file;
-    const newEstate = new Estate_1.default();
-    newEstate.userId = req.body.userId;
-    newEstate.fileType = req.body.fileType;
-    newEstate.adFileName = "/uploads/ads/" + filename;
-    newEstate.uploadDate = new Date();
-    yield newEstate.save();
-    res.json({
-        success: true,
-        message: "Ad is uploaded successfully",
-        filename,
-        originalname,
-        model: newEstate,
-    });
-});
-exports.uploadAd = uploadAd;
 const getMoreEstateAds = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const condition = {
@@ -76,13 +53,15 @@ const getMoreEstateAds = (req, res) => __awaiter(void 0, void 0, void 0, functio
 });
 exports.getMoreEstateAds = getMoreEstateAds;
 const getEstateInfo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    Estate_1.default.findById(new mongoose_1.default.Types.ObjectId(req.body.videoId)).then((model) => __awaiter(void 0, void 0, void 0, function* () {
-        if (!model) {
+    Estate_1.default.find({ adId: new mongoose_1.default.Types.ObjectId(req.body.adId) }).then((model) => __awaiter(void 0, void 0, void 0, function* () {
+        if (model) {
             return res.json({
                 success: false,
-                message: "Error happened while loading data!",
+                message: "Error found!",
             });
         }
+        model.adId = req.body.adId;
+        model.userId = req.body.userId;
         model.title = req.body.title;
         model.subTitle = req.body.subTitle;
         model.description = req.body.description;
@@ -112,30 +91,3 @@ const getEstateInfo = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }));
 });
 exports.getEstateInfo = getEstateInfo;
-const uploadImages = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    Estate_1.default.findById(new mongoose_1.default.Types.ObjectId(req.body.videoId)).then((model) => __awaiter(void 0, void 0, void 0, function* () {
-        if (!model) {
-            return res.json({
-                success: false,
-                message: "Error happened while loading data!",
-            });
-        }
-        const multerReq = req;
-        let imageNames = [];
-        for (let index = 0; index < multerReq.files.length; index++) {
-            const { fileName, originalname } = multerReq.files[index];
-            imageNames.push(fileName);
-        }
-        model.imagesFileName = imageNames;
-        yield model.save();
-        const nextEstateAds = yield Estate_1.default.find()
-            .populate("userId", "avatar reviewCount reviewMark")
-            .sort({ postDate: -1 })
-            .limit(50);
-        return res.json({
-            success: true,
-            message: "Images are successfully uploaded",
-        });
-    }));
-});
-exports.uploadImages = uploadImages;
