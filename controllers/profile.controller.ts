@@ -25,7 +25,6 @@ export const setAvatar = async (req: Request, res: Response) => {
             if (err) {
               console.error("Error deleting file:", err);
             }
-            console.log("File deleted successfully");
           });
         }
 
