@@ -4,9 +4,13 @@ import * as community from "../controllers/community.controller";
 import * as profile from "../controllers/profile.controller";
 import * as estate from "../controllers/estate.controller";
 import * as ad from "../controllers/ad.controller";
+import * as vehicle from "../controllers/vehicle.controller";
+import * as job from "../controllers/job.controller";
+
 import multer from "multer";
 import { v4 as uuidv4 } from "uuid";
 import path from "path";
+
 /**
  * Router
  * Using Passport
@@ -17,8 +21,19 @@ const router = Router();
 const avatar_dir = path.join(__dirname, "../uploads/avatar");
 const ad_dir = path.join(__dirname, "../uploads/ads");
 const extraImage_dir = path.join(__dirname, "../uploads/images");
+const jobFile_dir = path.join(__dirname, "../uploads/job");
 
 // Create a storage engine for Multer
+
+const jobFileStorage = multer.diskStorage({
+  destination: jobFile_dir,
+  filename: (req, file, cb) => {
+    const uniqueSuffix = uuidv4();
+    const fileExtension = path.extname(file.originalname);
+    const fileName = `${uniqueSuffix}${fileExtension}`;
+    cb(null, fileName);
+  },
+});
 
 const avatarStorage = multer.diskStorage({
   destination: avatar_dir,
@@ -54,6 +69,7 @@ const imageStorage = multer.diskStorage({
 const uploadAvatar = multer({ storage: avatarStorage });
 const uploadAds = multer({ storage: adStorage });
 const uploadImages = multer({ storage: imageStorage });
+const uploadJobs = multer({ storage: jobFileStorage });
 
 // Authentication
 
@@ -100,5 +116,15 @@ router.post("/upload/cancel", ad.cancelUpload);
 router.post("/estate/loadEstateInfo", estate.loadEstateInfo);
 router.post("/estate/getEstateObjects", estate.getMoreEstateAds);
 router.post("/estate/getAdDetailInfo", estate.getAdDetailInfo);
+
+// Vehcile
+
+router.post("/truck/loadVehicleInfo", vehicle.loadVehicleInfo);
+router.post("/truck/getMoreVehicleAds", vehicle.getMoreVehicleAds);
+router.post("/truck/getAdDetailInfo", vehicle.getAdDetailInfo);
+
+// Job
+
+router.post("/job/loadJobInfo", uploadJobs.array("jobFiles"), job.uploadJob);
 
 export default router;
