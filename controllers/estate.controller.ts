@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import Estate from "../models/Estate";
-import Multer from "multer";
 import mongoose from "mongoose";
 
 export const getAdDetailInfo = async (req: Request, res: Response) => {
@@ -17,7 +16,11 @@ export const getAdDetailInfo = async (req: Request, res: Response) => {
       message: "Error found while loading deail info!",
     });
 
-  return res.json({ success: true, message: "Success", data: estateObj });
+  return res.json({
+    success: true,
+    message: "Success",
+    data: estateObj,
+  });
 };
 
 export const getMoreEstateAds = async (req: Request, res: Response) => {
@@ -36,7 +39,7 @@ export const getMoreEstateAds = async (req: Request, res: Response) => {
       condition.bathroomCount = { $in: req.body.bathroomCount };
     }
     const nextEstateAds = await Estate.find(condition)
-      .populate("userId", "avatar reviewCount reviewMark")
+      .populate("userId", "firstName lastName avatar reviewCount reviewMark")
       .populate("adId", "adFileName imagesFileName uploadDate duration")
       .sort({ postDate: -1 })
       .skip(req.body.index * 50)

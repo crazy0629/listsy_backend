@@ -1,10 +1,5 @@
 import { Document, Schema } from "mongoose";
 
-/**
- * IUser Interface
- * Document class inheritance
- */
-
 export interface IUser extends Document {
   firstName: string;
   lastName: string;
@@ -85,7 +80,7 @@ export interface IVehicle extends Document {
   doors: number;
   color: string;
   bodyType: string;
-  seat: number;
+  seat: string;
 }
 
 export interface IJob extends Document {
@@ -99,4 +94,5 @@ export interface IJob extends Document {
   workTimeType: string;
   workRemoteType: string;
   jobIndustry: string;
+  jobAttachFileName: Array<string>;
 }

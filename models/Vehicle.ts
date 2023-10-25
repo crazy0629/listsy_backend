@@ -4,6 +4,7 @@ import { IVehicle } from "../service/interfaces";
 /**
  * Create a new Schema from mongoose
  */
+
 const VehicleSchema = new Schema(
   {
     userId: { type: Schema.Types.ObjectId, ref: "User" },
@@ -27,7 +28,7 @@ const VehicleSchema = new Schema(
     doors: { type: Number },
     color: { type: String },
     bodyType: { type: String },
-    seat: { type: Number },
+    seat: { type: String },
   },
   { timestamps: true }
 );

@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import Vehicle from "../models/Vehicle";
-import Multer from "multer";
 import mongoose from "mongoose";
 
 export const loadVehicleInfo = async (req: Request, res: Response) => {
@@ -54,7 +53,7 @@ export const getMoreVehicleAds = async (req: Request, res: Response) => {
       condition.vehicleType = { $in: req.body.vehicleType };
     }
     if (req.body.saleType.length) {
-      condition.saleType = { $in: req.body.propertyType };
+      condition.saleType = { $in: req.body.saleType };
     }
     if (req.body.condition.length) {
       condition.condition = { $in: req.body.condition };
@@ -72,7 +71,7 @@ export const getMoreVehicleAds = async (req: Request, res: Response) => {
       condition.gearBox = { $in: req.body.gearBox };
     }
     const nextEstateAds = await Vehicle.find(condition)
-      .populate("userId", "avatar reviewCount reviewMark")
+      .populate("userId", "firstName lastName avatar reviewCount reviewMark")
       .populate("adId", "adFileName imagesFileName uploadDate duration")
       .sort({ postDate: -1 })
       .skip(req.body.index * 50)
@@ -104,5 +103,9 @@ export const getAdDetailInfo = async (req: Request, res: Response) => {
       message: "Error found while loading deail info!",
     });
 
-  return res.json({ success: true, message: "Success", data: vehicleObj });
+  return res.json({
+    success: true,
+    message: "Success",
+    data: vehicleObj,
+  });
 };
