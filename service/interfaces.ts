@@ -77,10 +77,10 @@ export interface IVehicle extends Document {
   condition: string;
   vehicleMake: string;
   vehicleModel: string;
-  year: number;
+  year: String;
   mileage: number;
   mileageUnit: string;
-  gearbox: string;
+  gearBox: string;
   fuelType: string;
   doors: number;
   color: string;

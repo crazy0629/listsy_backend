@@ -6,13 +6,10 @@ import { IVehicle } from "../service/interfaces";
  */
 const VehicleSchema = new Schema(
   {
-    isVideoAds: { type: Number },
-    adFileName: { type: String },
-    imagesFileName: { type: Array },
+    userId: { type: Schema.Types.ObjectId, ref: "User" },
+    adId: { type: Schema.Types.ObjectId, ref: "Ad" },
     price: { type: Number },
     priceUnit: { type: String },
-    uploadDate: { type: Date },
-    userId: { type: Schema.Types.ObjectId, ref: "User" },
     title: { type: String },
     subTitle: { type: String },
     description: { type: String },
@@ -22,10 +19,10 @@ const VehicleSchema = new Schema(
     condition: { type: String },
     vehicleMake: { type: String },
     vehicleModel: { type: String },
-    year: { type: Number },
+    year: { type: String },
     mileage: { type: Number },
     mileageUnit: { type: String },
-    gearbox: { type: String },
+    gearBox: { type: String },
     fuelType: { type: String },
     doors: { type: Number },
     color: { type: String },
