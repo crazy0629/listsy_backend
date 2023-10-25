@@ -6,6 +6,8 @@ import mongoose from "mongoose";
 import path from "path";
 import fs from "fs";
 
+const { getVideoDurationInSeconds } = require("get-video-duration");
+
 export const uploadAd = async (req: Request, res: Response) => {
   const multerReq = req as Request & { file?: Multer.File };
   if (!multerReq?.file) {
@@ -19,8 +21,9 @@ export const uploadAd = async (req: Request, res: Response) => {
   const newAd = new Ad();
   newAd.fileType = req.body.fileType;
   newAd.adFileName = "/uploads/ads/" + filename;
-  newAd.uploadDate = new Date();
-
+  newAd.uploadDate = req.body.uploadDate;
+  const ad_dir = path.join(__dirname, "../uploads/ads/" + filename);
+  newAd.duration = await getVideoDurationInSeconds(ad_dir);
   await newAd.save();
 
   res.json({

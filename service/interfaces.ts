@@ -34,6 +34,7 @@ export interface IAd extends Document {
   adFileName: string;
   imagesFileName: Array<string>;
   uploadDate: Date;
+  duration: number;
 }
 
 export interface IEstate extends Document {

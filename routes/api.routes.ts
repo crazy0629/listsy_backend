@@ -98,5 +98,7 @@ router.post("/upload/cancel", ad.cancelUpload);
 // Real Estate
 
 router.post("/estate/loadEstateInfo", estate.loadEstateInfo);
+router.post("/estate/getEstateObjects", estate.getMoreEstateAds);
+router.post("/estate/getAdDetailInfo", estate.getAdDetailInfo);
 
 export default router;
