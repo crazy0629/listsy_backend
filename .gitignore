@@ -46,6 +46,8 @@ jspm_packages/
 
 .env
 
+dist
+
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/
 
