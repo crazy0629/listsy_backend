@@ -63,13 +63,10 @@ export interface IEstate extends Document {
 }
 
 export interface IVehicle extends Document {
-  isVideoAds: number;
-  adFileName: string;
-  imagesFileName: Array<string>;
+  userId: Schema.Types.ObjectId;
+  adId: Schema.Types.ObjectId;
   price: number;
   priceUnit: string;
-  uploadDate: Date;
-  userId: Schema.Types.ObjectId;
   title: string;
   subTitle: string;
   description: string;

@@ -8,18 +8,8 @@ export const getMoreEstateAds = async (req: Request, res: Response) => {
     const condition = {
       listingType: { $in: req.body.listingType },
       propertyType: { $in: req.body.propertyType },
-      bedroomCount: {
-        $gte: req.body.minBedroomCount,
-        $lte: req.body.maxBedroomCount,
-      },
-      bathroomCount: {
-        $gte: req.body.minBathroomCount,
-        $lte: req.body.maxBathroomCount,
-      },
-      price: {
-        $gte: req.body.minPrice,
-        $lte: req.body.maxPrice,
-      },
+      bedroomCount: { $in: req.body.bedroomCount },
+      bathroomCount: { $in: req.body.bathroomCount },
     };
     const nextEstateAds = await Estate.find(condition)
       .populate("userId", "avatar reviewCount reviewMark")
@@ -40,43 +30,44 @@ export const getMoreEstateAds = async (req: Request, res: Response) => {
   }
 };
 
-export const getEstateInfo = async (req: Request, res: Response) => {
+export const loadEstateInfo = async (req: Request, res: Response) => {
   Estate.find({ adId: new mongoose.Types.ObjectId(req.body.adId) }).then(
     async (model: any) => {
-      if (model) {
+      if (model.length) {
         return res.json({
           success: false,
           message: "Error found!",
         });
       }
-      model.adId = req.body.adId;
-      model.userId = req.body.userId;
-      model.title = req.body.title;
-      model.subTitle = req.body.subTitle;
-      model.description = req.body.description;
-      model.price = req.body.price;
-      model.priceUnit = req.body.priceUnit;
-      model.viewCount = 0;
-      model.listingType = req.body.listingType;
-      model.propertyType = req.body.propertyType;
-      model.bedroomCount = req.body.bedroomCount;
-      model.bathroomCount = req.body.bathroomCount;
-      model.tenure = req.body.tenure;
-      model.propertyCondition = req.body.propertyCondition;
-      model.postCode = req.body.postCode;
-      model.yearBuilt = req.body.yearBuilt;
-      model.builtSurface = req.body.builtSurface;
-      model.builtSurfaceUnit = req.body.builtSurfaceUnit;
-      model.plotSurface = req.body.plotSurface;
-      model.plotSurfaceUnit = req.body.plotSurfaceUnit;
-      model.keyFeatures = req.body.keyFeatures;
-      model.nearestAttraction = req.body.nearestAttraction;
-      model.facilities = req.body.facilities;
+      const newEstate = new Estate();
+      newEstate.adId = req.body.adId;
+      newEstate.userId = req.body.userId;
+      newEstate.title = req.body.title;
+      newEstate.subTitle = req.body.subTitle;
+      newEstate.description = req.body.description;
+      newEstate.price = req.body.price;
+      newEstate.priceUnit = req.body.priceUnit;
+      newEstate.viewCount = 0;
+      newEstate.listingType = req.body.listingType;
+      newEstate.propertyType = req.body.propertyType;
+      newEstate.bedroomCount = req.body.bedroomCount;
+      newEstate.bathroomCount = req.body.bathroomCount;
+      newEstate.tenure = req.body.tenure;
+      newEstate.propertyCondition = req.body.propertyCondition;
+      newEstate.postCode = req.body.postCode;
+      newEstate.yearBuilt = req.body.yearBuilt;
+      newEstate.builtSurface = req.body.builtSurface;
+      newEstate.builtSurfaceUnit = req.body.builtSurfaceUnit;
+      newEstate.plotSurface = req.body.plotSurface;
+      newEstate.plotSurfaceUnit = req.body.plotSurfaceUnit;
+      newEstate.keyFeatures = req.body.keyFeatures;
+      newEstate.nearestAttraction = req.body.nearestAttraction;
+      newEstate.facilities = req.body.facilities;
 
-      await model.save();
+      await newEstate.save();
       return res.json({
         success: true,
-        message: "successfully loaded real estate video information",
+        message: "Successfully loaded real estate media information!",
       });
     }
   );

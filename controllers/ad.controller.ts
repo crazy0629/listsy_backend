@@ -3,6 +3,8 @@ import Ad from "../models/Ad";
 import Estate from "../models/Estate";
 import Multer from "multer";
 import mongoose from "mongoose";
+import path from "path";
+import fs from "fs";
 
 export const uploadAd = async (req: Request, res: Response) => {
   const multerReq = req as Request & { file?: Multer.File };
@@ -31,7 +33,7 @@ export const uploadAd = async (req: Request, res: Response) => {
 };
 
 export const uploadImages = async (req: Request, res: Response) => {
-  Ad.findById(new mongoose.Types.ObjectId(req.body.videoId)).then(
+  Ad.findById(new mongoose.Types.ObjectId(req.body.adId)).then(
     async (model: any) => {
       if (!model) {
         return res.json({
@@ -44,8 +46,8 @@ export const uploadImages = async (req: Request, res: Response) => {
 
       let imageNames: any = [];
       for (let index = 0; index < multerReq.files.length; index++) {
-        const { fileName, originalname } = multerReq.files[index];
-        imageNames.push(fileName);
+        const { filename } = multerReq.files[index];
+        imageNames.push("/uploads/images/" + filename);
       }
       model.imagesFileName = imageNames;
       await model.save();
@@ -59,7 +61,7 @@ export const uploadImages = async (req: Request, res: Response) => {
 };
 
 export const cancelUpload = async (req: Request, res: Response) => {
-  Ad.findById(new mongoose.Types.ObjectId(req.body.videoId)).then(
+  Ad.findById(new mongoose.Types.ObjectId(req.body.adId)).then(
     async (model: any) => {
       if (!model) {
         return res.json({
@@ -67,20 +69,21 @@ export const cancelUpload = async (req: Request, res: Response) => {
           message: "Error happened while getting data!",
         });
       }
-      const adObj = await Ad.deleteOne({ id: req.body.videoId });
 
-      if (!adObj) {
-        return res.json({ success: false, message: "Ad not exist" });
-      }
+      const adFilePath = path.join(__dirname, "/.." + model.adFileName);
+      fs.unlink(adFilePath, (err) => {
+        if (err) {
+          console.error("Error deleting file:", err);
+        }
+        console.log("File deleted successfully");
+      });
+
+      const adObj = await Ad.findByIdAndDelete(
+        new mongoose.Types.ObjectId(req.body.adId)
+      );
 
       if (req.body.adType == "estate") {
-        const estateObj = await Estate.deleteOne({ adId: req.body.videoId });
-        if (!estateObj) {
-          return res.json({
-            success: false,
-            message: "Erro found while canceling upload!",
-          });
-        }
+        const estateObj = await Estate.deleteOne({ adId: req.body.adId });
       }
 
       return res.json({
