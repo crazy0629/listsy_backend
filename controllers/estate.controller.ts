@@ -22,12 +22,7 @@ export const getAdDetailInfo = async (req: Request, res: Response) => {
 
 export const getMoreEstateAds = async (req: Request, res: Response) => {
   try {
-    let condition: any = {
-      // listingType: { $in: req.body.listingType },
-      // propertyType: { $in: req.body.propertyType },
-      // bedroomCount: { $in: req.body.bedroomCount },
-      // bathroomCount: { $in: req.body.bathroomCount },
-    };
+    let condition: any = {};
     if (req.body.listingType.length) {
       condition.listingType = { $in: req.body.listingType };
     }
@@ -40,14 +35,12 @@ export const getMoreEstateAds = async (req: Request, res: Response) => {
     if (req.body.bathroomCount.length) {
       condition.bathroomCount = { $in: req.body.bathroomCount };
     }
-    console.log(condition);
     const nextEstateAds = await Estate.find(condition)
       .populate("userId", "avatar reviewCount reviewMark")
       .populate("adId", "adFileName imagesFileName uploadDate duration")
       .sort({ postDate: -1 })
       .skip(req.body.index * 50)
       .limit(50);
-    console.log(nextEstateAds.length);
     return res.json({
       success: true,
       message: "Successfully loaded!",
