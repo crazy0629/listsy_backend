@@ -12,7 +12,7 @@ const JobSchema = new Schema(
     postDate: { type: Date },
     price: { type: Number },
     priceUnit: { type: String },
-    fixedPrice: { type: Boolean },
+    paidType: { type: String },
     workTimeType: { type: String },
     workRemoteType: { type: String },
     jobIndustry: { type: String },

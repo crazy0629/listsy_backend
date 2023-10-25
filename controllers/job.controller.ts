@@ -2,6 +2,42 @@ import { Request, Response } from "express";
 import Job from "../models/Job";
 import Multer from "multer";
 
+export const getMoreJobInfo = async (req: Request, res: Response) => {
+  try {
+    let condition: any = {};
+
+    if (req.body.jobIndustry.length) {
+      condition.jobIndustry = { $in: req.body.jobIndustry };
+    }
+    if (req.body.workRemoteType.length) {
+      condition.workRemoteType = { $in: req.body.workRemoteType };
+    }
+    if (req.body.workTimeType.length) {
+      condition.workTimeType = { $in: req.body.workTimeType };
+    }
+    if (req.body.paidType) {
+      condition.paidType = { $in: req.body.paidType };
+    }
+
+    const nextJobInfos = await Job.find(condition)
+      .populate("userId", "firstName lastName avatar")
+      .sort({ postDate: -1 })
+      .skip(req.body.index * 50)
+      .limit(50);
+    return res.json({
+      success: true,
+      message: "Successfully loaded!",
+      data: nextJobInfos,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.json({
+      success: false,
+      message: "Error found while loading job info",
+    });
+  }
+};
+
 export const uploadJob = async (req: Request, res: Response) => {
   try {
     const newJob = new Job();
@@ -11,7 +47,7 @@ export const uploadJob = async (req: Request, res: Response) => {
     newJob.postDate = req.body.postDate;
     newJob.price = req.body.price;
     newJob.priceUnit = req.body.priceUnit;
-    newJob.fixedPrice = req.body.fixedPrice;
+    newJob.paidType = req.body.paidType;
     newJob.workTimeType = req.body.workTimeType;
     newJob.workRemoteType = req.body.workRemoteType;
     newJob.jobIndustry = req.body.jobIndustry;
