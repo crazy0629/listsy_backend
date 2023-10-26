@@ -90,9 +90,17 @@ export interface IJob extends Document {
   postDate: Date;
   price: number;
   priceUnit: string;
-  fixedPrice: boolean;
+  paidType: string;
   workTimeType: string;
   workRemoteType: string;
   jobIndustry: string;
   jobAttachFileName: Array<string>;
+}
+
+export interface IProposal extends Document {
+  jobId: Schema.Types.ObjectId;
+  userId: Schema.Types.ObjectId;
+  sentDate: Date;
+  proposalContent: string;
+  attachedFileNames: Array<string>;
 }

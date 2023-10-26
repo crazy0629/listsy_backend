@@ -6,6 +6,7 @@ import * as estate from "../controllers/estate.controller";
 import * as ad from "../controllers/ad.controller";
 import * as vehicle from "../controllers/vehicle.controller";
 import * as job from "../controllers/job.controller";
+import * as proposal from "../controllers/proposal.controller";
 
 import multer from "multer";
 import { v4 as uuidv4 } from "uuid";
@@ -126,5 +127,13 @@ router.post("/truck/getAdDetailInfo", vehicle.getAdDetailInfo);
 // Job
 
 router.post("/job/loadJobInfo", uploadJobs.array("jobFiles"), job.uploadJob);
+
+// Proposal
+
+router.post(
+  "/proposal/send",
+  uploadJobs.array("proposalFiles"),
+  proposal.sendProposal
+);
 
 export default router;
