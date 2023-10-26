@@ -14,8 +14,6 @@ export interface IUser extends Document {
   bio: string;
   userName: string;
   telephoneNumber: string;
-  addressCity: string;
-  addressCountry: string;
 }
 
 export interface ICommunity extends Document {
@@ -95,6 +93,7 @@ export interface IJob extends Document {
   workRemoteType: string;
   jobIndustry: string;
   jobAttachFileName: Array<string>;
+  attachOriginalName: Array<string>;
 }
 
 export interface IProposal extends Document {

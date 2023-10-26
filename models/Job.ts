@@ -17,6 +17,7 @@ const JobSchema = new Schema(
     workRemoteType: { type: String },
     jobIndustry: { type: String },
     jobAttachFileName: { type: Array },
+    attachOriginalName: { type: Array },
   },
   { timestamps: true }
 );

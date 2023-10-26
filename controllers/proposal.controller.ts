@@ -3,6 +3,14 @@ import Proposal from "../models/Proposal";
 import mongoose from "mongoose";
 import Multer from "multer";
 
+/**
+ * This function saves proposal when users apply for jobs.
+ *
+ * @param req
+ * @param res
+ * @returns
+ */
+
 export const sendProposal = async (req: Request, res: Response) => {
   try {
     const model = await Proposal.find({

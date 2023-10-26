@@ -127,6 +127,7 @@ router.post("/truck/getAdDetailInfo", vehicle.getAdDetailInfo);
 // Job
 
 router.post("/job/loadJobInfo", uploadJobs.array("jobFiles"), job.uploadJob);
+router.post("/job/getMoreJobInfo", job.getMoreJobInfo);
 
 // Proposal
 
