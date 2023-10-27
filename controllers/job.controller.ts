@@ -2,6 +2,14 @@ import { Request, Response } from "express";
 import Job from "../models/Job";
 import Multer from "multer";
 
+/**
+ * This function is to show job list and set filter for jobs.
+ *
+ * @param req
+ * @param res
+ * @returns
+ */
+
 export const getMoreJobInfo = async (req: Request, res: Response) => {
   try {
     let condition: any = {};
@@ -15,7 +23,7 @@ export const getMoreJobInfo = async (req: Request, res: Response) => {
     if (req.body.workTimeType.length) {
       condition.workTimeType = { $in: req.body.workTimeType };
     }
-    if (req.body.paidType) {
+    if (req.body.paidType.length) {
       condition.paidType = { $in: req.body.paidType };
     }
 
@@ -38,6 +46,14 @@ export const getMoreJobInfo = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * This function is to upload job
+ *
+ * @param req
+ * @param res
+ * @returns
+ */
+
 export const uploadJob = async (req: Request, res: Response) => {
   try {
     const newJob = new Job();
@@ -55,12 +71,15 @@ export const uploadJob = async (req: Request, res: Response) => {
     const multerReq = req as Request & { files?: Multer.Files };
 
     let jobFileNames: any = [];
+    let originalNames: any = [];
+
     for (let index = 0; index < multerReq.files.length; index++) {
-      const { filename } = multerReq.files[index];
+      const { filename, originalname } = multerReq.files[index];
       jobFileNames.push("/uploads/job/" + filename);
+      originalNames.push(originalname);
     }
     newJob.jobAttachFileName = jobFileNames;
-
+    newJob.attachOriginalName = originalNames;
     await newJob.save();
 
     return res.json({ success: true, message: "Job is successfully uploaded" });

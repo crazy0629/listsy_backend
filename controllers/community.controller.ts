@@ -1,6 +1,13 @@
 import { Request, Response } from "express";
 import Community from "../models/Community";
 
+/**
+ * Add community function
+ *
+ * @param req
+ * @param res
+ */
+
 export const addCommunity = async (req: Request, res: Response) => {
   try {
     const newCommunity = new Community();
@@ -28,6 +35,14 @@ export const addCommunity = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * This function gets latest community information.
+ *
+ * @param req
+ * @param res
+ * @returns
+ */
+
 export const getLatesetCommunity = async (req: Request, res: Response) => {
   try {
     const latestCommunity = await Community.find()
@@ -49,6 +64,14 @@ export const getLatesetCommunity = async (req: Request, res: Response) => {
     });
   }
 };
+
+/**
+ * This function is to get more community when users scroll down community list.
+ *
+ * @param req
+ * @param res
+ * @returns
+ */
 
 export const getMoreCommunity = async (req: Request, res: Response) => {
   const condition = {
@@ -84,6 +107,14 @@ export const getMoreCommunity = async (req: Request, res: Response) => {
     });
   }
 };
+
+/**
+ * This function is to delete community
+ *
+ * @param req
+ * @param res
+ * @returns
+ */
 
 export const deleteCommunity = async (req: Request, res: Response) => {
   try {

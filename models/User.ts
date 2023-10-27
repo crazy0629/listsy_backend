@@ -28,8 +28,6 @@ const UserSchema = new Schema(
     bio: { type: String },
     userName: { type: String },
     telephoneNumber: { type: String },
-    addressCity: { type: String },
-    addressCountry: { type: String },
     avatar: { type: String },
   },
   { timestamps: true }

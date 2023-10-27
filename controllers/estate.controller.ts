@@ -2,6 +2,15 @@ import { Request, Response } from "express";
 import Estate from "../models/Estate";
 import mongoose from "mongoose";
 
+/**
+ * This function is called when users press each ad category.
+ * And this returns detail object information.
+ *
+ * @param req
+ * @param res
+ * @returns
+ */
+
 export const getAdDetailInfo = async (req: Request, res: Response) => {
   const estateObj = await Estate.findOne({ adId: req.body.adId })
     .populate(
@@ -22,6 +31,15 @@ export const getAdDetailInfo = async (req: Request, res: Response) => {
     data: estateObj,
   });
 };
+
+/**
+ * This function is called to return estate ads objects list when users scroll down.
+ * This also enables filter operation.
+ *
+ * @param req
+ * @param res
+ * @returns
+ */
 
 export const getMoreEstateAds = async (req: Request, res: Response) => {
   try {
@@ -56,6 +74,13 @@ export const getMoreEstateAds = async (req: Request, res: Response) => {
     });
   }
 };
+/**
+ * This function is called when users upload estate ads.
+ * This loads detail estate ad info and saves on db.
+ *
+ * @param req
+ * @param res
+ */
 
 export const loadEstateInfo = async (req: Request, res: Response) => {
   Estate.find({ adId: new mongoose.Types.ObjectId(req.body.adId) }).then(

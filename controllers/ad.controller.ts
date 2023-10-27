@@ -8,6 +8,14 @@ import fs from "fs";
 
 const { getVideoDurationInSeconds } = require("get-video-duration");
 
+/**
+ * Upload Video/Audio function
+ *
+ * @param req
+ * @param res
+ * @returns
+ */
+
 export const uploadAd = async (req: Request, res: Response) => {
   const multerReq = req as Request & { file?: Multer.File };
   if (!multerReq?.file) {
@@ -34,6 +42,13 @@ export const uploadAd = async (req: Request, res: Response) => {
     model: newAd,
   });
 };
+
+/**
+ * Upload extra images function
+ *
+ * @param req
+ * @param res
+ */
 
 export const uploadImages = async (req: Request, res: Response) => {
   Ad.findById(new mongoose.Types.ObjectId(req.body.adId)).then(
@@ -62,6 +77,13 @@ export const uploadImages = async (req: Request, res: Response) => {
     }
   );
 };
+
+/**
+ * Cancel upload function when users press close button
+ *
+ * @param req
+ * @param res
+ */
 
 export const cancelUpload = async (req: Request, res: Response) => {
   Ad.findById(new mongoose.Types.ObjectId(req.body.adId)).then(
