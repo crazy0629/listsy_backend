@@ -11,6 +11,7 @@ const ProposalSchema = new Schema(
     sentDate: { type: Date },
     proposalContent: { type: String },
     attachedFileNames: { type: Array },
+    attachOriginalNames: { type: Array },
   },
   { timestamps: true }
 );

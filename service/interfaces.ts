@@ -28,6 +28,7 @@ export interface IAd extends Document {
   imagesFileName: Array<string>;
   uploadDate: Date;
   duration: number;
+  state: string;
 }
 
 export interface IEstate extends Document {
@@ -102,4 +103,5 @@ export interface IProposal extends Document {
   sentDate: Date;
   proposalContent: string;
   attachedFileNames: Array<string>;
+  attachOriginalNames: Array<string>;
 }

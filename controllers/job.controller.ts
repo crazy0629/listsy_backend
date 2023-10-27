@@ -91,3 +91,12 @@ export const uploadJob = async (req: Request, res: Response) => {
     });
   }
 };
+
+/**
+ *
+ * This function is callend when users are going to see jobs they posted.
+ *
+ * @param req
+ * @param res
+ */
+export const getJobListByUser = async (req: Request, res: Response) => {};

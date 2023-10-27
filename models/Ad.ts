@@ -11,6 +11,7 @@ const AdSchema = new Schema(
     imagesFileName: { type: Array },
     uploadDate: { type: Date },
     duration: { type: Number },
+    state: { type: String },
   },
   { timestamps: true }
 );

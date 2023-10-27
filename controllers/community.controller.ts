@@ -133,3 +133,30 @@ export const deleteCommunity = async (req: Request, res: Response) => {
     });
   }
 };
+
+/**
+ * This function creates community which was created by user.
+ *
+ * @param req
+ * @param res
+ */
+
+export const getCommunityByUser = async (req: Request, res: Response) => {
+  try {
+    const communityList = await Community.find({ userId: req.body.userId });
+
+    if (!communityList) {
+      return res.json({ success: false, message: "Community not exist" });
+    }
+    return res.json({
+      success: true,
+      data: communityList,
+      message: "Successfully got your community!",
+    });
+  } catch (error) {
+    return res.json({
+      success: false,
+      message: "Error found while getting user's community!",
+    });
+  }
+};

@@ -6,6 +6,10 @@ import Multer from "multer";
 import path from "path";
 import fs from "fs";
 import { generateToken } from "../service/helper";
+import Estate from "../models/Estate";
+import Vehicle from "../models/Vehicle";
+import Job from "../models/Job";
+import { EvalState } from "ts-node/dist/repl";
 
 export const setAvatar = async (req: Request, res: Response) => {
   User.findById(new mongoose.Types.ObjectId(req.body.userId))
@@ -135,4 +139,60 @@ export const changePassword = async (req: Request, res: Response) => {
       });
     }
   );
+};
+
+/**
+ * This function returns user's own posts
+ *
+ * @param req
+ * @param res
+ */
+
+export const getPostByUser = async (req: Request, res: Response) => {
+  if (req.body.postType == "estate") {
+    Estate.find({ userId: req.body.userId })
+      .populate({ path: "adId", match: { state: req.body.adState } })
+      .populate("userId")
+      .then((model: any) => {
+        if (!model) {
+          return res.json({ success: false, message: "Error found!" });
+        }
+        return res.json({
+          success: true,
+          data: model,
+          message: "Successfully loaded estate ads posted by you!",
+        });
+      });
+  }
+
+  if (req.body.postType == "vehicle") {
+    Vehicle.find({ userId: req.body.userId })
+      .populate({ path: "adId", match: { state: req.body.adState } })
+      .populate("userId")
+      .then((model: any) => {
+        if (!model) {
+          return res.json({ success: false, message: "Error found!" });
+        }
+        return res.json({
+          success: true,
+          data: model,
+          message: "Successfully loaded vehicle ads posted by you!",
+        });
+      });
+  }
+
+  if (req.body.postType == "job") {
+    Job.find({ userId: req.body.userId })
+      .populate("userId")
+      .then((model: any) => {
+        if (!model) {
+          return res.json({ success: false, message: "Error found!" });
+        }
+        return res.json({
+          success: true,
+          data: model,
+          message: "Successfully loaded vehicle ads posted by you!",
+        });
+      });
+  }
 };

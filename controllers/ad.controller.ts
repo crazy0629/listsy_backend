@@ -5,6 +5,7 @@ import Multer from "multer";
 import mongoose from "mongoose";
 import path from "path";
 import fs from "fs";
+import Vehicle from "../models/Vehicle";
 
 const { getVideoDurationInSeconds } = require("get-video-duration");
 
@@ -30,6 +31,7 @@ export const uploadAd = async (req: Request, res: Response) => {
   newAd.fileType = req.body.fileType;
   newAd.adFileName = "/uploads/ads/" + filename;
   newAd.uploadDate = req.body.uploadDate;
+  newAd.state = "Active";
   const ad_dir = path.join(__dirname, "../uploads/ads/" + filename);
   newAd.duration = await getVideoDurationInSeconds(ad_dir);
   await newAd.save();
@@ -109,6 +111,8 @@ export const cancelUpload = async (req: Request, res: Response) => {
 
       if (req.body.adType == "estate") {
         const estateObj = await Estate.deleteOne({ adId: req.body.adId });
+      } else if (req.body.adType == "truck") {
+        const vehicleObj = await Vehicle.deleteOne({ adId: req.body.adId });
       }
 
       return res.json({
