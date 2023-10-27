@@ -50,6 +50,7 @@ export const sendProposal = async (req: Request, res: Response) => {
     for (let index = 0; index < multerReq.files.length; index++) {
       const { filename, originalname } = multerReq.files[index];
       proposalFileNames.push("/uploads/job/" + filename);
+      attachedOriginalNames.push(originalname);
     }
     newProposal.attachedFileNames = proposalFileNames;
     newProposal.attachOriginalNames = attachedOriginalNames;

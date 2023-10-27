@@ -3,7 +3,8 @@ import { IProposal } from "../service/interfaces";
 
 /**
  * Create a new Schema from mongoose
- */ 1;
+ */
+
 const ProposalSchema = new Schema(
   {
     jobId: { type: Schema.Types.ObjectId, ref: "Job" },

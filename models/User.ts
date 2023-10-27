@@ -5,6 +5,7 @@ import { IUser } from "../service/interfaces";
 /**
  * Create a new Schema from mongoose
  */
+
 const UserSchema = new Schema(
   {
     firstName: { type: String, required: true },

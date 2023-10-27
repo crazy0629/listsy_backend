@@ -4,6 +4,7 @@ import { IEstate } from "../service/interfaces";
 /**
  * Create a new Schema from mongoose
  */
+
 const EstateSchema = new Schema(
   {
     userId: { type: Schema.Types.ObjectId, ref: "User" },
