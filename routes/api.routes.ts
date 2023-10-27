@@ -138,5 +138,6 @@ router.post(
   proposal.sendProposal
 );
 router.post("/proposal/checkIsApplied", proposal.checkIsApplied);
+router.post("/proposal/getProposalListPerJob", proposal.getProposalListPerJob);
 
 export default router;
