@@ -101,6 +101,7 @@ router.post(
   uploadAvatar.single("avatar"),
   profile.setAvatar
 );
+router.post("/profile/getPostByUser", profile.getPostByUser);
 
 // Ad upload
 
@@ -136,5 +137,6 @@ router.post(
   uploadJobs.array("proposalFiles"),
   proposal.sendProposal
 );
+router.post("/proposal/checkIsApplied", proposal.checkIsApplied);
 
 export default router;
