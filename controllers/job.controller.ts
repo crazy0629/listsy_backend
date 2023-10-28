@@ -38,7 +38,6 @@ export const getMoreJobInfo = async (req: Request, res: Response) => {
       data: nextJobInfos,
     });
   } catch (error) {
-    console.log(error);
     return res.json({
       success: false,
       message: "Error found while loading job info",

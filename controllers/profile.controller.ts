@@ -9,7 +9,6 @@ import { generateToken } from "../service/helper";
 import Estate from "../models/Estate";
 import Vehicle from "../models/Vehicle";
 import Job from "../models/Job";
-import { EvalState } from "ts-node/dist/repl";
 
 export const setAvatar = async (req: Request, res: Response) => {
   User.findById(new mongoose.Types.ObjectId(req.body.userId))
@@ -149,33 +148,63 @@ export const changePassword = async (req: Request, res: Response) => {
  */
 
 export const getPostByUser = async (req: Request, res: Response) => {
+  let adCondition = {};
+  if (req.body.adState !== "") adCondition = { state: req.body.adState };
+
+  if (req.body.postType == "sale") {
+    return res.json({
+      success: true,
+      data: [],
+      message: "Successfully loaded estate ads posted by you!",
+    });
+  }
+  if (req.body.postType == "service") {
+    return res.json({
+      success: true,
+      data: [],
+      message: "Successfully loaded estate ads posted by you!",
+    });
+  }
+  if (req.body.postType == "pet") {
+    return res.json({
+      success: true,
+      data: [],
+      message: "Successfully loaded estate ads posted by you!",
+    });
+  }
   if (req.body.postType == "estate") {
     Estate.find({ userId: req.body.userId })
-      .populate({ path: "adId", match: { state: req.body.adState } })
+      .populate({ path: "adId", match: adCondition })
       .populate("userId")
+      .skip(req.body.index * 50)
+      .limit(50)
       .then((model: any) => {
+        const value = model.filter((item) => item.adId !== null);
         if (!model) {
           return res.json({ success: false, message: "Error found!" });
         }
         return res.json({
           success: true,
-          data: model,
+          data: value,
           message: "Successfully loaded estate ads posted by you!",
         });
       });
   }
 
-  if (req.body.postType == "vehicle") {
+  if (req.body.postType == "truck") {
     Vehicle.find({ userId: req.body.userId })
-      .populate({ path: "adId", match: { state: req.body.adState } })
+      .populate({ path: "adId", match: adCondition })
       .populate("userId")
+      .skip(req.body.index * 50)
+      .limit(50)
       .then((model: any) => {
+        const value = model.filter((item) => item.adId !== null);
         if (!model) {
           return res.json({ success: false, message: "Error found!" });
         }
         return res.json({
           success: true,
-          data: model,
+          data: value,
           message: "Successfully loaded vehicle ads posted by you!",
         });
       });
@@ -184,6 +213,8 @@ export const getPostByUser = async (req: Request, res: Response) => {
   if (req.body.postType == "job") {
     Job.find({ userId: req.body.userId })
       .populate("userId")
+      .skip(req.body.index * 50)
+      .limit(50)
       .then((model: any) => {
         if (!model) {
           return res.json({ success: false, message: "Error found!" });

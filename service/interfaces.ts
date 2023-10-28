@@ -36,6 +36,9 @@ export interface IEstate extends Document {
   adId: Schema.Types.ObjectId;
   price: number;
   priceUnit: string;
+  addressCountry: string;
+  addressState: string;
+  addressCity: string;
   title: string;
   subTitle: string;
   description: string;
@@ -62,6 +65,9 @@ export interface IVehicle extends Document {
   adId: Schema.Types.ObjectId;
   price: number;
   priceUnit: string;
+  addressCountry: string;
+  addressState: string;
+  addressCity: string;
   title: string;
   subTitle: string;
   description: string;

@@ -64,3 +64,28 @@ export const sendProposal = async (req: Request, res: Response) => {
     });
   }
 };
+
+/**
+ * This function is called when user is going to check proposals for jobs they posted
+ *
+ * @param req
+ * @param res
+ */
+
+export const getProposalListPerJob = async (req: Request, res: Response) => {
+  try {
+    const proposalList = await Proposal.find({ jobId: req.body.jobId })
+      .populate("userId")
+      .sort({ sentDate: -1 });
+    return res.json({
+      success: true,
+      message: "Successfully loaded!",
+      data: proposalList,
+    });
+  } catch (error) {
+    res.json({
+      success: false,
+      message: "Error happened while loading proposals",
+    });
+  }
+};

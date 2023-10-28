@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import Community from "../models/Community";
+import mongoose from "mongoose";
 
 /**
  * Add community function
@@ -118,10 +119,9 @@ export const getMoreCommunity = async (req: Request, res: Response) => {
 
 export const deleteCommunity = async (req: Request, res: Response) => {
   try {
-    const community = await Community.deleteOne({
-      userId: req.body.userId,
-      title: req.body.title,
-    });
+    const community = await Community.findByIdAndDelete(
+      new mongoose.Types.ObjectId(req.body.communityId)
+    );
     if (!community) {
       return res.json({ success: false, message: "Community not exist" });
     }
