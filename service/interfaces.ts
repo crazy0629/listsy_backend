@@ -95,6 +95,9 @@ export interface IJob extends Document {
   postDate: Date;
   price: number;
   priceUnit: string;
+  addressCity: string;
+  addressState: string;
+  addressCountry: string;
   paidType: string;
   workTimeType: string;
   workRemoteType: string;
@@ -110,4 +113,21 @@ export interface IProposal extends Document {
   proposalContent: string;
   attachedFileNames: Array<string>;
   attachOriginalNames: Array<string>;
+}
+
+export interface IReport extends Document {
+  adId: Schema.Types.ObjectId;
+  userId: Schema.Types.ObjectId;
+  mainReason: string;
+  description: string;
+  startPoint: string;
+}
+
+export interface IChat extends Document {
+  senderId: Schema.Types.ObjectId;
+  receiverId: Schema.Types.ObjectId;
+  message: string;
+  sentDate: Date;
+  attachedFileNames: Array<string>;
+  originalFileNames: Array<string>;
 }

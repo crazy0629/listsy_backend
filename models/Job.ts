@@ -4,6 +4,7 @@ import { IJob } from "../service/interfaces";
 /**
  * Create a new Schema from mongoose
  */
+
 const JobSchema = new Schema(
   {
     userId: { type: Schema.Types.ObjectId, ref: "User" },
@@ -12,6 +13,9 @@ const JobSchema = new Schema(
     postDate: { type: Date },
     price: { type: Number },
     priceUnit: { type: String },
+    addressCity: { type: String },
+    addressState: { type: String },
+    addressCountry: { type: String },
     paidType: { type: String },
     workTimeType: { type: String },
     workRemoteType: { type: String },

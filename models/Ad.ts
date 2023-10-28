@@ -4,6 +4,7 @@ import { IAd } from "../service/interfaces";
 /**
  * Create a new Schema from mongoose
  */
+
 const AdSchema = new Schema(
   {
     fileType: { type: String },

@@ -4,6 +4,7 @@ import { ICommunity } from "../service/interfaces";
 /**
  * Create a new Schema from mongoose
  */
+
 const CommunitySchema = new Schema(
   {
     userId: { type: Schema.Types.ObjectId, ref: "User" },

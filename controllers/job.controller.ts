@@ -66,6 +66,9 @@ export const uploadJob = async (req: Request, res: Response) => {
     newJob.workTimeType = req.body.workTimeType;
     newJob.workRemoteType = req.body.workRemoteType;
     newJob.jobIndustry = req.body.jobIndustry;
+    newJob.addressCity = req.body.addressCity;
+    newJob.addressCountry = req.body.addressCountry;
+    newJob.addressState = req.body.addressState;
 
     const multerReq = req as Request & { files?: Multer.Files };
 
@@ -90,12 +93,3 @@ export const uploadJob = async (req: Request, res: Response) => {
     });
   }
 };
-
-/**
- *
- * This function is callend when users are going to see jobs they posted.
- *
- * @param req
- * @param res
- */
-export const getJobListByUser = async (req: Request, res: Response) => {};

@@ -20,6 +20,9 @@ export const loadVehicleInfo = async (req: Request, res: Response) => {
       newVehicle.description = req.body.description;
       newVehicle.price = req.body.price;
       newVehicle.priceUnit = req.body.priceUnit;
+      newVehicle.addressCity = req.body.addressCity;
+      newVehicle.addressState = req.body.addressState;
+      newVehicle.addressCountry = req.body.addressCountry;
       newVehicle.viewCount = 0;
       newVehicle.vehicleType = req.body.vehicleType;
       newVehicle.saleType = req.body.saleType;
