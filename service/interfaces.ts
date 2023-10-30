@@ -88,6 +88,30 @@ export interface IVehicle extends Document {
   seat: string;
 }
 
+export interface IForSale extends Document {
+  userId: Schema.Types.ObjectId;
+  adId: Schema.Types.ObjectId;
+  price: number;
+  priceUnit: string;
+  addressCountry: string;
+  addressState: string;
+  addressCity: string;
+  title: string;
+  subTitle: string;
+  description: string;
+  viewCount: number;
+  itemCategory: string;
+  itemCondition: string;
+  itemColor: string;
+  dimensionW: number;
+  dimensionH: number;
+  dimensionUnit: string;
+  itemWeight: number;
+  itemUnit: string;
+  brandName: string;
+  manufacturer: string;
+}
+
 export interface IJob extends Document {
   userId: Schema.Types.ObjectId;
   jobTitle: string;

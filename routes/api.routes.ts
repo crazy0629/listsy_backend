@@ -7,6 +7,7 @@ import * as ad from "../controllers/ad.controller";
 import * as vehicle from "../controllers/vehicle.controller";
 import * as job from "../controllers/job.controller";
 import * as proposal from "../controllers/proposal.controller";
+import * as sale from "../controllers/sale.controller";
 
 import multer from "multer";
 import { v4 as uuidv4 } from "uuid";
@@ -23,8 +24,19 @@ const avatar_dir = path.join(__dirname, "../uploads/avatar");
 const ad_dir = path.join(__dirname, "../uploads/ads");
 const extraImage_dir = path.join(__dirname, "../uploads/images");
 const jobFile_dir = path.join(__dirname, "../uploads/job");
+const chatFile_dir = path.join(__dirname, "../uploads/chat");
 
 // Create a storage engine for Multer
+
+const chatFileStorage = multer.diskStorage({
+  destination: chatFile_dir,
+  filename: (req, file, cb) => {
+    const uniqueSuffix = uuidv4();
+    const fileExtension = path.extname(file.originalname);
+    const fileName = `${uniqueSuffix}${fileExtension}`;
+    cb(null, fileName);
+  },
+});
 
 const jobFileStorage = multer.diskStorage({
   destination: jobFile_dir,
@@ -71,6 +83,7 @@ const uploadAvatar = multer({ storage: avatarStorage });
 const uploadAds = multer({ storage: adStorage });
 const uploadImages = multer({ storage: imageStorage });
 const uploadJobs = multer({ storage: jobFileStorage });
+const uploadChatFile = multer({ storage: chatFileStorage });
 
 // Authentication
 
@@ -118,6 +131,12 @@ router.post("/upload/cancel", ad.cancelUpload);
 router.post("/estate/loadEstateInfo", estate.loadEstateInfo);
 router.post("/estate/getEstateObjects", estate.getMoreEstateAds);
 router.post("/estate/getAdDetailInfo", estate.getAdDetailInfo);
+
+// ForSale Estate
+
+router.post("/sale/loadForSaleInfo", sale.loadForSaleInfo);
+router.post("/sale/getForSaleAds", sale.getMoreForSaleAds);
+router.post("/sale/getAdDetailInfo", sale.getAdDetailInfo);
 
 // Vehcile
 

@@ -27,7 +27,8 @@ export const signUp = async (req: Request, res: Response) => {
     !req.body.email ||
     !req.body.password ||
     !req.body.firstName ||
-    !req.body.lastName
+    !req.body.lastName ||
+    !req.body.telephoneNumber
   ) {
     return res.json({
       success: false,
@@ -69,6 +70,7 @@ export const signUp = async (req: Request, res: Response) => {
     passwordToken,
     reviewCount: 0,
     reviewMark: 0,
+    telephoneNumber: req.body.telephoneNumber,
   };
 
   const newUser = new User(payload);
