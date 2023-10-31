@@ -19,6 +19,7 @@ const ForSaleSchema = new Schema(
     description: { type: String },
     viewCount: { type: Number },
     itemCategory: { type: String },
+    itemCondition: { type: String },
     itemColor: { type: String },
     dimensionW: { type: Number },
     dimensionH: { type: Number },

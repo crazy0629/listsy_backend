@@ -155,3 +155,10 @@ export interface IChat extends Document {
   attachedFileNames: Array<string>;
   originalFileNames: Array<string>;
 }
+
+export interface IReview extends Document {
+  fromUserId: Schema.Types.ObjectId;
+  toUserId: Schema.Types.ObjectId;
+  reviewMark: number;
+  reviewContent: string;
+}
