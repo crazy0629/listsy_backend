@@ -11,6 +11,7 @@ const ChatSchema = new Schema(
     receiverId: { type: Schema.Types.ObjectId, ref: "User" },
     message: { type: String },
     sentDate: { type: Date },
+    replyFrom: { type: String },
     attachedFileNames: { type: Array },
     originalFileNames: { type: Array },
   },

@@ -8,6 +8,7 @@ import * as vehicle from "../controllers/vehicle.controller";
 import * as job from "../controllers/job.controller";
 import * as proposal from "../controllers/proposal.controller";
 import * as sale from "../controllers/sale.controller";
+import * as chat from "../controllers/chat.controller";
 
 import multer from "multer";
 import { v4 as uuidv4 } from "uuid";
@@ -158,5 +159,9 @@ router.post(
 );
 router.post("/proposal/checkIsApplied", proposal.checkIsApplied);
 router.post("/proposal/getProposalListPerJob", proposal.getProposalListPerJob);
+
+// Chat
+
+router.post("/message/add", uploadChatFile.array("chatFiles"), chat.addMessage);
 
 export default router;
