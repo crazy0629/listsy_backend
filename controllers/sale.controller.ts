@@ -11,7 +11,6 @@ import mongoose from "mongoose";
  */
 
 export const loadForSaleInfo = async (req: Request, res: Response) => {
-  console.log(req.body.itemCondition);
   ForSale.find({ adId: new mongoose.Types.ObjectId(req.body.adId) }).then(
     async (model: any) => {
       if (model.length) {
@@ -46,7 +45,7 @@ export const loadForSaleInfo = async (req: Request, res: Response) => {
       await newForSale.save();
       return res.json({
         success: true,
-        message: "Successfully loaded items for sale media information!",
+        message: "Successfully saved sale media information!",
       });
     }
   );
