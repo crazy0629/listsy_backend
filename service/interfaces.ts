@@ -151,7 +151,6 @@ export interface IChat extends Document {
   senderId: Schema.Types.ObjectId;
   receiverId: Schema.Types.ObjectId;
   message: string;
-  sentDate: Date;
   readState: boolean;
   attachedFileNames: Array<string>;
   originalFileNames: Array<string>;
