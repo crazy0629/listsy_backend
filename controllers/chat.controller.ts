@@ -41,7 +41,7 @@ export const setupWebSocket = (server) => {
 
     // Handle client disconnection
     socket.on("disconnect", () => {
-      console.log("A client disconnected");
+      // console.log("A client disconnected");
     });
   });
 };
