@@ -53,7 +53,6 @@ export const addMessage = async (req: Request, res: Response) => {
     newChatObj.receiverId = req.body.receiverId;
     newChatObj.message = req.body.message;
     newChatObj.sentDate = req.body.sentDate;
-    newChatObj.replyFrom = req.body.replyFrom;
     newChatObj.readState = false;
 
     const multerReq = req as Request & { files?: Multer.Files };
@@ -128,7 +127,6 @@ export const deleteMessage = async (req: Request, res: Response) => {
     let refChatItems = await Chat.find({ replyFrom: req.body.chatId });
 
     for (let index = 0; index < refChatItems.length; index++) {
-      refChatItems[index].replyFrom = "";
       await refChatItems[index].save();
     }
   } catch (error) {
