@@ -164,5 +164,5 @@ router.post("/proposal/getProposalListPerJob", proposal.getProposalListPerJob);
 
 router.post("/message/add", uploadChatFile.array("chatFiles"), chat.addMessage);
 router.post("/message/addMemberOnChat", chat.addMemberOnChat);
-
+router.post("/message/markAsRead", chat.markAsRead);
 export default router;

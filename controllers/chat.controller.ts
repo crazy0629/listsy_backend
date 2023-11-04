@@ -54,6 +54,7 @@ export const addMessage = async (req: Request, res: Response) => {
     newChatObj.message = req.body.message;
     newChatObj.sentDate = req.body.sentDate;
     newChatObj.replyFrom = req.body.replyFrom;
+    newChatObj.readState = false;
 
     const multerReq = req as Request & { files?: Multer.Files };
 
@@ -163,6 +164,28 @@ export const getMessageHistory = async (req: Request, res: Response) => {
   }
 };
 
+export const markAsRead = async (req: Request, res: Response) => {
+  try {
+    const chatLists = await Chat.find({ _id: { $in: req.body.idList } });
+    chatLists.map(async (item: any) => {
+      item.readState = true;
+      await item.save();
+    });
+    const messages = await Chat.find({
+      $or: [
+        { senderId: req.body.senderId, receiverId: req.body.receiverId },
+        { senderId: req.body.receiverId, receiverId: req.body.senderId },
+      ],
+    })
+      .populate("senderId")
+      .populate("receiverId")
+      .sort({ sentDate: 1 });
+    sendToReceiver(req.body.receiverId, messages);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const addMemberOnChat = async (req: Request, res: Response) => {
   try {
     if (req.body.posterId != "no-user") {
@@ -177,6 +200,7 @@ export const addMemberOnChat = async (req: Request, res: Response) => {
         newChatItem.senderId = req.body.userId;
         newChatItem.receiverId = req.body.posterId;
         newChatItem.message = "";
+        newChatItem.readState = true;
         await newChatItem.save();
       }
     }

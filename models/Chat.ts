@@ -12,6 +12,7 @@ const ChatSchema = new Schema(
     message: { type: String },
     sentDate: { type: Date },
     replyFrom: { type: String },
+    readState: { type: Boolean },
     attachedFileNames: { type: Array },
     originalFileNames: { type: Array },
   },

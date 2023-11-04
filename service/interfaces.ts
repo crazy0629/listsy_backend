@@ -153,6 +153,7 @@ export interface IChat extends Document {
   message: string;
   sentDate: Date;
   replyFrom: string;
+  readState: boolean;
   attachedFileNames: Array<string>;
   originalFileNames: Array<string>;
 }
