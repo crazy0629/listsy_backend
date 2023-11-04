@@ -52,7 +52,6 @@ export const addMessage = async (req: Request, res: Response) => {
     newChatObj.senderId = req.body.senderId;
     newChatObj.receiverId = req.body.receiverId;
     newChatObj.message = req.body.message;
-    newChatObj.sentDate = req.body.sentDate;
     newChatObj.readState = false;
 
     const multerReq = req as Request & { files?: Multer.Files };
@@ -79,7 +78,7 @@ export const addMessage = async (req: Request, res: Response) => {
     })
       .populate("senderId")
       .populate("receiverId")
-      .sort({ sentDate: 1 });
+      .sort({ createdAt: 1 });
     sendToReceiver(req.body.receiverId, messages);
     return res.json({
       success: true,
@@ -147,7 +146,7 @@ export const getMessageHistory = async (req: Request, res: Response) => {
     })
       .populate("senderId")
       .populate("receiverId")
-      .sort({ sentDate: 1 });
+      .sort({ createdAt: 1 });
 
     return res.json({
       success: true,
@@ -177,7 +176,7 @@ export const markAsRead = async (req: Request, res: Response) => {
     })
       .populate("senderId")
       .populate("receiverId")
-      .sort({ sentDate: 1 });
+      .sort({ createdAt: 1 });
     sendToReceiver(req.body.receiverId, messages);
   } catch (error) {
     console.log(error);
@@ -226,7 +225,7 @@ export const addMemberOnChat = async (req: Request, res: Response) => {
       })
         .populate("senderId")
         .populate("receiverId")
-        .sort({ sentDate: 1 });
+        .sort({ createdAt: 1 });
     }
 
     return res.json({
