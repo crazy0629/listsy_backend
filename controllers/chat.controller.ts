@@ -29,6 +29,16 @@ export const setupWebSocket = (server) => {
     socket.on("disconnect", () => {
       // console.log("A client disconnected");
     });
+
+    socket.on("getMessageHistory", () => {});
+
+    socket.on("addMessage", (data) => {
+      console.log("234", data);
+    });
+
+    socket.on("addChatUserList", (data) => {
+      addChatUser(data);
+    });
   });
 };
 
@@ -42,19 +52,20 @@ const addConnection = (io, userId) => {
   }
 };
 
-export const addChatUserList = async (req: Request, res: Response) => {
+const addChatUser = async (data: any) => {
+  console.log(123123123, data);
   try {
-    if (req.body.receiverId != "no-user") {
+    if (data.receiverId != "no-user") {
       const models = await ChatConnection.find({
         $or: [
-          { fromUserId: req.body.senderId, toUserId: req.body.receiverId },
-          { fromUserId: req.body.receiverId, toUserId: req.body.senderId },
+          { fromUserId: data.senderId, toUserId: data.receiverId },
+          { fromUserId: data.receiverId, toUserId: data.senderId },
         ],
       });
       if (!models.length) {
         let newChatConnection = new ChatConnection();
-        newChatConnection.fromUserId = req.body.senderId;
-        newChatConnection.toUserId = req.body.receiverId;
+        newChatConnection.fromUserId = data.senderId;
+        newChatConnection.toUserId = data.receiverId;
         await newChatConnection.save();
       }
     }
@@ -62,34 +73,32 @@ export const addChatUserList = async (req: Request, res: Response) => {
     let chatUserIdList: any = [];
 
     const chatUserConnections = await ChatConnection.find({
-      $or: [{ fromUserId: req.body.senderId }, { toUserId: req.body.senderId }],
+      $or: [{ fromUserId: data.senderId }, { toUserId: data.senderId }],
     });
 
     for (let index = 0; index < chatUserConnections.length; index++) {
       const element = chatUserConnections[index];
-      if (element.fromUserId == req.body.senderId)
+      if (element.fromUserId == data.senderId)
         chatUserIdList.push(element.toUserId);
       else chatUserIdList.push(element.fromUserId);
     }
 
     const chatUsers = await User.find({ _id: { $in: chatUserIdList } });
-
-    let messages: any = [];
-    if (req.body.receiverId != "no-user") {
-      messages = await Chat.find({
-        $or: [
-          { senderId: req.body.senderId, receiverId: req.body.receiverId },
-          { senderId: req.body.receiverId, receiverId: req.body.senderId },
-        ],
-      })
-        .populate("senderId")
-        .populate("receiverId")
-        .sort({ createdAt: 1 });
-    }
-
-    res.json({ success: true, data: chatUsers, messages });
+    clients.forEach((client: any) => {
+      console.log(3333, client.userId);
+      if (client.userId == data.senderId) {
+        console.log(444, client.userId);
+        client.io.emit("getChatUserList", { success: true, data: chatUsers });
+      }
+    });
   } catch (error) {
-    res.json({ success: false, message: "DB Error found!" });
+    clients.forEach((client: any) => {
+      if (client.userId == data.senderId)
+        client.io.emit("getChatUserList", {
+          success: false,
+          message: "DB Error found!",
+        });
+    });
   }
 };
 
