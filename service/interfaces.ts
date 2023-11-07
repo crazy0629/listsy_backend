@@ -162,3 +162,8 @@ export interface IReview extends Document {
   reviewMark: number;
   reviewContent: string;
 }
+
+export interface IChatConnection extends Document {
+  fromUserId: Schema.Types.ObjectId;
+  toUserId: Schema.Types.ObjectId;
+}
