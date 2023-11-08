@@ -26,14 +26,10 @@ export const setupWebSocket = (server) => {
     addConnection(io, socket.handshake.query.userId);
 
     // Handle client disconnection
-    socket.on("disconnect", () => {
-      // console.log("A client disconnected");
-    });
-
-    socket.on("getMessageHistory", () => {});
+    socket.on("disconnect", () => {});
 
     socket.on("addMessage", (data) => {
-      console.log("234", data);
+      addMessage(data);
     });
 
     socket.on("addChatUserList", (data) => {
@@ -53,7 +49,6 @@ const addConnection = (io, userId) => {
 };
 
 const addChatUser = async (data: any) => {
-  console.log(123123123, data);
   try {
     if (data.receiverId != "no-user") {
       const models = await ChatConnection.find({
@@ -84,11 +79,27 @@ const addChatUser = async (data: any) => {
     }
 
     const chatUsers = await User.find({ _id: { $in: chatUserIdList } });
+
+    let messages: any = [];
+    if (data.receiverId != "no-user") {
+      messages = await Chat.find({
+        $or: [
+          { senderId: data.senderId, receiverId: data.receiverId },
+          { senderId: data.receiverId, receiverId: data.senderId },
+        ],
+      })
+        .populate("senderId")
+        .populate("receiverId")
+        .sort({ createdAt: 1 });
+    }
     clients.forEach((client: any) => {
-      console.log(3333, client.userId);
       if (client.userId == data.senderId) {
-        console.log(444, client.userId);
-        client.io.emit("getChatUserList", { success: true, data: chatUsers });
+        client.io.emit("getChatUserList", {
+          success: true,
+          data: chatUsers,
+          id: data.senderId,
+          messages,
+        });
       }
     });
   } catch (error) {
@@ -102,90 +113,42 @@ const addChatUser = async (data: any) => {
   }
 };
 
-const sendToReceiver = (receiverId, data) => {
-  clients.forEach((client: any) => {
-    if (client.userId == receiverId) client.io.emit("server", data);
-  });
-};
-
-export const addMessage = async (req: Request, res: Response) => {
+const addMessage = async (data: any) => {
   try {
     let newChatObj = new Chat();
-    newChatObj.senderId = req.body.senderId;
-    newChatObj.receiverId = req.body.receiverId;
-    newChatObj.message = req.body.message;
+    newChatObj.senderId = data.senderId;
+    newChatObj.receiverId = data.receiverId;
+    newChatObj.message = data.message;
     newChatObj.readState = false;
     await newChatObj.save();
 
-    const messages = await Chat.find({
-      $or: [
-        { senderId: req.body.senderId, receiverId: req.body.receiverId },
-        { senderId: req.body.receiverId, receiverId: req.body.senderId },
-      ],
-    })
+    const newMessage = await Chat.findById(newChatObj.id)
       .populate("senderId")
-      .populate("receiverId")
-      .sort({ createdAt: 1 });
-    sendToReceiver(req.body.receiverId, messages);
-
-    return res.json({
-      success: true,
-      data: messages,
+      .populate("receiverId");
+    clients.forEach((client: any) => {
+      if (client.userId == data.senderId || client.userId == data.receiverId) {
+        const flag = client.userId == data.senderId ? 1 : 0;
+        client.io.emit("newMessage", {
+          success: true,
+          message: newMessage,
+          senderId: data.senderId,
+          receiverId: data.receiverId,
+          flag,
+        });
+      }
     });
   } catch (error) {
-    res.json({ success: false, message: "DB error found!" });
+    clients.forEach((client: any) => {
+      if (client.userId == data.senderId || client.userId == data.receiverId)
+        client.io.emit("newMessage", {
+          success: false,
+          message: "DB error found!",
+        });
+    });
   }
 };
 
 /*
-
-
-export const addMessage = async (req: Request, res: Response) => {
-  try {
-    let newChatObj = new Chat();
-    newChatObj.senderId = req.body.senderId;
-    newChatObj.receiverId = req.body.receiverId;
-    newChatObj.message = req.body.message;
-    newChatObj.readState = false;
-
-    const multerReq = req as Request & { files?: Multer.Files };
-
-    let chatFileNames: any = [];
-    let chatFileOriginalNames: any = [];
-
-    for (let index = 0; index < multerReq.files.length; index++) {
-      const { filename, originalname } = multerReq.files[index];
-      chatFileNames.push("/upload/chat/" + filename);
-      chatFileOriginalNames.push(originalname);
-    }
-
-    newChatObj.attachedFileNames = chatFileNames;
-    newChatObj.originalFileNames = chatFileOriginalNames;
-
-    await newChatObj.save();
-
-    const messages = await Chat.find({
-      $or: [
-        { senderId: req.body.senderId, receiverId: req.body.receiverId },
-        { senderId: req.body.receiverId, receiverId: req.body.senderId },
-      ],
-    })
-      .populate("senderId")
-      .populate("receiverId")
-      .sort({ createdAt: 1 });
-    sendToReceiver(req.body.receiverId, messages);
-    return res.json({
-      success: true,
-      data: messages,
-    });
-  } catch (error) {
-    return res.json({
-      success: false,
-      message: "Error found while working on db!",
-    });
-  }
-};
-
 export const editMessage = async (req: Request, res: Response) => {
   try {
     let chatItem = await Chat.findById(
@@ -230,31 +193,6 @@ export const deleteMessage = async (req: Request, res: Response) => {
   }
 };
 
-export const getMessageHistory = async (req: Request, res: Response) => {
-  try {
-    const messages = await Chat.find({
-      $or: [
-        { senderId: req.body.senderId, receiverId: req.body.receiverId },
-        { senderId: req.body.receiverId, receiverId: req.body.senderId },
-      ],
-    })
-      .populate("senderId")
-      .populate("receiverId")
-      .sort({ createdAt: 1 });
-
-    return res.json({
-      success: true,
-      message: "Successfully loaded messages",
-      data: messages,
-    });
-  } catch (error) {
-    return res.json({
-      success: false,
-      message: "Error found loading messages",
-    });
-  }
-};
-
 export const markAsRead = async (req: Request, res: Response) => {
   try {
     const chatLists = await Chat.find({ _id: { $in: req.body.idList } });
@@ -274,65 +212,6 @@ export const markAsRead = async (req: Request, res: Response) => {
     sendToReceiver(req.body.receiverId, messages);
   } catch (error) {
     console.log(error);
-  }
-};
-
-export const addMemberOnChat = async (req: Request, res: Response) => {
-  try {
-    if (req.body.posterId != "no-user") {
-      const message = await Chat.find({
-        $or: [
-          { senderId: req.body.userId, receiverId: req.body.posterId },
-          { senderId: req.body.posterId, receiverId: req.body.userId },
-        ],
-      });
-      if (message.length == 0) {
-        const newChatItem = new Chat();
-        newChatItem.senderId = req.body.userId;
-        newChatItem.receiverId = req.body.posterId;
-        newChatItem.message = "";
-        newChatItem.readState = true;
-        await newChatItem.save();
-      }
-    }
-
-    const messageHistory = await Chat.find({
-      $or: [{ senderId: req.body.userId }, { receiverId: req.body.userId }],
-    });
-
-    let chatUserIdLists: any = [];
-    for (let index = 0; index < messageHistory.length; index++) {
-      if (messageHistory[index].senderId == req.body.userId)
-        chatUserIdLists.push(messageHistory[index].receiverId);
-      else chatUserIdLists.push(messageHistory[index].senderId);
-    }
-
-    const chatUserLists = await User.find({ _id: { $in: chatUserIdLists } });
-
-    let messages: any = [];
-    if (req.body.posterId != "no-user") {
-      messages = await Chat.find({
-        $or: [
-          { senderId: req.body.userId, receiverId: req.body.posterId },
-          { senderId: req.body.posterId, receiverId: req.body.userId },
-        ],
-      })
-        .populate("senderId")
-        .populate("receiverId")
-        .sort({ createdAt: 1 });
-    }
-
-    return res.json({
-      success: true,
-      data: chatUserLists,
-      messages,
-    });
-  } catch (error) {
-    console.log(error);
-    res.json({
-      success: false,
-      message: "Error found while loading messages",
-    });
   }
 };
 */
