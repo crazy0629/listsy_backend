@@ -39,12 +39,14 @@ export const addReview = async (req: Request, res: Response) => {
     }
     user.reviewCount = user.reviewCount + 1;
     user.reviewMark =
-      (user.reviewMark + req.body.reviewMark) / (user.reviewCount + 1);
+      (user.reviewMark * (user.reviewCount - 1) + req.body.reviewMark) /
+      user.reviewCount;
     await user.save();
 
     return res.json({
       success: true,
       message: "Successfully done!",
+      reviewer: user,
     });
   } catch (error) {
     return res.json({
@@ -64,8 +66,8 @@ export const addReview = async (req: Request, res: Response) => {
 export const changeReview = async (req: Request, res: Response) => {
   try {
     const reviewModel = await Review.findOne({
-      senderId: req.body.senderId,
-      receiverId: req.body.receiverId,
+      fromUserId: req.body.senderId,
+      toUserId: req.body.receiverId,
     });
     if (!reviewModel) {
       return res.json({ success: false, message: "Error found!" });
@@ -74,23 +76,27 @@ export const changeReview = async (req: Request, res: Response) => {
     reviewModel.reviewContent = req.body.reviewContent;
 
     await reviewModel.save();
-
     const userModel = await User.findById(req.body.receiverId);
     if (!userModel) {
       return res.json({ success: false, message: "Error found!" });
     }
 
-    const reviewObjs = await Review.find({ receiverId: req.body.receiverId });
+    const reviewObjs = await Review.find({ toUserId: req.body.receiverId });
     const reviewMarkTotal = reviewObjs.reduce(
       (accumulator, currentObject) => accumulator + currentObject.reviewMark,
       0
     );
-    userModel.reviewMark = reviewMarkTotal / reviewObjs.length;
 
+    if (reviewObjs.length == 0) {
+      userModel.reviewCount = 0;
+      userModel.reviewMark = 0;
+    } else userModel.reviewMark = reviewMarkTotal / reviewObjs.length;
     await userModel.save();
     return res.json({
       success: true,
       message: "Successfully changed your reivew",
+      reviewer: userModel,
+      review: reviewModel,
     });
   } catch (error) {
     return res.json({ success: false, message: "Error found!" });
@@ -108,29 +114,34 @@ export const changeReview = async (req: Request, res: Response) => {
 export const deleteReview = async (req: Request, res: Response) => {
   try {
     const reviewModel = await Review.deleteOne({
-      senderId: req.body.senderId,
-      receiverId: req.body.receiverId,
+      fromUserId: req.body.senderId,
+      toUserId: req.body.receiverId,
     });
     if (!reviewModel) {
       return res.json({ success: false, message: "Error found!" });
     }
-
     const userModel = await User.findById(req.body.receiverId);
     if (!userModel) {
       return res.json({ success: false, message: "Error found!" });
     }
 
-    const reviewObjs = await Review.find({ receiverId: req.body.receiverId });
+    const reviewObjs = await Review.find({ toUserId: req.body.receiverId });
     const reviewMarkTotal = reviewObjs.reduce(
       (accumulator, currentObject) => accumulator + currentObject.reviewMark,
       0
     );
-    userModel.reviewMark = reviewMarkTotal / reviewObjs.length;
+    if (reviewObjs.length == 0 && reviewMarkTotal == 0)
+      (userModel.reviewMark = 0), (userModel.reviewCount = 0);
+    else {
+      userModel.reviewMark = reviewMarkTotal / reviewObjs.length;
+      userModel.reviewCount = userModel.reviewCount - 1;
+    }
 
     await userModel.save();
     return res.json({
       success: true,
       message: "Successfully deleted your reivew",
+      reviewer: userModel,
     });
   } catch (error) {
     res.json({ success: false, message: "Error found!" });
@@ -152,6 +163,21 @@ export const getAllRviews = async (req: Request, res: Response) => {
       message: "Successfully loaded all reviews",
       data: reviewItems,
     });
+  } catch (error) {
+    return res.json({ success: false, message: "Error found!" });
+  }
+};
+
+export const checkReviewExists = async (req: Request, res: Response) => {
+  try {
+    const revieweExist = await Review.findOne({
+      fromUserId: req.body.fromUserId,
+      toUserId: req.body.toUserId,
+    });
+    if (revieweExist) {
+      return res.json({ success: true, data: revieweExist });
+    }
+    return res.json({ success: false, message: "No exist" });
   } catch (error) {
     return res.json({ success: false, message: "Error found!" });
   }

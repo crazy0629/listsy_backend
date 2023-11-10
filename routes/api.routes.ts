@@ -8,7 +8,7 @@ import * as vehicle from "../controllers/vehicle.controller";
 import * as job from "../controllers/job.controller";
 import * as proposal from "../controllers/proposal.controller";
 import * as sale from "../controllers/sale.controller";
-import * as chat from "../controllers/chat.controller";
+import * as review from "../controllers/review.controller";
 
 import multer from "multer";
 import { v4 as uuidv4 } from "uuid";
@@ -160,4 +160,10 @@ router.post(
 router.post("/proposal/checkIsApplied", proposal.checkIsApplied);
 router.post("/proposal/getProposalListPerJob", proposal.getProposalListPerJob);
 
+// Review
+
+router.post("/review/checkReviewExists", review.checkReviewExists);
+router.post("/review/addReview", review.addReview);
+router.post("/review/deleteReview", review.deleteReview);
+router.post("/review/changeReview", review.changeReview);
 export default router;
