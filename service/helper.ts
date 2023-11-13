@@ -24,7 +24,9 @@ export const generateToken = (user: IUser) => {
       bio: user.bio,
       userName: user.userName,
       telephoneNumber: user.telephoneNumber,
+      phoneNumberShare: user.phoneNumberShare,
       avatar: user.avatar,
+      adCount: user.adCount,
     },
     SECRET_KEY,
     {

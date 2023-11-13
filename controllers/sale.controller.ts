@@ -101,7 +101,7 @@ export const getAdDetailInfo = async (req: Request, res: Response) => {
   const saleObj = await ForSale.findOne({ adId: req.body.adId })
     .populate(
       "userId",
-      "firstName lastName avatar reviewCount reviewMark telephoneNumber"
+      "firstName lastName avatar reviewCount reviewMark telephoneNumber phoneNumberShare"
     )
     .populate("adId", "adFileName imagesFileName uploadDate duration");
 
@@ -110,6 +110,9 @@ export const getAdDetailInfo = async (req: Request, res: Response) => {
       success: false,
       message: "Error found while loading deail info!",
     });
+
+  saleObj.viewCount = saleObj.viewCount + 1;
+  await saleObj.save();
 
   return res.json({
     success: true,

@@ -14,6 +14,8 @@ export interface IUser extends Document {
   bio: string;
   userName: string;
   telephoneNumber: string;
+  phoneNumberShare: boolean;
+  adCount: number;
 }
 
 export interface ICommunity extends Document {

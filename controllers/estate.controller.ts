@@ -15,7 +15,7 @@ export const getAdDetailInfo = async (req: Request, res: Response) => {
   const estateObj = await Estate.findOne({ adId: req.body.adId })
     .populate(
       "userId",
-      "firstName lastName avatar reviewCount reviewMark telephoneNumber"
+      "firstName lastName avatar reviewCount reviewMark telephoneNumber phoneNumberShare"
     )
     .populate("adId", "adFileName imagesFileName uploadDate duration");
 
@@ -25,6 +25,8 @@ export const getAdDetailInfo = async (req: Request, res: Response) => {
       message: "Error found while loading deail info!",
     });
 
+  estateObj.viewCount = estateObj.viewCount + 1;
+  await estateObj.save();
   return res.json({
     success: true,
     message: "Success",

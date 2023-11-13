@@ -96,7 +96,7 @@ export const getAdDetailInfo = async (req: Request, res: Response) => {
   const vehicleObj = await Vehicle.findOne({ adId: req.body.adId })
     .populate(
       "userId",
-      "firstName lastName avatar reviewCount reviewMark telephoneNumber"
+      "firstName lastName avatar reviewCount reviewMark telephoneNumber phoneNumberShare"
     )
     .populate("adId", "adFileName imagesFileName uploadDate duration");
 
@@ -105,6 +105,9 @@ export const getAdDetailInfo = async (req: Request, res: Response) => {
       success: false,
       message: "Error found while loading deail info!",
     });
+
+  vehicleObj.viewCount = vehicleObj.viewCount + 1;
+  await vehicleObj.save();
 
   return res.json({
     success: true,

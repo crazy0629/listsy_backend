@@ -6,6 +6,8 @@ import mongoose from "mongoose";
 import path from "path";
 import fs from "fs";
 import Vehicle from "../models/Vehicle";
+import ForSale from "../models/ForSale";
+import User from "../models/User";
 
 const { getVideoDurationInSeconds } = require("get-video-duration");
 
@@ -72,6 +74,18 @@ export const uploadImages = async (req: Request, res: Response) => {
       model.imagesFileName = imageNames;
       await model.save();
 
+      const user = await User.findById(
+        new mongoose.Types.ObjectId(req.body.userId)
+      );
+      if (!user) {
+        return res.json({
+          success: false,
+          message: "Error happened while uploading ad.",
+        });
+      }
+      user.adCount = user.adCount + 1;
+      await user.save();
+
       return res.json({
         success: true,
         message: "Images are successfully uploaded",
@@ -113,6 +127,8 @@ export const cancelUpload = async (req: Request, res: Response) => {
         const estateObj = await Estate.deleteOne({ adId: req.body.adId });
       } else if (req.body.adType == "truck") {
         const vehicleObj = await Vehicle.deleteOne({ adId: req.body.adId });
+      } else if (req.body.adType == "sale") {
+        const saleObj = await ForSale.deleteOne({ adId: req.body.adId });
       }
 
       return res.json({
