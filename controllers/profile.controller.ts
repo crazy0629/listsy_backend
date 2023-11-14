@@ -9,6 +9,7 @@ import { generateToken } from "../service/helper";
 import Estate from "../models/Estate";
 import Vehicle from "../models/Vehicle";
 import Job from "../models/Job";
+import ForSale from "../models/ForSale";
 
 export const setAvatar = async (req: Request, res: Response) => {
   User.findById(new mongoose.Types.ObjectId(req.body.userId))
@@ -68,6 +69,7 @@ export const editProfile = async (req: Request, res: Response) => {
       model.userName = req.body.userName;
       model.bio = req.body.bio;
       model.telephoneNumber = req.body.telephoneNumber;
+      model.phoneNumberShare = req.body.phoneNumberShare;
       // model.addressCity = req.body.addressCity;
       // model.addressCountry = req.body.addressCountry;
 
@@ -152,11 +154,22 @@ export const getPostByUser = async (req: Request, res: Response) => {
   if (req.body.adState !== "") adCondition = { state: req.body.adState };
 
   if (req.body.postType == "sale") {
-    return res.json({
-      success: true,
-      data: [],
-      message: "Successfully loaded estate ads posted by you!",
-    });
+    ForSale.find({ userId: req.body.userId })
+      .populate({ path: "adId", match: adCondition })
+      .populate("userId")
+      .skip(req.body.index * 50)
+      .limit(50)
+      .then((model: any) => {
+        const value = model.filter((item) => item.adId !== null);
+        if (!model) {
+          return res.json({ success: false, message: "Error found!" });
+        }
+        return res.json({
+          success: true,
+          data: value,
+          message: "Successfully loaded estate ads posted by you!",
+        });
+      });
   }
   if (req.body.postType == "service") {
     return res.json({

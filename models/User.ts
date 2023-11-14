@@ -30,6 +30,8 @@ const UserSchema = new Schema(
     userName: { type: String },
     telephoneNumber: { type: String },
     avatar: { type: String },
+    phoneNumberShare: { type: Boolean, default: false },
+    adCount: { type: Number, default: 0 },
   },
   { timestamps: true }
 );
