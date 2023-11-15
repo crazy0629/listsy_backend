@@ -107,6 +107,7 @@ router.post("/community/getMore", community.getMoreCommunity);
 
 // Profile
 
+router.post("/profile/changePhoneNumberShare", profile.changePhoneNumberShare);
 router.post("/profile/deleteAccount", profile.deleteAccount);
 router.post("/profile/changePassword", profile.changePassword);
 router.post("/profile/editProfile", profile.editProfile);

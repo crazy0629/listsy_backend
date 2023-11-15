@@ -55,6 +55,28 @@ export const setAvatar = async (req: Request, res: Response) => {
     });
 };
 
+export const changePhoneNumberShare = async (req: Request, res: Response) => {
+  User.findById(new mongoose.Types.ObjectId(req.body.userId)).then(
+    async (model: any) => {
+      if (!model) {
+        return res.json({
+          success: false,
+          message: "Error happened while changing setting your profile!",
+        });
+      }
+      model.phoneNumberShare = req.body.phoneNumberShare;
+      await model.save();
+
+      return res.json({
+        success: true,
+        message: "Your profile is successfully edited",
+        data: model,
+        token: generateToken(model),
+      });
+    }
+  );
+};
+
 export const editProfile = async (req: Request, res: Response) => {
   User.findById(new mongoose.Types.ObjectId(req.body.userId)).then(
     async (model: any) => {
@@ -69,9 +91,6 @@ export const editProfile = async (req: Request, res: Response) => {
       model.userName = req.body.userName;
       model.bio = req.body.bio;
       model.telephoneNumber = req.body.telephoneNumber;
-      model.phoneNumberShare = req.body.phoneNumberShare;
-      // model.addressCity = req.body.addressCity;
-      // model.addressCountry = req.body.addressCountry;
 
       await model.save();
 
