@@ -83,7 +83,7 @@ export const getMoreForSaleAds = async (req: Request, res: Response) => {
   } catch (error) {
     return res.json({
       success: false,
-      message: "Error found while loading more estate ads",
+      message: "Error found while loading more electronics ads",
     });
   }
 };

@@ -9,6 +9,7 @@ import * as job from "../controllers/job.controller";
 import * as proposal from "../controllers/proposal.controller";
 import * as sale from "../controllers/sale.controller";
 import * as review from "../controllers/review.controller";
+import * as garden from "../controllers/garden.controller";
 
 import multer from "multer";
 import { v4 as uuidv4 } from "uuid";
@@ -139,6 +140,12 @@ router.post("/estate/getAdDetailInfo", estate.getAdDetailInfo);
 router.post("/sale/loadForSaleInfo", sale.loadForSaleInfo);
 router.post("/sale/getForSaleAds", sale.getMoreForSaleAds);
 router.post("/sale/getAdDetailInfo", sale.getAdDetailInfo);
+
+// Garden Estate
+
+router.post("/garden/loadGardenInfo", garden.loadGardenInfo);
+router.post("/garden/getGardenAds", garden.getMoreGardenAds);
+router.post("/garden/getAdDetailInfo", garden.getAdDetailInfo);
 
 // Vehcile
 
