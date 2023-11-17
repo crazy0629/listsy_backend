@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
-import Sports from "../models/sports";
+import Sports from "../models/Sports";
 
 /**
  * This function is called when users upload items for homes and sports ads.

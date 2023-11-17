@@ -5,7 +5,7 @@ import { IForSale } from "../service/interfaces";
  * Create a new Schema from mongoose
  */
 
-const SportsSchema = new Schema(
+const EducationSchema = new Schema(
   {
     userId: { type: Schema.Types.ObjectId, ref: "User" },
     adId: { type: Schema.Types.ObjectId, ref: "Ad" },
@@ -33,7 +33,7 @@ const SportsSchema = new Schema(
 );
 
 /**
- * Sports Interface Document class inheritance
+ * Education Interface Document class inheritance
  */
 
-export default model<IForSale>("Sports", SportsSchema);
+export default model<IForSale>("education", EducationSchema);
