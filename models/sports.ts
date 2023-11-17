@@ -36,4 +36,4 @@ const SportsSchema = new Schema(
  * Sports Interface Document class inheritance
  */
 
-export default model<IForSale>("Sports", SportsSchema);
+export default model<IForSale>("sports", SportsSchema);
