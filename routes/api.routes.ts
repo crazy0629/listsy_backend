@@ -10,6 +10,7 @@ import * as proposal from "../controllers/proposal.controller";
 import * as sale from "../controllers/sale.controller";
 import * as review from "../controllers/review.controller";
 import * as garden from "../controllers/garden.controller";
+import * as fashion from "../controllers/fashion.controller";
 
 import multer from "multer";
 import { v4 as uuidv4 } from "uuid";
@@ -135,17 +136,23 @@ router.post("/estate/loadEstateInfo", estate.loadEstateInfo);
 router.post("/estate/getEstateObjects", estate.getMoreEstateAds);
 router.post("/estate/getAdDetailInfo", estate.getAdDetailInfo);
 
-// ForSale Estate
+// ForSale
 
 router.post("/sale/loadForSaleInfo", sale.loadForSaleInfo);
 router.post("/sale/getForSaleAds", sale.getMoreForSaleAds);
 router.post("/sale/getAdDetailInfo", sale.getAdDetailInfo);
 
-// Garden Estate
+// Garden
 
 router.post("/garden/loadGardenInfo", garden.loadGardenInfo);
 router.post("/garden/getGardenAds", garden.getMoreGardenAds);
 router.post("/garden/getAdDetailInfo", garden.getAdDetailInfo);
+
+// Fashion
+
+router.post("/fashion/loadFashionInfo", fashion.loadFashionInfo);
+router.post("/fashion/getFashionAds", fashion.getMoreFashionAds);
+router.post("/fashion/getAdDetailInfo", fashion.getAdDetailInfo);
 
 // Vehcile
 
