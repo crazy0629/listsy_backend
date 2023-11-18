@@ -11,6 +11,7 @@ import * as sale from "../controllers/sale.controller";
 import * as review from "../controllers/review.controller";
 import * as garden from "../controllers/garden.controller";
 import * as fashion from "../controllers/fashion.controller";
+import * as sports from "../controllers/sports.controller";
 
 import multer from "multer";
 import { v4 as uuidv4 } from "uuid";
@@ -160,6 +161,12 @@ router.post("/truck/loadVehicleInfo", vehicle.loadVehicleInfo);
 router.post("/truck/getMoreVehicleAds", vehicle.getMoreVehicleAds);
 router.post("/truck/getAdDetailInfo", vehicle.getAdDetailInfo);
 
+// Sports
+
+router.post("/sports/loadSportsInfo", sports.loadSportsInfo);
+router.post("/sports/getMoreSportsAds", sports.getMoreSportsAds);
+router.post("/sports/getAdDetailInfo", sports.getAdDetailInfo);
+
 // Job
 
 router.post("/job/loadJobInfo", uploadJobs.array("jobFiles"), job.uploadJob);
@@ -181,4 +188,5 @@ router.post("/review/checkReviewExists", review.checkReviewExists);
 router.post("/review/addReview", review.addReview);
 router.post("/review/deleteReview", review.deleteReview);
 router.post("/review/changeReview", review.changeReview);
+
 export default router;
