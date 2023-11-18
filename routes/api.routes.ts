@@ -14,6 +14,7 @@ import * as fashion from "../controllers/fashion.controller";
 import * as sports from "../controllers/sports.controller";
 import * as children from "../controllers/children.controller";
 import * as art from "../controllers/art.controller";
+import * as education from "../controllers/education.controller";
 
 import multer from "multer";
 import { v4 as uuidv4 } from "uuid";
@@ -180,6 +181,12 @@ router.post("/children/getAdDetailInfo", children.getAdDetailInfo);
 router.post("/art/loadArtInfo", art.loadArtInfo);
 router.post("/art/getMoreArtAds", art.getMoreArtAds);
 router.post("/art/getAdDetailInfo", art.getAdDetailInfo);
+
+// Education
+
+router.post("/education/loadEducationInfo", education.loadEducationInfo);
+router.post("/education/getMoreEducationAds", education.getMoreEducationAds);
+router.post("/education/getAdDetailInfo", education.getAdDetailInfo);
 
 // Job
 
