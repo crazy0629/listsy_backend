@@ -12,6 +12,7 @@ import * as review from "../controllers/review.controller";
 import * as garden from "../controllers/garden.controller";
 import * as fashion from "../controllers/fashion.controller";
 import * as sports from "../controllers/sports.controller";
+import * as children from "../controllers/children.controller";
 
 import multer from "multer";
 import { v4 as uuidv4 } from "uuid";
@@ -166,6 +167,12 @@ router.post("/truck/getAdDetailInfo", vehicle.getAdDetailInfo);
 router.post("/sports/loadSportsInfo", sports.loadSportsInfo);
 router.post("/sports/getMoreSportsAds", sports.getMoreSportsAds);
 router.post("/sports/getAdDetailInfo", sports.getAdDetailInfo);
+
+// Children
+
+router.post("/children/loadChildrenInfo", children.loadChildrenInfo);
+router.post("/children/getMoreChildrenAds", children.getMoreChildrenAds);
+router.post("/children/getAdDetailInfo", children.getAdDetailInfo);
 
 // Job
 
