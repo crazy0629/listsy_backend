@@ -52,6 +52,27 @@ export const loadVehicleInfo = async (req: Request, res: Response) => {
 export const getMoreVehicleAds = async (req: Request, res: Response) => {
   try {
     let condition: any = {};
+    if (req.body.locationFilter.worldWide == false) {
+      if (
+        req.body.locationFilter.country != "undefined" &&
+        req.body.locationFilter.country != ""
+      ) {
+        condition.addressCountry = req.body.locationFilter.country;
+      }
+      if (
+        req.body.locationFilter.state != "undefined" &&
+        req.body.locationFilter.state != ""
+      ) {
+        condition.addressState = req.body.locationFilter.state;
+      }
+      if (
+        req.body.locationFilter.city != "undefined" &&
+        req.body.locationFilter.city != ""
+      ) {
+        condition.addressCity = req.body.locationFilter.city;
+      }
+    }
+
     if (req.body.vehicleType.length) {
       condition.vehicleType = { $in: req.body.vehicleType };
     }
@@ -73,7 +94,7 @@ export const getMoreVehicleAds = async (req: Request, res: Response) => {
     if (req.body.gearBox.length) {
       condition.gearBox = { $in: req.body.gearBox };
     }
-    const nextEstateAds = await Vehicle.find(condition)
+    const nextVehicleAds = await Vehicle.find(condition)
       .populate("userId", "firstName lastName avatar reviewCount reviewMark")
       .populate("adId", "adFileName imagesFileName uploadDate duration")
       .sort({ postDate: -1 })
@@ -82,7 +103,7 @@ export const getMoreVehicleAds = async (req: Request, res: Response) => {
     return res.json({
       success: true,
       message: "Successfully loaded!",
-      data: nextEstateAds,
+      data: nextVehicleAds,
     });
   } catch (error) {
     return res.json({
