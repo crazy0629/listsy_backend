@@ -23,6 +23,8 @@ const mailgun = require("mailgun-js")({
 
 export const signUp = async (req: Request, res: Response) => {
   // Check if all registration infos are
+  console.log(req.body);
+
   if (
     !req.body.email ||
     !req.body.password ||
