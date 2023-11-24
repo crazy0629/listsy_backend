@@ -14,10 +14,6 @@ const mailgun = require("mailgun-js")({
   domain: "spyderreceipts.com",
 });
 
-export const getGoogleApiKey = async (req: Request, res: Response) => {
-  res.json({ data: process.env.Google_API_KEY });
-};
-
 /**
  * User registration function
  * @param req
