@@ -27,9 +27,9 @@ export const loadSportsInfo = async (req: Request, res: Response) => {
       newSports.description = req.body.description;
       newSports.price = req.body.price;
       newSports.priceUnit = req.body.priceUnit;
-      newSports.addressCity = req.body.addressCity;
-      newSports.addressState = req.body.addressState;
-      newSports.addressCountry = req.body.addressCountry;
+      newSports.address = req.body.address;
+      newSports.lat = req.body.lat;
+      newSports.lng = req.body.lng;
       newSports.viewCount = 0;
       newSports.itemCategory = req.body.itemCategory;
       newSports.itemCondition = req.body.itemCondition;

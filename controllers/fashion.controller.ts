@@ -27,9 +27,9 @@ export const loadFashionInfo = async (req: Request, res: Response) => {
       newFashion.description = req.body.description;
       newFashion.price = req.body.price;
       newFashion.priceUnit = req.body.priceUnit;
-      newFashion.addressCity = req.body.addressCity;
-      newFashion.addressState = req.body.addressState;
-      newFashion.addressCountry = req.body.addressCountry;
+      newFashion.address = req.body.address;
+      newFashion.lat = req.body.lat;
+      newFashion.lng = req.body.lng;
       newFashion.viewCount = 0;
       newFashion.itemCategory = req.body.itemCategory;
       newFashion.itemCondition = req.body.itemCondition;

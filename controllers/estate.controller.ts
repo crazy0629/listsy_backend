@@ -101,9 +101,9 @@ export const loadEstateInfo = async (req: Request, res: Response) => {
       newEstate.description = req.body.description;
       newEstate.price = req.body.price;
       newEstate.priceUnit = req.body.priceUnit;
-      newEstate.addressCity = req.body.addressCity;
-      newEstate.addressState = req.body.addressState;
-      newEstate.addressCountry = req.body.addressCountry;
+      newEstate.address = req.body.address;
+      newEstate.lat = req.body.lat;
+      newEstate.lng = req.body.lng;
       newEstate.viewCount = 0;
       newEstate.listingType = req.body.listingType;
       newEstate.propertyType = req.body.propertyType;

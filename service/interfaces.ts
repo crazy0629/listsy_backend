@@ -31,6 +31,9 @@ export interface IAd extends Document {
   uploadDate: Date;
   duration: number;
   state: string;
+  address: string;
+  lat: number;
+  lng: number;
 }
 
 export interface IEstate extends Document {
@@ -38,9 +41,9 @@ export interface IEstate extends Document {
   adId: Schema.Types.ObjectId;
   price: number;
   priceUnit: string;
-  addressCountry: string;
-  addressState: string;
-  addressCity: string;
+  address: string;
+  lat: number;
+  lng: number;
   title: string;
   subTitle: string;
   description: string;
@@ -67,9 +70,9 @@ export interface IVehicle extends Document {
   adId: Schema.Types.ObjectId;
   price: number;
   priceUnit: string;
-  addressCountry: string;
-  addressState: string;
-  addressCity: string;
+  address: string;
+  lat: number;
+  lng: number;
   title: string;
   subTitle: string;
   description: string;
@@ -95,9 +98,9 @@ export interface IForSale extends Document {
   adId: Schema.Types.ObjectId;
   price: number;
   priceUnit: string;
-  addressCountry: string;
-  addressState: string;
-  addressCity: string;
+  address: string;
+  lat: number;
+  lng: number;
   title: string;
   subTitle: string;
   description: string;

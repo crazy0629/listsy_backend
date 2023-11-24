@@ -27,9 +27,9 @@ export const loadEducationInfo = async (req: Request, res: Response) => {
       newEducation.description = req.body.description;
       newEducation.price = req.body.price;
       newEducation.priceUnit = req.body.priceUnit;
-      newEducation.addressCity = req.body.addressCity;
-      newEducation.addressState = req.body.addressState;
-      newEducation.addressCountry = req.body.addressCountry;
+      newEducation.address = req.body.address;
+      newEducation.lat = req.body.lat;
+      newEducation.lng = req.body.lng;
       newEducation.viewCount = 0;
       newEducation.itemCategory = req.body.itemCategory;
       newEducation.itemCondition = req.body.itemCondition;

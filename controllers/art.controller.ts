@@ -27,9 +27,9 @@ export const loadArtInfo = async (req: Request, res: Response) => {
       newArt.description = req.body.description;
       newArt.price = req.body.price;
       newArt.priceUnit = req.body.priceUnit;
-      newArt.addressCity = req.body.addressCity;
-      newArt.addressState = req.body.addressState;
-      newArt.addressCountry = req.body.addressCountry;
+      newArt.address = req.body.address;
+      newArt.lat = req.body.lat;
+      newArt.lng = req.body.lng;
       newArt.viewCount = 0;
       newArt.itemCategory = req.body.itemCategory;
       newArt.itemCondition = req.body.itemCondition;

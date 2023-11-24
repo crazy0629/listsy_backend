@@ -27,9 +27,9 @@ export const loadChildrenInfo = async (req: Request, res: Response) => {
       newChildren.description = req.body.description;
       newChildren.price = req.body.price;
       newChildren.priceUnit = req.body.priceUnit;
-      newChildren.addressCity = req.body.addressCity;
-      newChildren.addressState = req.body.addressState;
-      newChildren.addressCountry = req.body.addressCountry;
+      newChildren.address = req.body.address;
+      newChildren.lat = req.body.lat;
+      newChildren.lng = req.body.lng;
       newChildren.viewCount = 0;
       newChildren.itemCategory = req.body.itemCategory;
       newChildren.itemCondition = req.body.itemCondition;

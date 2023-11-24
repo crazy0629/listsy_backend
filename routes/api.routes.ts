@@ -133,7 +133,7 @@ router.post(
   ad.uploadImages
 );
 router.post("/upload/cancel", ad.cancelUpload);
-
+router.post("/ad/getLocationList", ad.getLocationList);
 // Real Estate
 
 router.post("/estate/loadEstateInfo", estate.loadEstateInfo);

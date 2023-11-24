@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import Vehicle from "../models/Vehicle";
 import mongoose from "mongoose";
+import Ad from "../models/Ad";
 
 export const loadVehicleInfo = async (req: Request, res: Response) => {
   Vehicle.find({ adId: new mongoose.Types.ObjectId(req.body.adId) }).then(
@@ -13,6 +14,14 @@ export const loadVehicleInfo = async (req: Request, res: Response) => {
       }
 
       const newVehicle = new Vehicle();
+      Ad.findById(new mongoose.Types.ObjectId(req.body.adId)).then(
+        async (adModel: any) => {
+          adModel.address = req.body.address;
+          adModel.lng = req.body.lng;
+          adModel.lat = req.body.lat;
+          await adModel.save();
+        }
+      );
       newVehicle.adId = req.body.adId;
       newVehicle.userId = req.body.userId;
       newVehicle.title = req.body.title;
@@ -20,9 +29,9 @@ export const loadVehicleInfo = async (req: Request, res: Response) => {
       newVehicle.description = req.body.description;
       newVehicle.price = req.body.price;
       newVehicle.priceUnit = req.body.priceUnit;
-      newVehicle.addressCity = req.body.addressCity;
-      newVehicle.addressState = req.body.addressState;
-      newVehicle.addressCountry = req.body.addressCountry;
+      newVehicle.address = req.body.address;
+      newVehicle.lat = req.body.lat;
+      newVehicle.lng = req.body.lng;
       newVehicle.viewCount = 0;
       newVehicle.vehicleType = req.body.vehicleType;
       newVehicle.saleType = req.body.saleType;

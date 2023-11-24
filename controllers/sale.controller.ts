@@ -27,9 +27,9 @@ export const loadForSaleInfo = async (req: Request, res: Response) => {
       newForSale.description = req.body.description;
       newForSale.price = req.body.price;
       newForSale.priceUnit = req.body.priceUnit;
-      newForSale.addressCity = req.body.addressCity;
-      newForSale.addressState = req.body.addressState;
-      newForSale.addressCountry = req.body.addressCountry;
+      newForSale.address = req.body.address;
+      newForSale.lat = req.body.lat;
+      newForSale.lng = req.body.lng;
       newForSale.viewCount = 0;
       newForSale.itemCategory = req.body.itemCategory;
       newForSale.itemCondition = req.body.itemCondition;
