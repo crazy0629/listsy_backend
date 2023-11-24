@@ -59,6 +59,7 @@ export const getMoreVehicleAds = async (req: Request, res: Response) => {
       ) {
         condition.addressCountry = req.body.locationFilter.country;
       }
+
       if (
         req.body.locationFilter.state != "undefined" &&
         req.body.locationFilter.state != ""
