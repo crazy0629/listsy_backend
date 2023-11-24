@@ -99,6 +99,7 @@ router.post("/auth/signup", auth.signUp);
 router.post("/auth/resendVeriEmail", auth.resendVeriEmail);
 router.post("/auth/forgetPassword", auth.forgetPassword);
 router.post("/auth/resetPassword", auth.resetPassword);
+router.post("/auth/getGoogleApiKey", auth.getGoogleApiKey);
 router.post(
   "/auth/checkSignUpVerificationToken",
   auth.checkSignUpVerificationToken
