@@ -27,9 +27,9 @@ export const loadGardenInfo = async (req: Request, res: Response) => {
       newGarden.description = req.body.description;
       newGarden.price = req.body.price;
       newGarden.priceUnit = req.body.priceUnit;
-      newGarden.addressCity = req.body.addressCity;
-      newGarden.addressState = req.body.addressState;
-      newGarden.addressCountry = req.body.addressCountry;
+      newGarden.address = req.body.address;
+      newGarden.lat = req.body.lat;
+      newGarden.lng = req.body.lng;
       newGarden.viewCount = 0;
       newGarden.itemCategory = req.body.itemCategory;
       newGarden.itemCondition = req.body.itemCondition;

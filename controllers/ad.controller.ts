@@ -11,6 +11,25 @@ import User from "../models/User";
 
 const { getVideoDurationInSeconds } = require("get-video-duration");
 
+export const getLocationList = async (req: Request, res: Response) => {
+  try {
+    Ad.find().then((models: any) => {
+      let result: any = [];
+      for (let index = 0; index < models.length; index++) {
+        const element = models[index];
+        result.push({
+          address: element.address,
+          lat: element.lat,
+          lng: element.lng,
+        });
+      }
+      res.json({ sucess: true, data: result });
+    });
+  } catch (error) {
+    res.json({ success: false, message: "Error happened while loading data" });
+  }
+};
+
 /**
  * Upload Video/Audio function
  *

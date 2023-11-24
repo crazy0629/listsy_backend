@@ -13,6 +13,9 @@ const AdSchema = new Schema(
     uploadDate: { type: Date },
     duration: { type: Number },
     state: { type: String },
+    address: { type: String },
+    lat: { type: Number },
+    lng: { type: Number },
   },
   { timestamps: true }
 );
