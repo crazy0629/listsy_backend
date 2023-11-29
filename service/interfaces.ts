@@ -34,6 +34,7 @@ export interface IAd extends Document {
   address: string;
   lat: number;
   lng: number;
+  countryCode: string;
 }
 
 export interface IEstate extends Document {
@@ -44,6 +45,7 @@ export interface IEstate extends Document {
   address: string;
   lat: number;
   lng: number;
+  countryCode: string;
   title: string;
   subTitle: string;
   description: string;
@@ -73,6 +75,7 @@ export interface IVehicle extends Document {
   address: string;
   lat: number;
   lng: number;
+  countryCode: string;
   title: string;
   subTitle: string;
   description: string;
@@ -101,6 +104,7 @@ export interface IForSale extends Document {
   address: string;
   lat: number;
   lng: number;
+  countryCode: string;
   title: string;
   subTitle: string;
   description: string;

@@ -12,13 +12,13 @@ export const loadVehicleInfo = async (req: Request, res: Response) => {
           message: "Error found!",
         });
       }
-
       const newVehicle = new Vehicle();
       Ad.findById(new mongoose.Types.ObjectId(req.body.adId)).then(
         async (adModel: any) => {
           adModel.address = req.body.address;
           adModel.lng = req.body.lng;
           adModel.lat = req.body.lat;
+          adModel.countryCode = req.body.countryCode;
           await adModel.save();
         }
       );
@@ -32,6 +32,7 @@ export const loadVehicleInfo = async (req: Request, res: Response) => {
       newVehicle.address = req.body.address;
       newVehicle.lat = req.body.lat;
       newVehicle.lng = req.body.lng;
+      newVehicle.countryCode = req.body.countryCode;
       newVehicle.viewCount = 0;
       newVehicle.vehicleType = req.body.vehicleType;
       newVehicle.saleType = req.body.saleType;
@@ -61,28 +62,14 @@ export const loadVehicleInfo = async (req: Request, res: Response) => {
 export const getMoreVehicleAds = async (req: Request, res: Response) => {
   try {
     let condition: any = {};
-    if (req.body.locationFilter.worldWide == false) {
-      if (
-        req.body.locationFilter.country != "undefined" &&
-        req.body.locationFilter.country != ""
-      ) {
-        condition.addressCountry = req.body.locationFilter.country;
-      }
 
-      if (
-        req.body.locationFilter.state != "undefined" &&
-        req.body.locationFilter.state != ""
-      ) {
-        condition.addressState = req.body.locationFilter.state;
-      }
-      if (
-        req.body.locationFilter.city != "undefined" &&
-        req.body.locationFilter.city != ""
-      ) {
-        condition.addressCity = req.body.locationFilter.city;
+    if (req.body.countryCode != null) {
+      if (req.body.countryCode == "") {
+        condition.address = req.body.address;
+      } else {
+        condition.countryCode = req.body.countryCode;
       }
     }
-
     if (req.body.vehicleType.length) {
       condition.vehicleType = { $in: req.body.vehicleType };
     }

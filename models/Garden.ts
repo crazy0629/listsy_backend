@@ -14,6 +14,7 @@ const GardenSchema = new Schema(
     address: { type: String },
     lat: { type: Number },
     lng: { type: Number },
+    countryCode: { type: String },
     title: { type: String },
     subTitle: { type: String },
     description: { type: String },
