@@ -16,6 +16,7 @@ const AdSchema = new Schema(
     address: { type: String },
     lat: { type: Number },
     lng: { type: Number },
+    countryCode: { type: String },
   },
   { timestamps: true }
 );
