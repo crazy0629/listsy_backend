@@ -32,16 +32,7 @@ export const loadSportsInfo = async (req: Request, res: Response) => {
       newSports.lng = req.body.lng;
       newSports.viewCount = 0;
       newSports.itemCategory = req.body.itemCategory;
-      newSports.itemCondition = req.body.itemCondition;
-      newSports.itemColor = req.body.itemColor;
-      newSports.dimensionW = req.body.dimensionW;
-      newSports.dimensionH = req.body.dimensionH;
-      newSports.dimensionUnit = req.body.dimensionUnit;
-      newSports.itemWeight = req.body.itemWeight;
-      newSports.itemUnit = req.body.itemUnit;
-      newSports.brandName = req.body.brandName;
-      newSports.manufacturer = req.body.manufacturer;
-
+      newSports.itemDetailInfo = req.body.itemDetailInfo;
       await newSports.save();
       return res.json({
         success: true,

@@ -32,15 +32,7 @@ export const loadChildrenInfo = async (req: Request, res: Response) => {
       newChildren.lng = req.body.lng;
       newChildren.viewCount = 0;
       newChildren.itemCategory = req.body.itemCategory;
-      newChildren.itemCondition = req.body.itemCondition;
-      newChildren.itemColor = req.body.itemColor;
-      newChildren.dimensionW = req.body.dimensionW;
-      newChildren.dimensionH = req.body.dimensionH;
-      newChildren.dimensionUnit = req.body.dimensionUnit;
-      newChildren.itemWeight = req.body.itemWeight;
-      newChildren.itemUnit = req.body.itemUnit;
-      newChildren.brandName = req.body.brandName;
-      newChildren.manufacturer = req.body.manufacturer;
+      newChildren.itemDetailInfo = req.body.itemDetailInfo;
 
       await newChildren.save();
       return res.json({

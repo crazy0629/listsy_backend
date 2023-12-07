@@ -110,15 +110,7 @@ export interface IForSale extends Document {
   description: string;
   viewCount: number;
   itemCategory: string;
-  itemCondition: string;
-  itemColor: string;
-  dimensionW: number;
-  dimensionH: number;
-  dimensionUnit: string;
-  itemWeight: number;
-  itemUnit: string;
-  brandName: string;
-  manufacturer: string;
+  itemDetailInfo: object;
 }
 
 export interface IJob extends Document {

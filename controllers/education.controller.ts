@@ -32,15 +32,7 @@ export const loadEducationInfo = async (req: Request, res: Response) => {
       newEducation.lng = req.body.lng;
       newEducation.viewCount = 0;
       newEducation.itemCategory = req.body.itemCategory;
-      newEducation.itemCondition = req.body.itemCondition;
-      newEducation.itemColor = req.body.itemColor;
-      newEducation.dimensionW = req.body.dimensionW;
-      newEducation.dimensionH = req.body.dimensionH;
-      newEducation.dimensionUnit = req.body.dimensionUnit;
-      newEducation.itemWeight = req.body.itemWeight;
-      newEducation.itemUnit = req.body.itemUnit;
-      newEducation.brandName = req.body.brandName;
-      newEducation.manufacturer = req.body.manufacturer;
+      newEducation.itemDetailInfo = req.body.itemDetailInfo;
 
       await newEducation.save();
       return res.json({

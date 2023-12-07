@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import ForSale from "../models/ForSale";
 import mongoose from "mongoose";
+import Ad from "../models/Ad";
 
 /**
  * This function is called when users upload items for sale ads.
@@ -19,6 +20,17 @@ export const loadForSaleInfo = async (req: Request, res: Response) => {
           message: "Error found!",
         });
       }
+
+      Ad.findById(new mongoose.Types.ObjectId(req.body.adId)).then(
+        async (adModel: any) => {
+          adModel.address = req.body.address;
+          adModel.lng = req.body.lng;
+          adModel.lat = req.body.lat;
+          adModel.countryCode = req.body.countryCode;
+          await adModel.save();
+        }
+      );
+
       const newForSale = new ForSale();
       newForSale.adId = req.body.adId;
       newForSale.userId = req.body.userId;
@@ -32,15 +44,7 @@ export const loadForSaleInfo = async (req: Request, res: Response) => {
       newForSale.lng = req.body.lng;
       newForSale.viewCount = 0;
       newForSale.itemCategory = req.body.itemCategory;
-      newForSale.itemCondition = req.body.itemCondition;
-      newForSale.itemColor = req.body.itemColor;
-      newForSale.dimensionW = req.body.dimensionW;
-      newForSale.dimensionH = req.body.dimensionH;
-      newForSale.dimensionUnit = req.body.dimensionUnit;
-      newForSale.itemWeight = req.body.itemWeight;
-      newForSale.itemUnit = req.body.itemUnit;
-      newForSale.brandName = req.body.brandName;
-      newForSale.manufacturer = req.body.manufacturer;
+      newForSale.itemDetailInfo = req.body.itemDetailInfo;
 
       await newForSale.save();
       return res.json({
@@ -63,13 +67,22 @@ export const loadForSaleInfo = async (req: Request, res: Response) => {
 export const getMoreForSaleAds = async (req: Request, res: Response) => {
   try {
     let condition: any = {};
+
+    if (req.body.countryCode != null) {
+      if (req.body.countryCode == "") {
+        condition.address = req.body.address;
+      } else {
+        condition.countryCode = req.body.countryCode;
+      }
+    }
+
     if (req.body.itemCategory.length) {
       condition.itemCategory = { $in: req.body.itemCategory };
     }
     if (req.body.itemCondition.length) {
       condition.itemCondition = { $in: req.body.itemCondition };
     }
-    const nextForSaleAds = await ForSale.find()
+    const nextForSaleAds = await ForSale.find(condition)
       .populate("userId", "firstName lastName avatar reviewCount reviewMark")
       .populate("adId", "adFileName imagesFileName uploadDate duration")
       .sort({ postDate: -1 })
