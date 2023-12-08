@@ -32,15 +32,7 @@ export const loadFashionInfo = async (req: Request, res: Response) => {
       newFashion.lng = req.body.lng;
       newFashion.viewCount = 0;
       newFashion.itemCategory = req.body.itemCategory;
-      newFashion.itemCondition = req.body.itemCondition;
-      newFashion.itemColor = req.body.itemColor;
-      newFashion.dimensionW = req.body.dimensionW;
-      newFashion.dimensionH = req.body.dimensionH;
-      newFashion.dimensionUnit = req.body.dimensionUnit;
-      newFashion.itemWeight = req.body.itemWeight;
-      newFashion.itemUnit = req.body.itemUnit;
-      newFashion.brandName = req.body.brandName;
-      newFashion.manufacturer = req.body.manufacturer;
+      newFashion.itemDetailInfo = req.body.itemDetailInfo;
 
       await newFashion.save();
       return res.json({

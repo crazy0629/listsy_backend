@@ -177,7 +177,6 @@ export const changePassword = async (req: Request, res: Response) => {
 export const getPostByUser = async (req: Request, res: Response) => {
   let adCondition = {};
   if (req.body.adState !== "") adCondition = { state: req.body.adState };
-
   if (req.body.postType == "sale") {
     ForSale.find({ userId: req.body.userId })
       .populate({ path: "adId", match: adCondition })

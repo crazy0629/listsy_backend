@@ -32,15 +32,7 @@ export const loadArtInfo = async (req: Request, res: Response) => {
       newArt.lng = req.body.lng;
       newArt.viewCount = 0;
       newArt.itemCategory = req.body.itemCategory;
-      newArt.itemCondition = req.body.itemCondition;
-      newArt.itemColor = req.body.itemColor;
-      newArt.dimensionW = req.body.dimensionW;
-      newArt.dimensionH = req.body.dimensionH;
-      newArt.dimensionUnit = req.body.dimensionUnit;
-      newArt.itemWeight = req.body.itemWeight;
-      newArt.itemUnit = req.body.itemUnit;
-      newArt.brandName = req.body.brandName;
-      newArt.manufacturer = req.body.manufacturer;
+      newArt.itemDetailInfo = req.body.itemDetailInfo;
 
       await newArt.save();
       return res.json({

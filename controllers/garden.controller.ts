@@ -32,15 +32,7 @@ export const loadGardenInfo = async (req: Request, res: Response) => {
       newGarden.lng = req.body.lng;
       newGarden.viewCount = 0;
       newGarden.itemCategory = req.body.itemCategory;
-      newGarden.itemCondition = req.body.itemCondition;
-      newGarden.itemColor = req.body.itemColor;
-      newGarden.dimensionW = req.body.dimensionW;
-      newGarden.dimensionH = req.body.dimensionH;
-      newGarden.dimensionUnit = req.body.dimensionUnit;
-      newGarden.itemWeight = req.body.itemWeight;
-      newGarden.itemUnit = req.body.itemUnit;
-      newGarden.brandName = req.body.brandName;
-      newGarden.manufacturer = req.body.manufacturer;
+      newGarden.itemDetailInfo = req.body.itemDetailInfo;
 
       await newGarden.save();
       return res.json({
