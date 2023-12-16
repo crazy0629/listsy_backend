@@ -79,9 +79,6 @@ export const getMoreForSaleAds = async (req: Request, res: Response) => {
     if (req.body.itemCategory.length) {
       condition.itemCategory = { $in: req.body.itemCategory };
     }
-    if (req.body.itemCondition.length) {
-      condition.itemCondition = { $in: req.body.itemCondition };
-    }
     const nextForSaleAds = await ForSale.find(condition)
       .populate("userId", "firstName lastName avatar reviewCount reviewMark")
       .populate("adId", "adFileName imagesFileName uploadDate duration")
