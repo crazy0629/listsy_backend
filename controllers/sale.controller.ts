@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import ForSale from "../models/ForSale";
 import mongoose from "mongoose";
 import Ad from "../models/Ad";
+import { count } from "console";
 
 /**
  * This function is called when users upload items for sale ads.
@@ -68,29 +69,120 @@ export const loadForSaleInfo = async (req: Request, res: Response) => {
 export const getMoreForSaleAds = async (req: Request, res: Response) => {
   try {
     let condition: any = {};
-    if (req.body.countryCode != null) {
-      if (req.body.countryCode == "") {
-        condition.address = req.body.address;
-      } else {
-        condition.countryCode = req.body.countryCode;
+    if (
+      req.body.centerLocationSelected == true &&
+      req.body.SearchWithin != ""
+    ) {
+      condition.countryCode = req.body.selectedLocation.countryCode;
+    } else {
+      if (req.body.countryCode != null) {
+        if (req.body.countryCode == "") {
+          condition.address = req.body.address;
+        } else {
+          condition.countryCode = req.body.countryCode;
+        }
       }
     }
-
-    if (req.body.itemCategory.length) {
-      condition.itemCategory = { $in: req.body.itemCategory };
+    if (req.body.itemCategory != "All" && req.body.itemCategory != "") {
+      condition.itemCategory = req.body.itemCategory;
     }
-    const nextForSaleAds = await ForSale.find(condition)
+    let nextForSaleAds = await ForSale.find(condition)
       .populate("userId", "firstName lastName avatar reviewCount reviewMark")
       .populate("adId", "adFileName imagesFileName uploadDate duration")
       .sort({ postDate: -1 })
       .skip(req.body.index * 50)
       .limit(50);
+
+    if (
+      req.body.centerLocationSelected == true &&
+      req.body.SearchWithin != "" &&
+      req.body.SearchWithin != "Nationwide"
+    ) {
+      let distance = 0;
+      if (req.body.SearchWithin != "Current location")
+        distance = parseInt(req.body.SearchWithin.match(/\d+/)[0]);
+      nextForSaleAds = nextForSaleAds.filter((item) => {
+        return (
+          calculateDistance(
+            item.lat,
+            item.lng,
+            req.body.selectedLocation.lat,
+            req.body.selectedLocation.lng
+          ) < distance
+        );
+      });
+    }
+
+    if (req.body.sellerRating && req.body.sellerRating.length) {
+      nextForSaleAds = nextForSaleAds.filter(
+        (item: any) =>
+          req.body.sellerRating.indexOf(
+            item.userId.reviewMark.toString() + "*"
+          ) !== -1
+      );
+    }
+    if (req.body.smartTV && req.body.smartTV.length) {
+      nextForSaleAds = nextForSaleAds.filter(
+        (item: any) =>
+          req.body.smartTV.indexOf(item.itemDetailInfo.smartTV) !== -1
+      );
+    }
+    if (req.body.warrantyInformation && req.body.warrantyInformation.length) {
+      nextForSaleAds = nextForSaleAds.filter(
+        (item: any) =>
+          req.body.warrantyInformation.indexOf(
+            item.itemDetailInfo.warrantyInformation
+          ) !== -1
+      );
+    }
+    if (req.body.colour && req.body.colour.length) {
+      nextForSaleAds = nextForSaleAds.filter(
+        (item: any) =>
+          req.body.colour.indexOf(item.itemDetailInfo.colour) !== -1
+      );
+    }
+    if (req.body.brand && req.body.brand.length) {
+      nextForSaleAds = nextForSaleAds.filter(
+        (item: any) => req.body.brand.indexOf(item.itemDetailInfo.brand) !== -1
+      );
+    }
+    if (req.body.resolution && req.body.resolution.length) {
+      nextForSaleAds = nextForSaleAds.filter(
+        (item: any) =>
+          req.body.resolution.indexOf(item.itemDetailInfo.resolution) !== -1
+      );
+    }
+    if (req.body.screenSize && req.body.screenSize.length) {
+      nextForSaleAds = nextForSaleAds.filter(
+        (item: any) =>
+          req.body.screenSize.indexOf(item.itemDetailInfo.screenSize) !== -1
+      );
+    }
+    if (req.body.itemCondition && req.body.itemCondition.length) {
+      nextForSaleAds = nextForSaleAds.filter(
+        (item: any) =>
+          req.body.itemCondition.indexOf(item.itemDetailInfo.itemCondition) !==
+          -1
+      );
+    }
+    if (req.body.minPrice && req.body.minPrice != "") {
+      nextForSaleAds = nextForSaleAds.filter(
+        (item: any) => Number(req.body.minPrice) <= item.price
+      );
+    }
+    if (req.body.maxPrice && req.body.maxPrice != "") {
+      nextForSaleAds = nextForSaleAds.filter(
+        (item: any) => Number(req.body.maxPrice) >= item.price
+      );
+    }
+
     return res.json({
       success: true,
       message: "Successfully loaded!",
       data: nextForSaleAds,
     });
   } catch (error) {
+    console.log(error);
     return res.json({
       success: false,
       message: "Error found while loading more electronics ads",
@@ -158,6 +250,8 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
     let condition: any = {};
     let condition1: any = {};
 
+    console.log(123123, req.body);
+
     if (req.body.countryCode != null) {
       if (req.body.countryCode == "") {
         condition.address = req.body.address;
@@ -165,40 +259,39 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
         condition.countryCode = req.body.countryCode;
       }
     }
-
-    let countryCode: any = "";
-    if (req.body.countryCode == "") {
-      const obj = await ForSale.findOne({ address: req.body.address });
-      countryCode = obj?.countryCode;
-    } else {
-      countryCode = req.body.countryCode;
-    }
-
-    condition1.countryCode = countryCode;
-    condition1.itemCategory = req.body.itemCategory;
-
-    const saleObjPerCountry = await ForSale.find(condition1);
-
+    condition.itemCategory = req.body.itemCategory;
     let itemSearchRangeCountList: any = [];
     let distanceList: any = [];
-    saleObjPerCountry.map((item: any, index: number) => {
-      distanceList.push(
-        calculateDistance(item.lat, item.lng, req.body.lat, req.body.lng)
-      );
-    });
-    req.body.itemSearchRange.map((item: number, index: number) => {
-      if (item == -1) {
-        itemSearchRangeCountList.push({
-          range: -1,
-          distance: distanceList.length,
-        });
-      } else {
-        itemSearchRangeCountList.push({
-          range: item,
-          distance: distanceList.filter((dis) => dis <= item).length,
-        });
-      }
-    });
+
+    if (req.body.centerLocationAvailable == true) {
+      condition1.countryCode = req.body.selectedLocation.countryCode;
+      condition1.itemCategory = req.body.itemCategory;
+      const saleObjPerCountry = await ForSale.find(condition1);
+      saleObjPerCountry.map((item: any, index: number) => {
+        distanceList.push(
+          calculateDistance(
+            item.lat,
+            item.lng,
+            req.body.selectedLocation.lat,
+            req.body.selectedLocation.lng
+          )
+        );
+      });
+
+      req.body.itemSearchRange.map((item: number, index: number) => {
+        if (item == -1) {
+          itemSearchRangeCountList.push({
+            range: -1,
+            distance: distanceList.length,
+          });
+        } else {
+          itemSearchRangeCountList.push({
+            range: item,
+            distance: distanceList.filter((dis) => dis <= item).length,
+          });
+        }
+      });
+    }
 
     let itemConditionCountList: any = [];
     let itemScreenSizeCountList: any = [];
@@ -215,7 +308,6 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
     );
 
     let countPerPrice = -1;
-
     if (req.body.minPrice != "" && req.body.maxPrice != "") {
       countPerPrice = saleObj.filter(
         (item) =>
