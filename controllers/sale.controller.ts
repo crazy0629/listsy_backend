@@ -108,7 +108,7 @@ export const getMoreForSaleAds = async (req: Request, res: Response) => {
             item.lng,
             req.body.selectedLocation.lat,
             req.body.selectedLocation.lng
-          ) < distance
+          ) <= distance
         );
       });
     }
@@ -250,8 +250,6 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
     let condition: any = {};
     let condition1: any = {};
 
-    console.log(123123, req.body);
-
     if (req.body.countryCode != null) {
       if (req.body.countryCode == "") {
         condition.address = req.body.address;
@@ -293,6 +291,7 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
       });
     }
 
+    let itemTypeCountList: any = [];
     let itemConditionCountList: any = [];
     let itemScreenSizeCountList: any = [];
     let itemResolutionCountList: any = [];
@@ -301,6 +300,11 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
     let itemColourCountList: any = [];
     let itemWarrantyInformationCountList: any = [];
     let itemSellerRatingCountList: any = [];
+    let itemBatteryLifeCountList: any = [];
+    let itemOperatingSystemCountList: any = [];
+    let itemStorageCapacityCountList: any = [];
+    let itemProcessorCountList: any = [];
+    let itemRamSizeCountList: any = [];
 
     const saleObj = await ForSale.find(condition).populate(
       "userId",
@@ -326,96 +330,192 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
       ).length;
     }
 
-    req.body.itemSellerRating.map((item: string, index: number) => {
-      let rating = Number(item.at(0));
-      let count = 0;
-      count = saleObj.filter(
-        (obj) =>
-          (obj as any)?.userId.reviewMark == rating &&
-          (obj as any).itemCategory == req.body.itemCategory
-      ).length;
-      itemSellerRatingCountList.push({ itemSellerRating: item, count });
-    });
-
-    req.body.itemCondition.map((item: string, index: number) => {
-      let count = 0;
-      count = saleObj.filter(
-        (obj) =>
-          (obj as any)?.itemDetailInfo?.itemCondition == item &&
-          (obj as any).itemCategory == req.body.itemCategory
-      ).length;
-
-      itemConditionCountList.push({ itemCondition: item, count });
-    });
-
-    req.body.itemScreenSize.map((item: string, index: number) => {
-      let count = 0;
-      count = saleObj.filter(
-        (obj) =>
-          (obj as any)?.itemDetailInfo?.screenSize == item &&
-          (obj as any).itemCategory == req.body.itemCategory
-      ).length;
-
-      itemScreenSizeCountList.push({ itemScreenSize: item, count });
-    });
-
-    req.body.itemBrand.map((item: string, index: number) => {
-      let count = 0;
-      count = saleObj.filter(
-        (obj) =>
-          (obj as any)?.itemDetailInfo?.brand == item &&
-          (obj as any).itemCategory == req.body.itemCategory
-      ).length;
-
-      itemBrandCountList.push({ itemBrand: item, count });
-    });
-
-    req.body.itemResolution.map((item: string, index: number) => {
-      let count = 0;
-      count = saleObj.filter(
-        (obj) =>
-          (obj as any)?.itemDetailInfo?.resolution == item &&
-          (obj as any).itemCategory == req.body.itemCategory
-      ).length;
-
-      itemResolutionCountList.push({ itemResolution: item, count });
-    });
-
-    req.body.itemSmartTV.map((item: string, index: number) => {
-      let count = 0;
-      count = saleObj.filter(
-        (obj) =>
-          (obj as any)?.itemDetailInfo?.smartTV == item &&
-          (obj as any).itemCategory == req.body.itemCategory
-      ).length;
-
-      itemSmartTVCountList.push({ itemSmartTV: item, count });
-    });
-
-    req.body.itemColour.map((item: string, index: number) => {
-      let count = 0;
-      count = saleObj.filter(
-        (obj) =>
-          (obj as any)?.itemDetailInfo?.colour == item &&
-          (obj as any).itemCategory == req.body.itemCategory
-      ).length;
-
-      itemColourCountList.push({ itemColour: item, count });
-    });
-
-    req.body.itemWarrantyInformation.map((item: string, index: number) => {
-      let count = 0;
-      count = saleObj.filter(
-        (obj) =>
-          (obj as any)?.itemDetailInfo?.warrantyInformation == item &&
-          (obj as any).itemCategory == req.body.itemCategory
-      ).length;
-
-      itemWarrantyInformationCountList.push({
-        itemWarrantyInformation: item,
-        count,
+    if (req.body.itemSellerRating) {
+      req.body.itemSellerRating.map((item: string, index: number) => {
+        let rating = Number(item.at(0));
+        let count = 0;
+        count = saleObj.filter(
+          (obj) =>
+            (obj as any)?.userId.reviewMark == rating &&
+            (obj as any).itemCategory == req.body.itemCategory
+        ).length;
+        itemSellerRatingCountList.push({ itemSellerRating: item, count });
       });
-    });
+    }
+
+    if (req.body.itemCondition) {
+      req.body.itemCondition.map((item: string, index: number) => {
+        let count = 0;
+        count = saleObj.filter(
+          (obj) =>
+            (obj as any)?.itemDetailInfo?.itemCondition == item &&
+            (obj as any).itemCategory == req.body.itemCategory
+        ).length;
+
+        itemConditionCountList.push({ itemCondition: item, count });
+      });
+    }
+
+    if (req.body.itemProcessor) {
+      req.body.itemProcessor.map((item: string, index: number) => {
+        let count = 0;
+        count = saleObj.filter(
+          (obj) =>
+            (obj as any)?.itemDetailInfo?.processor == item &&
+            (obj as any).itemCategory == req.body.itemCategory
+        ).length;
+
+        itemProcessorCountList.push({ itemProcessor: item, count });
+      });
+    }
+    if (req.body.itemScreenSize) {
+      req.body.itemScreenSize.map((item: string, index: number) => {
+        let count = 0;
+        count = saleObj.filter(
+          (obj) =>
+            (obj as any)?.itemDetailInfo?.screenSize == item &&
+            (obj as any).itemCategory == req.body.itemCategory
+        ).length;
+
+        itemScreenSizeCountList.push({ itemScreenSize: item, count });
+      });
+    }
+
+    if (req.body.itemBrand) {
+      req.body.itemBrand.map((item: string, index: number) => {
+        let count = 0;
+        count = saleObj.filter(
+          (obj) =>
+            (obj as any)?.itemDetailInfo?.brand == item &&
+            (obj as any).itemCategory == req.body.itemCategory
+        ).length;
+
+        itemBrandCountList.push({ itemBrand: item, count });
+      });
+    }
+
+    if (req.body.itemResolution) {
+      req.body.itemResolution.map((item: string, index: number) => {
+        let count = 0;
+        count = saleObj.filter(
+          (obj) =>
+            (obj as any)?.itemDetailInfo?.resolution == item &&
+            (obj as any).itemCategory == req.body.itemCategory
+        ).length;
+
+        itemResolutionCountList.push({ itemResolution: item, count });
+      });
+    }
+
+    if (req.body.itemSmartTV) {
+      req.body.itemSmartTV.map((item: string, index: number) => {
+        let count = 0;
+        count = saleObj.filter(
+          (obj) =>
+            (obj as any)?.itemDetailInfo?.smartTV == item &&
+            (obj as any).itemCategory == req.body.itemCategory
+        ).length;
+
+        itemSmartTVCountList.push({ itemSmartTV: item, count });
+      });
+    }
+
+    if (req.body.itemOperatingSystem) {
+      req.body.itemOperatingSystem.map((item: string, index: number) => {
+        let count = 0;
+        count = saleObj.filter(
+          (obj) =>
+            (obj as any)?.itemDetailInfo?.operatingSystem == item &&
+            (obj as any).itemCategory == req.body.itemCategory
+        ).length;
+
+        itemOperatingSystemCountList.push({ itemOperatingSystem: item, count });
+      });
+    }
+
+    if (req.body.itemStorageCapacity) {
+      req.body.itemStorageCapacity.map((item: string, index: number) => {
+        let count = 0;
+        count = saleObj.filter(
+          (obj) =>
+            (obj as any)?.itemDetailInfo?.storageCapacity == item &&
+            (obj as any).itemCategory == req.body.itemCategory
+        ).length;
+
+        itemStorageCapacityCountList.push({ itemStorageCapacity: item, count });
+      });
+    }
+
+    if (req.body.itemType) {
+      req.body.itemType.map((item: string, index: number) => {
+        let count = 0;
+        count = saleObj.filter(
+          (obj) =>
+            (obj as any)?.itemDetailInfo?.type == item &&
+            (obj as any).itemCategory == req.body.itemCategory
+        ).length;
+
+        itemTypeCountList.push({ itemType: item, count });
+      });
+    }
+
+    if (req.body.itemBatteryLife) {
+      req.body.itemBatteryLife.map((item: string, index: number) => {
+        let count = 0;
+        count = saleObj.filter(
+          (obj) =>
+            (obj as any)?.itemDetailInfo?.batteryLife == item &&
+            (obj as any).itemCategory == req.body.itemCategory
+        ).length;
+
+        itemBatteryLifeCountList.push({
+          itemBatteryLife: item,
+          count,
+        });
+      });
+    }
+
+    if (req.body.itemRamSize) {
+      req.body.itemRamSize.map((item: string, index: number) => {
+        let count = 0;
+        count = saleObj.filter(
+          (obj) =>
+            (obj as any)?.itemDetailInfo?.ramSize == item &&
+            (obj as any).itemCategory == req.body.itemCategory
+        ).length;
+
+        itemRamSizeCountList.push({ itemRamSize: item, count });
+      });
+    }
+
+    if (req.body.itemColour) {
+      req.body.itemColour.map((item: string, index: number) => {
+        let count = 0;
+        count = saleObj.filter(
+          (obj) =>
+            (obj as any)?.itemDetailInfo?.colour == item &&
+            (obj as any).itemCategory == req.body.itemCategory
+        ).length;
+
+        itemColourCountList.push({ itemColour: item, count });
+      });
+    }
+
+    if (req.body.itemWarrantyInformation) {
+      req.body.itemWarrantyInformation.map((item: string, index: number) => {
+        let count = 0;
+        count = saleObj.filter(
+          (obj) =>
+            (obj as any)?.itemDetailInfo?.warrantyInformation == item &&
+            (obj as any).itemCategory == req.body.itemCategory
+        ).length;
+
+        itemWarrantyInformationCountList.push({
+          itemWarrantyInformation: item,
+          count,
+        });
+      });
+    }
 
     return res.json({
       success: true,
@@ -428,7 +528,13 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
       itemWarrantyInformation: itemWarrantyInformationCountList,
       itemRangeInfo: itemSearchRangeCountList,
       itemSellerRating: itemSellerRatingCountList,
+      itemBatteryLife: itemBatteryLifeCountList,
       itemPriceRange: countPerPrice,
+      itemOperatingSystem: itemOperatingSystemCountList,
+      itemStorageCapacity: itemStorageCapacityCountList,
+      itemProcessor: itemProcessorCountList,
+      itemRamSize: itemRamSizeCountList,
+      itemType: itemTypeCountList,
     });
   } catch (error) {
     res.json({ success: false, message: "Error happpend while getting data!" });
