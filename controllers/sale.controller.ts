@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import ForSale from "../models/ForSale";
 import mongoose from "mongoose";
 import Ad from "../models/Ad";
-import { count } from "console";
 
 /**
  * This function is called when users upload items for sale ads.
