@@ -245,6 +245,280 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
   return distance;
 }
 
+const getCountOnWarrantyInformation = async (
+  itemWarrantyInformation,
+  filter,
+  itemCategory,
+  saleObj
+) => {
+  let itemWarrantyInformationCountList: any = [];
+
+  itemWarrantyInformation.map((item: string, index: number) => {
+    let count = 0;
+    count = saleObj.filter((obj) => {
+      const isMatchingWarrantyInformation =
+        (obj as any)?.itemDetailInfo?.warrantyInformation == item;
+      const isMatchingItemCategory = (obj as any).itemCategory == itemCategory;
+      const hasConditions = filter.itemCondition.length > 0;
+
+      const itemConditionMatches = hasConditions
+        ? filter.itemCondition.includes(
+            (obj as any)?.itemDetailInfo?.itemCondition
+          )
+        : true;
+      return (
+        isMatchingWarrantyInformation &&
+        isMatchingItemCategory &&
+        itemConditionMatches
+      );
+    }).length;
+    itemWarrantyInformationCountList.push({
+      itemWarrantyInformation: item,
+      count,
+    });
+  });
+  return itemWarrantyInformationCountList;
+};
+
+const getCountOnSmartTV = async (
+  itemSmartTV,
+  filter,
+  itemCategory,
+  saleObj
+) => {
+  let itemSmartTVCountList: any = [];
+
+  itemSmartTV.map((item: string, index: number) => {
+    let count = 0;
+    count = saleObj.filter((obj) => {
+      const isMatchingSmart = (obj as any)?.itemDetailInfo?.smartTV == item;
+      const isMatchingItemCategory = (obj as any).itemCategory == itemCategory;
+      const hasConditions = filter.itemCondition.length > 0;
+
+      const itemConditionMatches = hasConditions
+        ? filter.itemCondition.includes(
+            (obj as any)?.itemDetailInfo?.itemCondition
+          )
+        : true;
+      return isMatchingSmart && isMatchingItemCategory && itemConditionMatches;
+    }).length;
+
+    itemSmartTVCountList.push({
+      itemSmartTV: item,
+      count,
+    });
+  });
+  return itemSmartTVCountList;
+};
+
+const getCountOnSellerRating = async (
+  itemSellerRating,
+  filter,
+  itemCategory,
+  saleObj
+) => {
+  let itemSellerRatingCountList: any = [];
+
+  itemSellerRating.map((item: string, index: number) => {
+    let rating = Number(item.at(0));
+    let count = 0;
+    count = saleObj.filter((obj) => {
+      const isMatchingRating = (obj as any)?.userId.reviewMark == rating;
+      const isMatchingItemCategory = (obj as any).itemCategory == itemCategory;
+      const hasConditions = filter.itemCondition.length > 0;
+
+      const itemConditionMatches = hasConditions
+        ? filter.itemCondition.includes(
+            (obj as any)?.itemDetailInfo?.itemCondition
+          )
+        : true;
+
+      return isMatchingRating && isMatchingItemCategory && itemConditionMatches;
+    }).length;
+
+    itemSellerRatingCountList.push({ itemSellerRating: item, count });
+  });
+
+  return itemSellerRatingCountList;
+};
+
+const getCountOnBrand = async (itemBrand, filter, itemCategory, saleObj) => {
+  let itemBrandCountList: any = [];
+
+  itemBrand.map((item: string, index: number) => {
+    let count = 0;
+    count = saleObj.filter((obj) => {
+      const isMatchingBrand = (obj as any)?.itemDetailInfo?.brand == item;
+      const isMatchingItemCategory = (obj as any).itemCategory == itemCategory;
+      const hasConditions = filter.itemCondition.length > 0;
+
+      const itemConditionMatches = hasConditions
+        ? filter.itemCondition.includes(
+            (obj as any)?.itemDetailInfo?.itemCondition
+          )
+        : true;
+      return isMatchingBrand && isMatchingItemCategory && itemConditionMatches;
+    }).length;
+
+    itemBrandCountList.push({
+      itemBrand: item,
+      count,
+    });
+  });
+  return itemBrandCountList;
+};
+
+const getCountOnColor = async (itemColour, filter, itemCategory, saleObj) => {
+  let itemColourCountList: any = [];
+
+  itemColour.map((item: string, index: number) => {
+    let count = 0;
+    count = saleObj.filter((obj) => {
+      const isMatchingColour = (obj as any)?.itemDetailInfo?.colour == item;
+      const isMatchingItemCategory = (obj as any).itemCategory == itemCategory;
+      const hasConditions = filter.itemCondition.length > 0;
+
+      const itemConditionMatches = hasConditions
+        ? filter.itemCondition.includes(
+            (obj as any)?.itemDetailInfo?.itemCondition
+          )
+        : true;
+      return isMatchingColour && isMatchingItemCategory && itemConditionMatches;
+    }).length;
+
+    itemColourCountList.push({
+      itemColour: item,
+      count,
+    });
+  });
+  return itemColourCountList;
+};
+
+const getCountOnResolution = async (
+  itemResolution,
+  filter,
+  itemCategory,
+  saleObj
+) => {
+  let itemResolutionCountList: any = [];
+
+  itemResolution.map((item: string, index: number) => {
+    let count = 0;
+    count = saleObj.filter((obj) => {
+      const isMatchingResolution =
+        (obj as any)?.itemDetailInfo?.resolution == item;
+      const isMatchingItemCategory = (obj as any).itemCategory == itemCategory;
+      const hasConditions = filter.itemCondition.length > 0;
+
+      const itemConditionMatches = hasConditions
+        ? filter.itemCondition.includes(
+            (obj as any)?.itemDetailInfo?.itemCondition
+          )
+        : true;
+      return (
+        isMatchingResolution && isMatchingItemCategory && itemConditionMatches
+      );
+    }).length;
+
+    itemResolutionCountList.push({
+      itemResolution: item,
+      count,
+    });
+  });
+  return itemResolutionCountList;
+};
+
+const getCountOnScreenSize = async (
+  itemScreenSize,
+  filter,
+  itemCategory,
+  saleObj
+) => {
+  let itemScreenSizeCountList: any = [];
+
+  itemScreenSize.map((item: string, index: number) => {
+    let count = 0;
+    count = saleObj.filter((obj) => {
+      const isMatchingScreenSize =
+        (obj as any)?.itemDetailInfo?.screenSize == item;
+      const isMatchingItemCategory = (obj as any).itemCategory == itemCategory;
+      const hasConditions = filter.itemCondition.length > 0;
+
+      const itemConditionMatches = hasConditions
+        ? filter.itemCondition.includes(
+            (obj as any)?.itemDetailInfo?.itemCondition
+          )
+        : true;
+      return (
+        isMatchingScreenSize && isMatchingItemCategory && itemConditionMatches
+      );
+    }).length;
+
+    itemScreenSizeCountList.push({
+      itemScreenSize: item,
+      count,
+    });
+  });
+  return itemScreenSizeCountList;
+};
+
+const getCountOnItemCondition = async (
+  itemCondition,
+  filter,
+  itemCategory,
+  saleObj
+) => {
+  let itemConditionCountList: any = [];
+
+  itemCondition.map((item: string, index: number) => {
+    let count = 0;
+    count = saleObj.filter((obj) => {
+      const isMatchingCondition =
+        (obj as any)?.itemDetailInfo?.itemCondition == item;
+      const isMatchingItemCategory = (obj as any).itemCategory == itemCategory;
+
+      const screenSizeCondition = filter.screenSize.length > 0;
+
+      const screenSizeMatches = screenSizeCondition
+        ? filter.screenSize.includes((obj as any)?.itemDetailInfo?.screenSize)
+        : true;
+
+      return isMatchingCondition && isMatchingItemCategory && screenSizeMatches;
+    }).length;
+
+    itemConditionCountList.push({
+      itemCondition: item,
+      count,
+    });
+  });
+
+  return itemConditionCountList;
+};
+
+const getCountOnMinMaxPrice = async (minPrice, maxPrice, filter, saleObj) => {
+  let countPerPrice = -1;
+
+  countPerPrice = saleObj.filter((item) => {
+    let minPriceCondition = true,
+      maxPriceCondition = true;
+
+    if (minPrice != "") minPriceCondition = item.price >= Number(minPrice);
+    if (maxPrice != "") maxPriceCondition = item.price <= Number(maxPrice);
+
+    const isMatchItemCondition = filter.itemCondition.length > 0;
+
+    const itemConditionMatches = isMatchItemCondition
+      ? filter.itemCondition.includes(
+          (item as any)?.itemDetailInfo?.itemCondition
+        )
+      : true;
+
+    return minPriceCondition && maxPriceCondition && itemConditionMatches;
+  }).length;
+
+  return countPerPrice;
+};
+
 export const getCountOfEachFilter = async (req: Request, res: Response) => {
   try {
     let condition: any = {};
@@ -305,55 +579,34 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
     let itemStorageCapacityCountList: any = [];
     let itemProcessorCountList: any = [];
     let itemRamSizeCountList: any = [];
-
     const saleObj = await ForSale.find(condition).populate(
       "userId",
       "firstName lastName avatar reviewCount reviewMark"
     );
 
-    let countPerPrice = -1;
-    if (req.body.minPrice != "" && req.body.maxPrice != "") {
-      countPerPrice = saleObj.filter(
-        (item) =>
-          item.price >= Number(req.body.minPrice) &&
-          item.price <= Number(req.body.maxPrice)
-      ).length;
-    }
-    if (req.body.minPrice == "" && req.body.maxPrice != "") {
-      countPerPrice = saleObj.filter(
-        (item) => item.price <= Number(req.body.maxPrice)
-      ).length;
-    }
-    if (req.body.minPrice != "" && req.body.maxPrice == "") {
-      countPerPrice = saleObj.filter(
-        (item) => item.price >= Number(req.body.minPrice)
-      ).length;
-    }
+    let countPerPrice = await getCountOnMinMaxPrice(
+      req.body.minPrice,
+      req.body.maxPrice,
+      req.body.filter,
+      saleObj
+    );
 
     if (req.body.itemSellerRating) {
-      req.body.itemSellerRating.map((item: string, index: number) => {
-        let rating = Number(item.at(0));
-        let count = 0;
-        count = saleObj.filter(
-          (obj) =>
-            (obj as any)?.userId.reviewMark == rating &&
-            (obj as any).itemCategory == req.body.itemCategory
-        ).length;
-        itemSellerRatingCountList.push({ itemSellerRating: item, count });
-      });
+      itemSellerRatingCountList = await getCountOnSellerRating(
+        req.body.itemSellerRating,
+        req.body.filter,
+        req.body.itemCategory,
+        saleObj
+      );
     }
 
     if (req.body.itemCondition) {
-      req.body.itemCondition.map((item: string, index: number) => {
-        let count = 0;
-        count = saleObj.filter(
-          (obj) =>
-            (obj as any)?.itemDetailInfo?.itemCondition == item &&
-            (obj as any).itemCategory == req.body.itemCategory
-        ).length;
-
-        itemConditionCountList.push({ itemCondition: item, count });
-      });
+      itemConditionCountList = await getCountOnItemCondition(
+        req.body.itemCondition,
+        req.body.filter,
+        req.body.itemCategory,
+        saleObj
+      );
     }
 
     if (req.body.itemProcessor) {
@@ -369,55 +622,39 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
       });
     }
     if (req.body.itemScreenSize) {
-      req.body.itemScreenSize.map((item: string, index: number) => {
-        let count = 0;
-        count = saleObj.filter(
-          (obj) =>
-            (obj as any)?.itemDetailInfo?.screenSize == item &&
-            (obj as any).itemCategory == req.body.itemCategory
-        ).length;
-
-        itemScreenSizeCountList.push({ itemScreenSize: item, count });
-      });
+      itemScreenSizeCountList = await getCountOnScreenSize(
+        req.body.itemScreenSize,
+        req.body.filter,
+        req.body.itemCategory,
+        saleObj
+      );
     }
 
     if (req.body.itemBrand) {
-      req.body.itemBrand.map((item: string, index: number) => {
-        let count = 0;
-        count = saleObj.filter(
-          (obj) =>
-            (obj as any)?.itemDetailInfo?.brand == item &&
-            (obj as any).itemCategory == req.body.itemCategory
-        ).length;
-
-        itemBrandCountList.push({ itemBrand: item, count });
-      });
+      itemBrandCountList = await getCountOnBrand(
+        req.body.itemBrand,
+        req.body.filter,
+        req.body.itemCategory,
+        saleObj
+      );
     }
 
     if (req.body.itemResolution) {
-      req.body.itemResolution.map((item: string, index: number) => {
-        let count = 0;
-        count = saleObj.filter(
-          (obj) =>
-            (obj as any)?.itemDetailInfo?.resolution == item &&
-            (obj as any).itemCategory == req.body.itemCategory
-        ).length;
-
-        itemResolutionCountList.push({ itemResolution: item, count });
-      });
+      itemResolutionCountList = await getCountOnResolution(
+        req.body.itemResolution,
+        req.body.filter,
+        req.body.itemCategory,
+        saleObj
+      );
     }
 
     if (req.body.itemSmartTV) {
-      req.body.itemSmartTV.map((item: string, index: number) => {
-        let count = 0;
-        count = saleObj.filter(
-          (obj) =>
-            (obj as any)?.itemDetailInfo?.smartTV == item &&
-            (obj as any).itemCategory == req.body.itemCategory
-        ).length;
-
-        itemSmartTVCountList.push({ itemSmartTV: item, count });
-      });
+      itemSmartTVCountList = await getCountOnSmartTV(
+        req.body.itemSmartTV,
+        req.body.filter,
+        req.body.itemCategory,
+        saleObj
+      );
     }
 
     if (req.body.itemOperatingSystem) {
@@ -489,32 +726,21 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
     }
 
     if (req.body.itemColour) {
-      req.body.itemColour.map((item: string, index: number) => {
-        let count = 0;
-        count = saleObj.filter(
-          (obj) =>
-            (obj as any)?.itemDetailInfo?.colour == item &&
-            (obj as any).itemCategory == req.body.itemCategory
-        ).length;
-
-        itemColourCountList.push({ itemColour: item, count });
-      });
+      itemColourCountList = await getCountOnColor(
+        req.body.itemColour,
+        req.body.filter,
+        req.body.itemCategory,
+        saleObj
+      );
     }
 
     if (req.body.itemWarrantyInformation) {
-      req.body.itemWarrantyInformation.map((item: string, index: number) => {
-        let count = 0;
-        count = saleObj.filter(
-          (obj) =>
-            (obj as any)?.itemDetailInfo?.warrantyInformation == item &&
-            (obj as any).itemCategory == req.body.itemCategory
-        ).length;
-
-        itemWarrantyInformationCountList.push({
-          itemWarrantyInformation: item,
-          count,
-        });
-      });
+      itemWarrantyInformationCountList = await getCountOnWarrantyInformation(
+        req.body.itemWarrantyInformation,
+        req.body.filter,
+        req.body.itemCategory,
+        saleObj
+      );
     }
 
     return res.json({
