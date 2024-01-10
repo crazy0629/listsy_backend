@@ -248,7 +248,9 @@ const getCountOnWarrantyInformation = async (
   itemWarrantyInformation,
   filter,
   itemCategory,
-  saleObj
+  saleObj,
+  minPrice,
+  maxPrice
 ) => {
   let itemWarrantyInformationCountList: any = [];
 
@@ -258,17 +260,60 @@ const getCountOnWarrantyInformation = async (
       const isMatchingWarrantyInformation =
         (obj as any)?.itemDetailInfo?.warrantyInformation == item;
       const isMatchingItemCategory = (obj as any).itemCategory == itemCategory;
-      const hasConditions = filter.itemCondition.length > 0;
+      let minPriceCondition = true;
+      let maxPriceCondition = true;
 
-      const itemConditionMatches = hasConditions
+      if (minPrice != "")
+        minPriceCondition = (obj as any).price >= Number(minPrice);
+      if (maxPrice != "")
+        maxPriceCondition = (obj as any).price <= Number(maxPrice);
+
+      const selectedItemCondition = filter.itemCondition.length > 0;
+      const selectedScreenSizeCondition = filter.screenSize.length > 0;
+      const selectedResolutionCondition = filter.resolution.length > 0;
+      const selectedBrandCondition = filter.brand.length > 0;
+      const selectedSmartTVCondition = filter.smartTV.length > 0;
+      const selectedColorCondition = filter.colour.length > 0;
+      const selectedSellerRatingCondition = filter.sellerRating.length > 0;
+
+      const itemConditionMatches = selectedItemCondition
         ? filter.itemCondition.includes(
             (obj as any)?.itemDetailInfo?.itemCondition
           )
         : true;
+      const screenSizeMatches = selectedScreenSizeCondition
+        ? filter.screenSize.includes((obj as any)?.itemDetailInfo?.screenSize)
+        : true;
+      const resolutionMatches = selectedResolutionCondition
+        ? filter.resolution.includes((obj as any)?.itemDetailInfo?.resolution)
+        : true;
+      const brandMatches = selectedBrandCondition
+        ? filter.brand.includes((obj as any)?.itemDetailInfo?.brand)
+        : true;
+      const smartTVMatches = selectedSmartTVCondition
+        ? filter.smartTV.includes((obj as any)?.itemDetailInfo.smartTV)
+        : true;
+      const colourMatches = selectedColorCondition
+        ? filter.colour.includes((obj as any)?.itemDetailInfo.colour)
+        : true;
+      const sellerRatingMatches = selectedSellerRatingCondition
+        ? filter.sellerRating.includes(
+            parseInt((obj as any)?.userId.reviewMark).toString() + "*"
+          )
+        : true;
+
       return (
         isMatchingWarrantyInformation &&
         isMatchingItemCategory &&
-        itemConditionMatches
+        minPriceCondition &&
+        maxPriceCondition &&
+        itemConditionMatches &&
+        screenSizeMatches &&
+        resolutionMatches &&
+        brandMatches &&
+        smartTVMatches &&
+        colourMatches &&
+        sellerRatingMatches
       );
     }).length;
     itemWarrantyInformationCountList.push({
@@ -283,7 +328,9 @@ const getCountOnSmartTV = async (
   itemSmartTV,
   filter,
   itemCategory,
-  saleObj
+  saleObj,
+  minPrice,
+  maxPrice
 ) => {
   let itemSmartTVCountList: any = [];
 
@@ -292,14 +339,63 @@ const getCountOnSmartTV = async (
     count = saleObj.filter((obj) => {
       const isMatchingSmart = (obj as any)?.itemDetailInfo?.smartTV == item;
       const isMatchingItemCategory = (obj as any).itemCategory == itemCategory;
-      const hasConditions = filter.itemCondition.length > 0;
+      let minPriceCondition = true;
+      let maxPriceCondition = true;
 
-      const itemConditionMatches = hasConditions
+      if (minPrice != "")
+        minPriceCondition = (obj as any).price >= Number(minPrice);
+      if (maxPrice != "")
+        maxPriceCondition = (obj as any).price <= Number(maxPrice);
+
+      const selectedItemCondition = filter.itemCondition.length > 0;
+      const selectedScreenSizeCondition = filter.screenSize.length > 0;
+      const selectedResolutionCondition = filter.resolution.length > 0;
+      const selectedBrandCondition = filter.brand.length > 0;
+      const selectedWarrantyCondition = filter.warrantyInformation.length > 0;
+      const selectedColorCondition = filter.colour.length > 0;
+      const selectedSellerRatingCondition = filter.sellerRating.length > 0;
+
+      const itemConditionMatches = selectedItemCondition
         ? filter.itemCondition.includes(
             (obj as any)?.itemDetailInfo?.itemCondition
           )
         : true;
-      return isMatchingSmart && isMatchingItemCategory && itemConditionMatches;
+      const screenSizeMatches = selectedScreenSizeCondition
+        ? filter.screenSize.includes((obj as any)?.itemDetailInfo?.screenSize)
+        : true;
+      const resolutionMatches = selectedResolutionCondition
+        ? filter.resolution.includes((obj as any)?.itemDetailInfo?.resolution)
+        : true;
+      const brandMatches = selectedBrandCondition
+        ? filter.brand.includes((obj as any)?.itemDetailInfo?.brand)
+        : true;
+      const warrantyInformationMatches = selectedWarrantyCondition
+        ? filter.warrantyInformation.includes(
+            (obj as any)?.itemDetailInfo.warrantyInformation
+          )
+        : true;
+      const colourMatches = selectedColorCondition
+        ? filter.colour.includes((obj as any)?.itemDetailInfo.colour)
+        : true;
+      const sellerRatingMatches = selectedSellerRatingCondition
+        ? filter.sellerRating.includes(
+            parseInt((obj as any)?.userId.reviewMark).toString() + "*"
+          )
+        : true;
+
+      return (
+        isMatchingSmart &&
+        isMatchingItemCategory &&
+        minPriceCondition &&
+        maxPriceCondition &&
+        itemConditionMatches &&
+        screenSizeMatches &&
+        resolutionMatches &&
+        brandMatches &&
+        warrantyInformationMatches &&
+        colourMatches &&
+        sellerRatingMatches
+      );
     }).length;
 
     itemSmartTVCountList.push({
@@ -314,7 +410,9 @@ const getCountOnSellerRating = async (
   itemSellerRating,
   filter,
   itemCategory,
-  saleObj
+  saleObj,
+  minPrice,
+  maxPrice
 ) => {
   let itemSellerRatingCountList: any = [];
 
@@ -324,15 +422,61 @@ const getCountOnSellerRating = async (
     count = saleObj.filter((obj) => {
       const isMatchingRating = (obj as any)?.userId.reviewMark == rating;
       const isMatchingItemCategory = (obj as any).itemCategory == itemCategory;
-      const hasConditions = filter.itemCondition.length > 0;
+      let minPriceCondition = true;
+      let maxPriceCondition = true;
 
-      const itemConditionMatches = hasConditions
+      if (minPrice != "")
+        minPriceCondition = (obj as any).price >= Number(minPrice);
+      if (maxPrice != "")
+        maxPriceCondition = (obj as any).price <= Number(maxPrice);
+
+      const selectedItemCondition = filter.itemCondition.length > 0;
+      const selectedScreenSizeCondition = filter.screenSize.length > 0;
+      const selectedResolutionCondition = filter.resolution.length > 0;
+      const selectedBrandCondition = filter.brand.length > 0;
+      const selectedSmartTVCondition = filter.smartTV.length > 0;
+      const selectedColorCondition = filter.colour.length > 0;
+      const selectedWarrantyCondition = filter.warrantyInformation.length > 0;
+
+      const itemConditionMatches = selectedItemCondition
         ? filter.itemCondition.includes(
             (obj as any)?.itemDetailInfo?.itemCondition
           )
         : true;
+      const screenSizeMatches = selectedScreenSizeCondition
+        ? filter.screenSize.includes((obj as any)?.itemDetailInfo?.screenSize)
+        : true;
+      const resolutionMatches = selectedResolutionCondition
+        ? filter.resolution.includes((obj as any)?.itemDetailInfo?.resolution)
+        : true;
+      const brandMatches = selectedBrandCondition
+        ? filter.brand.includes((obj as any)?.itemDetailInfo?.brand)
+        : true;
+      const smartTVMatches = selectedSmartTVCondition
+        ? filter.smartTV.includes((obj as any)?.itemDetailInfo.smartTV)
+        : true;
+      const colourMatches = selectedColorCondition
+        ? filter.colour.includes((obj as any)?.itemDetailInfo.colour)
+        : true;
+      const warrantyInformationMatches = selectedWarrantyCondition
+        ? filter.warrantyInformation.includes(
+            (obj as any)?.itemDetailInfo.warrantyInformation
+          )
+        : true;
 
-      return isMatchingRating && isMatchingItemCategory && itemConditionMatches;
+      return (
+        isMatchingRating &&
+        isMatchingItemCategory &&
+        minPriceCondition &&
+        maxPriceCondition &&
+        itemConditionMatches &&
+        screenSizeMatches &&
+        resolutionMatches &&
+        brandMatches &&
+        smartTVMatches &&
+        colourMatches &&
+        warrantyInformationMatches
+      );
     }).length;
 
     itemSellerRatingCountList.push({ itemSellerRating: item, count });
@@ -341,7 +485,14 @@ const getCountOnSellerRating = async (
   return itemSellerRatingCountList;
 };
 
-const getCountOnBrand = async (itemBrand, filter, itemCategory, saleObj) => {
+const getCountOnBrand = async (
+  itemBrand,
+  filter,
+  itemCategory,
+  saleObj,
+  minPrice,
+  maxPrice
+) => {
   let itemBrandCountList: any = [];
 
   itemBrand.map((item: string, index: number) => {
@@ -349,14 +500,63 @@ const getCountOnBrand = async (itemBrand, filter, itemCategory, saleObj) => {
     count = saleObj.filter((obj) => {
       const isMatchingBrand = (obj as any)?.itemDetailInfo?.brand == item;
       const isMatchingItemCategory = (obj as any).itemCategory == itemCategory;
-      const hasConditions = filter.itemCondition.length > 0;
+      let minPriceCondition = true;
+      let maxPriceCondition = true;
 
-      const itemConditionMatches = hasConditions
+      if (minPrice != "")
+        minPriceCondition = (obj as any).price >= Number(minPrice);
+      if (maxPrice != "")
+        maxPriceCondition = (obj as any).price <= Number(maxPrice);
+
+      const selectedItemCondition = filter.itemCondition.length > 0;
+      const selectedScreenSizeCondition = filter.screenSize.length > 0;
+      const selectedResolutionCondition = filter.resolution.length > 0;
+      const selectedSmartTVCondition = filter.smartTV.length > 0;
+      const selectedWarrantyCondition = filter.warrantyInformation.length > 0;
+      const selectedColorCondition = filter.colour.length > 0;
+      const selectedSellerRatingCondition = filter.sellerRating.length > 0;
+
+      const itemConditionMatches = selectedItemCondition
         ? filter.itemCondition.includes(
             (obj as any)?.itemDetailInfo?.itemCondition
           )
         : true;
-      return isMatchingBrand && isMatchingItemCategory && itemConditionMatches;
+      const screenSizeMatches = selectedScreenSizeCondition
+        ? filter.screenSize.includes((obj as any)?.itemDetailInfo?.screenSize)
+        : true;
+      const resolutionMatches = selectedResolutionCondition
+        ? filter.resolution.includes((obj as any)?.itemDetailInfo?.resolution)
+        : true;
+      const smartTVMatches = selectedSmartTVCondition
+        ? filter.smartTV.includes((obj as any)?.itemDetailInfo.smartTV)
+        : true;
+      const colourMatches = selectedColorCondition
+        ? filter.colour.includes((obj as any)?.itemDetailInfo.colour)
+        : true;
+      const warrantyInformationMatches = selectedWarrantyCondition
+        ? filter.warrantyInformation.includes(
+            (obj as any)?.itemDetailInfo.warrantyInformation
+          )
+        : true;
+      const sellerRatingMatches = selectedSellerRatingCondition
+        ? filter.sellerRating.includes(
+            parseInt((obj as any)?.userId.reviewMark).toString() + "*"
+          )
+        : true;
+
+      return (
+        isMatchingBrand &&
+        isMatchingItemCategory &&
+        minPriceCondition &&
+        maxPriceCondition &&
+        itemConditionMatches &&
+        screenSizeMatches &&
+        resolutionMatches &&
+        warrantyInformationMatches &&
+        smartTVMatches &&
+        colourMatches &&
+        sellerRatingMatches
+      );
     }).length;
 
     itemBrandCountList.push({
@@ -367,7 +567,14 @@ const getCountOnBrand = async (itemBrand, filter, itemCategory, saleObj) => {
   return itemBrandCountList;
 };
 
-const getCountOnColor = async (itemColour, filter, itemCategory, saleObj) => {
+const getCountOnColor = async (
+  itemColour,
+  filter,
+  itemCategory,
+  saleObj,
+  minPrice,
+  maxPrice
+) => {
   let itemColourCountList: any = [];
 
   itemColour.map((item: string, index: number) => {
@@ -375,14 +582,63 @@ const getCountOnColor = async (itemColour, filter, itemCategory, saleObj) => {
     count = saleObj.filter((obj) => {
       const isMatchingColour = (obj as any)?.itemDetailInfo?.colour == item;
       const isMatchingItemCategory = (obj as any).itemCategory == itemCategory;
-      const hasConditions = filter.itemCondition.length > 0;
+      let minPriceCondition = true;
+      let maxPriceCondition = true;
 
-      const itemConditionMatches = hasConditions
+      if (minPrice != "")
+        minPriceCondition = (obj as any).price >= Number(minPrice);
+      if (maxPrice != "")
+        maxPriceCondition = (obj as any).price <= Number(maxPrice);
+
+      const selectedItemCondition = filter.itemCondition.length > 0;
+      const selectedScreenSizeCondition = filter.screenSize.length > 0;
+      const selectedResolutionCondition = filter.resolution.length > 0;
+      const selectedBrandCondition = filter.brand.length > 0;
+      const selectedSmartTVCondition = filter.smartTV.length > 0;
+      const selectedWarrantyCondition = filter.warrantyInformation.length > 0;
+      const selectedSellerRatingCondition = filter.sellerRating.length > 0;
+
+      const itemConditionMatches = selectedItemCondition
         ? filter.itemCondition.includes(
             (obj as any)?.itemDetailInfo?.itemCondition
           )
         : true;
-      return isMatchingColour && isMatchingItemCategory && itemConditionMatches;
+      const screenSizeMatches = selectedScreenSizeCondition
+        ? filter.screenSize.includes((obj as any)?.itemDetailInfo?.screenSize)
+        : true;
+      const resolutionMatches = selectedResolutionCondition
+        ? filter.resolution.includes((obj as any)?.itemDetailInfo?.resolution)
+        : true;
+      const brandMatches = selectedBrandCondition
+        ? filter.brand.includes((obj as any)?.itemDetailInfo?.brand)
+        : true;
+      const smartTVMatches = selectedSmartTVCondition
+        ? filter.smartTV.includes((obj as any)?.itemDetailInfo.smartTV)
+        : true;
+      const warrantyInformationMatches = selectedWarrantyCondition
+        ? filter.warrantyInformation.includes(
+            (obj as any)?.itemDetailInfo.warrantyInformation
+          )
+        : true;
+      const sellerRatingMatches = selectedSellerRatingCondition
+        ? filter.sellerRating.includes(
+            parseInt((obj as any)?.userId.reviewMark).toString() + "*"
+          )
+        : true;
+
+      return (
+        isMatchingColour &&
+        isMatchingItemCategory &&
+        minPriceCondition &&
+        maxPriceCondition &&
+        itemConditionMatches &&
+        screenSizeMatches &&
+        resolutionMatches &&
+        brandMatches &&
+        smartTVMatches &&
+        warrantyInformationMatches &&
+        sellerRatingMatches
+      );
     }).length;
 
     itemColourCountList.push({
@@ -397,7 +653,9 @@ const getCountOnResolution = async (
   itemResolution,
   filter,
   itemCategory,
-  saleObj
+  saleObj,
+  minPrice,
+  maxPrice
 ) => {
   let itemResolutionCountList: any = [];
 
@@ -407,15 +665,61 @@ const getCountOnResolution = async (
       const isMatchingResolution =
         (obj as any)?.itemDetailInfo?.resolution == item;
       const isMatchingItemCategory = (obj as any).itemCategory == itemCategory;
-      const hasConditions = filter.itemCondition.length > 0;
+      let minPriceCondition = true;
+      let maxPriceCondition = true;
 
-      const itemConditionMatches = hasConditions
+      if (minPrice != "")
+        minPriceCondition = (obj as any).price >= Number(minPrice);
+      if (maxPrice != "")
+        maxPriceCondition = (obj as any).price <= Number(maxPrice);
+
+      const selectedItemCondition = filter.itemCondition.length > 0;
+      const selectedScreenSizeCondition = filter.screenSize.length > 0;
+      const selectedWarrantyCondition = filter.warrantyInformation.length > 0;
+      const selectedBrandCondition = filter.brand.length > 0;
+      const selectedSmartTVCondition = filter.smartTV.length > 0;
+      const selectedColorCondition = filter.colour.length > 0;
+      const selectedSellerRatingCondition = filter.sellerRating.length > 0;
+
+      const itemConditionMatches = selectedItemCondition
         ? filter.itemCondition.includes(
             (obj as any)?.itemDetailInfo?.itemCondition
           )
         : true;
+      const screenSizeMatches = selectedScreenSizeCondition
+        ? filter.screenSize.includes((obj as any)?.itemDetailInfo?.screenSize)
+        : true;
+      const warrantyInformationMatches = selectedWarrantyCondition
+        ? filter.warrantyInformation.includes(
+            (obj as any)?.itemDetailInfo?.warrantyInformation
+          )
+        : true;
+      const brandMatches = selectedBrandCondition
+        ? filter.brand.includes((obj as any)?.itemDetailInfo?.brand)
+        : true;
+      const smartTVMatches = selectedSmartTVCondition
+        ? filter.smartTV.includes((obj as any)?.itemDetailInfo.smartTV)
+        : true;
+      const colourMatches = selectedColorCondition
+        ? filter.colour.includes((obj as any)?.itemDetailInfo.colour)
+        : true;
+      const sellerRatingMatches = selectedSellerRatingCondition
+        ? filter.sellerRating.includes(
+            parseInt((obj as any)?.userId.reviewMark).toString() + "*"
+          )
+        : true;
       return (
-        isMatchingResolution && isMatchingItemCategory && itemConditionMatches
+        isMatchingResolution &&
+        isMatchingItemCategory &&
+        minPriceCondition &&
+        maxPriceCondition &&
+        itemConditionMatches &&
+        screenSizeMatches &&
+        warrantyInformationMatches &&
+        brandMatches &&
+        smartTVMatches &&
+        colourMatches &&
+        sellerRatingMatches
       );
     }).length;
 
@@ -431,7 +735,9 @@ const getCountOnScreenSize = async (
   itemScreenSize,
   filter,
   itemCategory,
-  saleObj
+  saleObj,
+  minPrice,
+  maxPrice
 ) => {
   let itemScreenSizeCountList: any = [];
 
@@ -441,15 +747,61 @@ const getCountOnScreenSize = async (
       const isMatchingScreenSize =
         (obj as any)?.itemDetailInfo?.screenSize == item;
       const isMatchingItemCategory = (obj as any).itemCategory == itemCategory;
-      const hasConditions = filter.itemCondition.length > 0;
+      let minPriceCondition = true;
+      let maxPriceCondition = true;
 
-      const itemConditionMatches = hasConditions
+      if (minPrice != "")
+        minPriceCondition = (obj as any).price >= Number(minPrice);
+      if (maxPrice != "")
+        maxPriceCondition = (obj as any).price <= Number(maxPrice);
+
+      const selectedItemCondition = filter.itemCondition.length > 0;
+      const selectedWarrantyCondition = filter.warrantyInformation.length > 0;
+      const selectedResolutionCondition = filter.resolution.length > 0;
+      const selectedBrandCondition = filter.brand.length > 0;
+      const selectedSmartTVCondition = filter.smartTV.length > 0;
+      const selectedColorCondition = filter.colour.length > 0;
+      const selectedSellerRatingCondition = filter.sellerRating.length > 0;
+
+      const itemConditionMatches = selectedItemCondition
         ? filter.itemCondition.includes(
             (obj as any)?.itemDetailInfo?.itemCondition
           )
         : true;
+      const warrantyInformationMatches = selectedWarrantyCondition
+        ? filter.warrantyInformation.includes(
+            (obj as any)?.itemDetailInfo?.warrantyInformation
+          )
+        : true;
+      const resolutionMatches = selectedResolutionCondition
+        ? filter.resolution.includes((obj as any)?.itemDetailInfo?.resolution)
+        : true;
+      const brandMatches = selectedBrandCondition
+        ? filter.brand.includes((obj as any)?.itemDetailInfo?.brand)
+        : true;
+      const smartTVMatches = selectedSmartTVCondition
+        ? filter.smartTV.includes((obj as any)?.itemDetailInfo.smartTV)
+        : true;
+      const colourMatches = selectedColorCondition
+        ? filter.colour.includes((obj as any)?.itemDetailInfo.colour)
+        : true;
+      const sellerRatingMatches = selectedSellerRatingCondition
+        ? filter.sellerRating.includes(
+            parseInt((obj as any)?.userId.reviewMark).toString() + "*"
+          )
+        : true;
       return (
-        isMatchingScreenSize && isMatchingItemCategory && itemConditionMatches
+        isMatchingScreenSize &&
+        isMatchingItemCategory &&
+        minPriceCondition &&
+        maxPriceCondition &&
+        itemConditionMatches &&
+        warrantyInformationMatches &&
+        resolutionMatches &&
+        brandMatches &&
+        smartTVMatches &&
+        colourMatches &&
+        sellerRatingMatches
       );
     }).length;
 
@@ -465,7 +817,9 @@ const getCountOnItemCondition = async (
   itemCondition,
   filter,
   itemCategory,
-  saleObj
+  saleObj,
+  minPrice,
+  maxPrice
 ) => {
   let itemConditionCountList: any = [];
 
@@ -476,13 +830,61 @@ const getCountOnItemCondition = async (
         (obj as any)?.itemDetailInfo?.itemCondition == item;
       const isMatchingItemCategory = (obj as any).itemCategory == itemCategory;
 
-      const screenSizeCondition = filter.screenSize.length > 0;
+      let minPriceCondition = true;
+      let maxPriceCondition = true;
 
-      const screenSizeMatches = screenSizeCondition
+      if (minPrice != "")
+        minPriceCondition = (obj as any).price >= Number(minPrice);
+      if (maxPrice != "")
+        maxPriceCondition = (obj as any).price <= Number(maxPrice);
+
+      const selectedWarrantyCondition = filter.warrantyInformation.length > 0;
+      const selectedScreenSizeCondition = filter.screenSize.length > 0;
+      const selectedResolutionCondition = filter.resolution.length > 0;
+      const selectedBrandCondition = filter.brand.length > 0;
+      const selectedSmartTVCondition = filter.smartTV.length > 0;
+      const selectedColorCondition = filter.colour.length > 0;
+      const selectedSellerRatingCondition = filter.sellerRating.length > 0;
+
+      const warrantyInformationMatches = selectedWarrantyCondition
+        ? filter.warrantyInformation.includes(
+            (obj as any)?.itemDetailInfo?.warrantyInformation
+          )
+        : true;
+      const screenSizeMatches = selectedScreenSizeCondition
         ? filter.screenSize.includes((obj as any)?.itemDetailInfo?.screenSize)
         : true;
+      const resolutionMatches = selectedResolutionCondition
+        ? filter.resolution.includes((obj as any)?.itemDetailInfo?.resolution)
+        : true;
+      const brandMatches = selectedBrandCondition
+        ? filter.brand.includes((obj as any)?.itemDetailInfo?.brand)
+        : true;
+      const smartTVMatches = selectedSmartTVCondition
+        ? filter.smartTV.includes((obj as any)?.itemDetailInfo.smartTV)
+        : true;
+      const colourMatches = selectedColorCondition
+        ? filter.colour.includes((obj as any)?.itemDetailInfo.colour)
+        : true;
+      const sellerRatingMatches = selectedSellerRatingCondition
+        ? filter.sellerRating.includes(
+            parseInt((obj as any)?.userId.reviewMark).toString() + "*"
+          )
+        : true;
 
-      return isMatchingCondition && isMatchingItemCategory && screenSizeMatches;
+      return (
+        isMatchingCondition &&
+        isMatchingItemCategory &&
+        minPriceCondition &&
+        maxPriceCondition &&
+        warrantyInformationMatches &&
+        screenSizeMatches &&
+        resolutionMatches &&
+        brandMatches &&
+        smartTVMatches &&
+        colourMatches &&
+        sellerRatingMatches
+      );
     }).length;
 
     itemConditionCountList.push({
@@ -497,22 +899,64 @@ const getCountOnItemCondition = async (
 const getCountOnMinMaxPrice = async (minPrice, maxPrice, filter, saleObj) => {
   let countPerPrice = -1;
 
-  countPerPrice = saleObj.filter((item) => {
+  countPerPrice = saleObj.filter((obj) => {
     let minPriceCondition = true,
       maxPriceCondition = true;
 
-    if (minPrice != "") minPriceCondition = item.price >= Number(minPrice);
-    if (maxPrice != "") maxPriceCondition = item.price <= Number(maxPrice);
+    if (minPrice != "") minPriceCondition = obj.price >= Number(minPrice);
+    if (maxPrice != "") maxPriceCondition = obj.price <= Number(maxPrice);
 
-    const isMatchItemCondition = filter.itemCondition.length > 0;
-
-    const itemConditionMatches = isMatchItemCondition
+    const selectedItemCondition = filter.itemCondition.length > 0;
+    const selectedScreenSizeCondition = filter.screenSize.length > 0;
+    const selectedResolutionCondition = filter.resolution.length > 0;
+    const selectedBrandCondition = filter.brand.length > 0;
+    const selectedSmartTVCondition = filter.smartTV.length > 0;
+    const selectedColorCondition = filter.colour.length > 0;
+    const selectedSellerRatingCondition = filter.sellerRating.length > 0;
+    const selectedWarrantyCondition = filter.warrantyInformation.length > 0;
+    const itemConditionMatches = selectedItemCondition
       ? filter.itemCondition.includes(
-          (item as any)?.itemDetailInfo?.itemCondition
+          (obj as any)?.itemDetailInfo?.itemCondition
+        )
+      : true;
+    const screenSizeMatches = selectedScreenSizeCondition
+      ? filter.screenSize.includes((obj as any)?.itemDetailInfo?.screenSize)
+      : true;
+    const resolutionMatches = selectedResolutionCondition
+      ? filter.resolution.includes((obj as any)?.itemDetailInfo?.resolution)
+      : true;
+    const brandMatches = selectedBrandCondition
+      ? filter.brand.includes((obj as any)?.itemDetailInfo?.brand)
+      : true;
+    const smartTVMatches = selectedSmartTVCondition
+      ? filter.smartTV.includes((obj as any)?.itemDetailInfo.smartTV)
+      : true;
+    const colourMatches = selectedColorCondition
+      ? filter.colour.includes((obj as any)?.itemDetailInfo.colour)
+      : true;
+    const warrantyInformationMatches = selectedWarrantyCondition
+      ? filter.warrantyInformation.includes(
+          (obj as any)?.itemDetailInfo.warrantyInformation
+        )
+      : true;
+    const sellerRatingMatches = selectedSellerRatingCondition
+      ? filter.sellerRating.includes(
+          parseInt((obj as any)?.userId.reviewMark).toString() + "*"
         )
       : true;
 
-    return minPriceCondition && maxPriceCondition && itemConditionMatches;
+    return (
+      minPriceCondition &&
+      maxPriceCondition &&
+      itemConditionMatches &&
+      screenSizeMatches &&
+      resolutionMatches &&
+      brandMatches &&
+      smartTVMatches &&
+      colourMatches &&
+      sellerRatingMatches &&
+      warrantyInformationMatches
+    );
   }).length;
 
   return countPerPrice;
@@ -523,14 +967,24 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
     let condition: any = {};
     let condition1: any = {};
 
-    if (req.body.countryCode != null) {
-      if (req.body.countryCode == "") {
-        condition.address = req.body.address;
-      } else {
-        condition.countryCode = req.body.countryCode;
+    if (
+      req.body.centerLocationAvailable == true &&
+      req.body.filter.SearchWithin != ""
+    ) {
+      condition.countryCode = req.body.selectedLocation.countryCode;
+    } else {
+      if (req.body.countryCode != null) {
+        if (req.body.countryCode == "") {
+          condition.address = req.body.address;
+        } else {
+          condition.countryCode = req.body.countryCode;
+        }
       }
     }
-    condition.itemCategory = req.body.itemCategory;
+    if (req.body.itemCategory != "All" && req.body.itemCategory != "") {
+      condition.itemCategory = req.body.itemCategory;
+    }
+
     let itemSearchRangeCountList: any = [];
     let distanceList: any = [];
 
@@ -538,16 +992,93 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
       condition1.countryCode = req.body.selectedLocation.countryCode;
       condition1.itemCategory = req.body.itemCategory;
       const saleObjPerCountry = await ForSale.find(condition1);
-      saleObjPerCountry.map((item: any, index: number) => {
-        distanceList.push(
-          calculateDistance(
-            item.lat,
-            item.lng,
-            req.body.selectedLocation.lat,
-            req.body.selectedLocation.lng
-          )
-        );
-      });
+      saleObjPerCountry
+        .filter((obj) => {
+          let minPriceCondition = true;
+          let maxPriceCondition = true;
+
+          if (req.body.minPrice != "")
+            minPriceCondition = (obj as any).price >= Number(req.body.minPrice);
+          if (req.body.maxPrice != "")
+            maxPriceCondition = (obj as any).price <= Number(req.body.maxPrice);
+
+          const selectedItemCondition =
+            req.body.filter.itemCondition.length > 0;
+          const selectedScreenSizeCondition =
+            req.body.filter.screenSize.length > 0;
+          const selectedResolutionCondition =
+            req.body.filter.resolution.length > 0;
+          const selectedBrandCondition = req.body.filter.brand.length > 0;
+          const selectedSmartTVCondition = req.body.filter.smartTV.length > 0;
+          const selectedColorCondition = req.body.filter.colour.length > 0;
+          const selectedSellerRatingCondition =
+            req.body.filter.sellerRating.length > 0;
+          const selectedWarrantyCondition =
+            req.body.filter.warrantyInformation.length > 0;
+
+          const itemConditionMatches = selectedItemCondition
+            ? req.body.filter.itemCondition.includes(
+                (obj as any)?.itemDetailInfo?.itemCondition
+              )
+            : true;
+          const screenSizeMatches = selectedScreenSizeCondition
+            ? req.body.filter.screenSize.includes(
+                (obj as any)?.itemDetailInfo?.screenSize
+              )
+            : true;
+          const resolutionMatches = selectedResolutionCondition
+            ? req.body.filter.resolution.includes(
+                (obj as any)?.itemDetailInfo?.resolution
+              )
+            : true;
+          const brandMatches = selectedBrandCondition
+            ? req.body.filter.brand.includes(
+                (obj as any)?.itemDetailInfo?.brand
+              )
+            : true;
+          const smartTVMatches = selectedSmartTVCondition
+            ? req.body.filter.smartTV.includes(
+                (obj as any)?.itemDetailInfo.smartTV
+              )
+            : true;
+          const colourMatches = selectedColorCondition
+            ? req.body.filter.colour.includes(
+                (obj as any)?.itemDetailInfo.colour
+              )
+            : true;
+          const warrantyInformationMatches = selectedWarrantyCondition
+            ? req.body.filter.warrantyInformation.includes(
+                (obj as any)?.itemDetailInfo.warrantyInformation
+              )
+            : true;
+          const sellerRatingMatches = selectedSellerRatingCondition
+            ? req.body.filter.sellerRating.includes(
+                parseInt((obj as any)?.userId.reviewMark).toString() + "*"
+              )
+            : true;
+          return (
+            minPriceCondition &&
+            maxPriceCondition &&
+            itemConditionMatches &&
+            screenSizeMatches &&
+            resolutionMatches &&
+            brandMatches &&
+            smartTVMatches &&
+            colourMatches &&
+            sellerRatingMatches &&
+            warrantyInformationMatches
+          );
+        })
+        .map((item: any, index: number) => {
+          distanceList.push(
+            calculateDistance(
+              item.lat,
+              item.lng,
+              req.body.selectedLocation.lat,
+              req.body.selectedLocation.lng
+            )
+          );
+        });
 
       req.body.itemSearchRange.map((item: number, index: number) => {
         if (item == -1) {
@@ -578,10 +1109,31 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
     let itemStorageCapacityCountList: any = [];
     let itemProcessorCountList: any = [];
     let itemRamSizeCountList: any = [];
-    const saleObj = await ForSale.find(condition).populate(
+
+    let saleObj = await ForSale.find(condition).populate(
       "userId",
       "firstName lastName avatar reviewCount reviewMark"
     );
+
+    if (
+      req.body.centerLocationAvailable == true &&
+      req.body.filter.SearchWithin != "" &&
+      req.body.filter.SearchWithin != "Nationwide"
+    ) {
+      let distance = 0;
+      if (req.body.filter.SearchWithin != "Current location")
+        distance = parseInt(req.body.filter.SearchWithin.match(/\d+/)[0]);
+      saleObj = saleObj.filter((item) => {
+        return (
+          calculateDistance(
+            item.lat,
+            item.lng,
+            req.body.selectedLocation.lat,
+            req.body.selectedLocation.lng
+          ) <= distance
+        );
+      });
+    }
 
     let countPerPrice = await getCountOnMinMaxPrice(
       req.body.minPrice,
@@ -595,7 +1147,9 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
         req.body.itemSellerRating,
         req.body.filter,
         req.body.itemCategory,
-        saleObj
+        saleObj,
+        req.body.minPrice,
+        req.body.maxPrice
       );
     }
 
@@ -604,7 +1158,9 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
         req.body.itemCondition,
         req.body.filter,
         req.body.itemCategory,
-        saleObj
+        saleObj,
+        req.body.minPrice,
+        req.body.maxPrice
       );
     }
 
@@ -625,7 +1181,9 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
         req.body.itemScreenSize,
         req.body.filter,
         req.body.itemCategory,
-        saleObj
+        saleObj,
+        req.body.minPrice,
+        req.body.maxPrice
       );
     }
 
@@ -634,7 +1192,9 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
         req.body.itemBrand,
         req.body.filter,
         req.body.itemCategory,
-        saleObj
+        saleObj,
+        req.body.minPrice,
+        req.body.maxPrice
       );
     }
 
@@ -643,7 +1203,9 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
         req.body.itemResolution,
         req.body.filter,
         req.body.itemCategory,
-        saleObj
+        saleObj,
+        req.body.minPrice,
+        req.body.maxPrice
       );
     }
 
@@ -652,7 +1214,9 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
         req.body.itemSmartTV,
         req.body.filter,
         req.body.itemCategory,
-        saleObj
+        saleObj,
+        req.body.minPrice,
+        req.body.maxPrice
       );
     }
 
@@ -729,7 +1293,9 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
         req.body.itemColour,
         req.body.filter,
         req.body.itemCategory,
-        saleObj
+        saleObj,
+        req.body.minPrice,
+        req.body.maxPrice
       );
     }
 
@@ -738,7 +1304,9 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
         req.body.itemWarrantyInformation,
         req.body.filter,
         req.body.itemCategory,
-        saleObj
+        saleObj,
+        req.body.minPrice,
+        req.body.maxPrice
       );
     }
 

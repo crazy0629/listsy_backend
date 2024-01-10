@@ -145,7 +145,6 @@ router.post("/estate/getAdDetailInfo", estate.getAdDetailInfo);
 router.post("/sale/loadForSaleInfo", sale.loadForSaleInfo);
 router.post("/sale/getForSaleAds", sale.getMoreForSaleAds);
 router.post("/sale/getAdDetailInfo", sale.getAdDetailInfo);
-
 router.post("/sale/getCountForEachCategory", sale.getCountForEachCategory);
 router.post("/sale/getCountOfEachFilter", sale.getCountOfEachFilter);
 
