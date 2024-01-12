@@ -14,7 +14,7 @@ import Ad from "../models/Ad";
 export const loadForSaleInfo = async (req: Request, res: Response) => {
   ForSale.find({ adId: new mongoose.Types.ObjectId(req.body.adId) }).then(
     async (model: any) => {
-      if (model.length) {
+      if (model?.length) {
         return res.json({
           success: false,
           message: "Error found!",
@@ -112,7 +112,7 @@ export const getMoreForSaleAds = async (req: Request, res: Response) => {
       });
     }
 
-    if (req.body.sellerRating && req.body.sellerRating.length) {
+    if (req.body.sellerRating && req.body.sellerRating?.length) {
       nextForSaleAds = nextForSaleAds.filter(
         (item: any) =>
           req.body.sellerRating.indexOf(
@@ -120,13 +120,13 @@ export const getMoreForSaleAds = async (req: Request, res: Response) => {
           ) !== -1
       );
     }
-    if (req.body.smartTV && req.body.smartTV.length) {
+    if (req.body.smartTV && req.body.smartTV?.length) {
       nextForSaleAds = nextForSaleAds.filter(
         (item: any) =>
           req.body.smartTV.indexOf(item.itemDetailInfo.smartTV) !== -1
       );
     }
-    if (req.body.warrantyInformation && req.body.warrantyInformation.length) {
+    if (req.body.warrantyInformation && req.body.warrantyInformation?.length) {
       nextForSaleAds = nextForSaleAds.filter(
         (item: any) =>
           req.body.warrantyInformation.indexOf(
@@ -134,34 +134,73 @@ export const getMoreForSaleAds = async (req: Request, res: Response) => {
           ) !== -1
       );
     }
-    if (req.body.colour && req.body.colour.length) {
+    if (req.body.colour && req.body.colour?.length) {
       nextForSaleAds = nextForSaleAds.filter(
         (item: any) =>
           req.body.colour.indexOf(item.itemDetailInfo.colour) !== -1
       );
     }
-    if (req.body.brand && req.body.brand.length) {
+    if (req.body.brand && req.body.brand?.length) {
       nextForSaleAds = nextForSaleAds.filter(
         (item: any) => req.body.brand.indexOf(item.itemDetailInfo.brand) !== -1
       );
     }
-    if (req.body.resolution && req.body.resolution.length) {
+    if (req.body.resolution && req.body.resolution?.length) {
       nextForSaleAds = nextForSaleAds.filter(
         (item: any) =>
           req.body.resolution.indexOf(item.itemDetailInfo.resolution) !== -1
       );
     }
-    if (req.body.screenSize && req.body.screenSize.length) {
+    if (req.body.screenSize && req.body.screenSize?.length) {
       nextForSaleAds = nextForSaleAds.filter(
         (item: any) =>
           req.body.screenSize.indexOf(item.itemDetailInfo.screenSize) !== -1
       );
     }
-    if (req.body.itemCondition && req.body.itemCondition.length) {
+    if (req.body.itemCondition && req.body.itemCondition?.length) {
       nextForSaleAds = nextForSaleAds.filter(
         (item: any) =>
           req.body.itemCondition.indexOf(item.itemDetailInfo.itemCondition) !==
           -1
+      );
+    }
+    if (req.body.batteryLife && req.body.batteryLife?.length) {
+      nextForSaleAds = nextForSaleAds.filter(
+        (item: any) =>
+          req.body.batteryLife.indexOf(item.itemDetailInfo.batteryLife) !== -1
+      );
+    }
+    if (req.body.operatingSystem && req.body.operatingSystem?.length) {
+      nextForSaleAds = nextForSaleAds.filter(
+        (item: any) =>
+          req.body.operatingSystem.indexOf(
+            item.itemDetailInfo.operatingSystem
+          ) !== -1
+      );
+    }
+    if (req.body.storageCapacity && req.body.storageCapacity?.length) {
+      nextForSaleAds = nextForSaleAds.filter(
+        (item: any) =>
+          req.body.storageCapacity.indexOf(
+            item.itemDetailInfo.storageCapacity
+          ) !== -1
+      );
+    }
+    if (req.body.processor && req.body.processor?.length) {
+      nextForSaleAds = nextForSaleAds.filter(
+        (item: any) =>
+          req.body.processor.indexOf(item.itemDetailInfo.processor) !== -1
+      );
+    }
+    if (req.body.ramSize && req.body.ramSize?.length) {
+      nextForSaleAds = nextForSaleAds.filter(
+        (item: any) =>
+          req.body.ramSize.indexOf(item.itemDetailInfo.ramSize) !== -1
+      );
+    }
+    if (req.body.type && req.body.type?.length) {
+      nextForSaleAds = nextForSaleAds.filter(
+        (item: any) => req.body.type.indexOf(item.itemDetailInfo.type) !== -1
       );
     }
     if (req.body.minPrice && req.body.minPrice != "") {
@@ -181,7 +220,6 @@ export const getMoreForSaleAds = async (req: Request, res: Response) => {
       data: nextForSaleAds,
     });
   } catch (error) {
-    console.log(error);
     return res.json({
       success: false,
       message: "Error found while loading more electronics ads",
@@ -268,13 +306,21 @@ const getCountOnWarrantyInformation = async (
       if (maxPrice != "")
         maxPriceCondition = (obj as any).price <= Number(maxPrice);
 
-      const selectedItemCondition = filter.itemCondition.length > 0;
-      const selectedScreenSizeCondition = filter.screenSize.length > 0;
-      const selectedResolutionCondition = filter.resolution.length > 0;
-      const selectedBrandCondition = filter.brand.length > 0;
-      const selectedSmartTVCondition = filter.smartTV.length > 0;
-      const selectedColorCondition = filter.colour.length > 0;
-      const selectedSellerRatingCondition = filter.sellerRating.length > 0;
+      const selectedItemCondition = filter.itemCondition?.length > 0;
+      const selectedScreenSizeCondition = filter.screenSize?.length > 0;
+      const selectedResolutionCondition = filter.resolution?.length > 0;
+      const selectedBrandCondition = filter.brand?.length > 0;
+      const selectedSmartTVCondition = filter.smartTV?.length > 0;
+      const selectedColorCondition = filter.colour?.length > 0;
+      const selectedSellerRatingCondition = filter.sellerRating?.length > 0;
+      const selectedBatteryLifeCondition = filter.batteryLife?.length > 0;
+      const selectedOperatingSystemCondition =
+        filter.operatingSystem?.length > 0;
+      const selectedStorageCapacityCondition =
+        filter.storageCapacity?.length > 0;
+      const selectedProcessorCondition = filter.processor?.length > 0;
+      const selectedRamSizeCondition = filter.ramSize?.length > 0;
+      const selectedTypeCondition = filter.type?.length > 0;
 
       const itemConditionMatches = selectedItemCondition
         ? filter.itemCondition.includes(
@@ -301,6 +347,28 @@ const getCountOnWarrantyInformation = async (
             parseInt((obj as any)?.userId.reviewMark).toString() + "*"
           )
         : true;
+      const batteryLifeMatches = selectedBatteryLifeCondition
+        ? filter.batteryLife.includes((obj as any)?.itemDetailInfo.batteryLife)
+        : true;
+      const operatingSystemMatches = selectedOperatingSystemCondition
+        ? filter.operatingSystem.includes(
+            (obj as any)?.itemDetailInfo.operatingSystem
+          )
+        : true;
+      const storageCapacityMatches = selectedStorageCapacityCondition
+        ? filter.storageCapacity.includes(
+            (obj as any)?.itemDetailInfo.storageCapacity
+          )
+        : true;
+      const processorMatches = selectedProcessorCondition
+        ? filter.processor.includes((obj as any)?.itemDetailInfo.processor)
+        : true;
+      const ramSizeMatches = selectedRamSizeCondition
+        ? filter.ramSize.includes((obj as any)?.itemDetailInfo.ramSize)
+        : true;
+      const typeMatches = selectedTypeCondition
+        ? filter.type.includes((obj as any)?.itemDetailInfo.type)
+        : true;
 
       return (
         isMatchingWarrantyInformation &&
@@ -313,9 +381,15 @@ const getCountOnWarrantyInformation = async (
         brandMatches &&
         smartTVMatches &&
         colourMatches &&
-        sellerRatingMatches
+        sellerRatingMatches &&
+        batteryLifeMatches &&
+        operatingSystemMatches &&
+        storageCapacityMatches &&
+        processorMatches &&
+        ramSizeMatches &&
+        typeMatches
       );
-    }).length;
+    })?.length;
     itemWarrantyInformationCountList.push({
       itemWarrantyInformation: item,
       count,
@@ -347,13 +421,21 @@ const getCountOnSmartTV = async (
       if (maxPrice != "")
         maxPriceCondition = (obj as any).price <= Number(maxPrice);
 
-      const selectedItemCondition = filter.itemCondition.length > 0;
-      const selectedScreenSizeCondition = filter.screenSize.length > 0;
-      const selectedResolutionCondition = filter.resolution.length > 0;
-      const selectedBrandCondition = filter.brand.length > 0;
-      const selectedWarrantyCondition = filter.warrantyInformation.length > 0;
-      const selectedColorCondition = filter.colour.length > 0;
-      const selectedSellerRatingCondition = filter.sellerRating.length > 0;
+      const selectedItemCondition = filter.itemCondition?.length > 0;
+      const selectedScreenSizeCondition = filter.screenSize?.length > 0;
+      const selectedResolutionCondition = filter.resolution?.length > 0;
+      const selectedBrandCondition = filter.brand?.length > 0;
+      const selectedWarrantyCondition = filter.warrantyInformation?.length > 0;
+      const selectedColorCondition = filter.colour?.length > 0;
+      const selectedSellerRatingCondition = filter.sellerRating?.length > 0;
+      const selectedBatteryLifeCondition = filter.batteryLife?.length > 0;
+      const selectedOperatingSystemCondition =
+        filter.operatingSystem?.length > 0;
+      const selectedStorageCapacityCondition =
+        filter.storageCapacity?.length > 0;
+      const selectedProcessorCondition = filter.processor?.length > 0;
+      const selectedRamSizeCondition = filter.ramSize?.length > 0;
+      const selectedTypeCondition = filter.type?.length > 0;
 
       const itemConditionMatches = selectedItemCondition
         ? filter.itemCondition.includes(
@@ -382,6 +464,28 @@ const getCountOnSmartTV = async (
             parseInt((obj as any)?.userId.reviewMark).toString() + "*"
           )
         : true;
+      const batteryLifeMatches = selectedBatteryLifeCondition
+        ? filter.batteryLife.includes((obj as any)?.itemDetailInfo.batteryLife)
+        : true;
+      const operatingSystemMatches = selectedOperatingSystemCondition
+        ? filter.operatingSystem.includes(
+            (obj as any)?.itemDetailInfo.operatingSystem
+          )
+        : true;
+      const storageCapacityMatches = selectedStorageCapacityCondition
+        ? filter.storageCapacity.includes(
+            (obj as any)?.itemDetailInfo.storageCapacity
+          )
+        : true;
+      const processorMatches = selectedProcessorCondition
+        ? filter.processor.includes((obj as any)?.itemDetailInfo.processor)
+        : true;
+      const ramSizeMatches = selectedRamSizeCondition
+        ? filter.ramSize.includes((obj as any)?.itemDetailInfo.ramSize)
+        : true;
+      const typeMatches = selectedTypeCondition
+        ? filter.type.includes((obj as any)?.itemDetailInfo.type)
+        : true;
 
       return (
         isMatchingSmart &&
@@ -394,9 +498,15 @@ const getCountOnSmartTV = async (
         brandMatches &&
         warrantyInformationMatches &&
         colourMatches &&
-        sellerRatingMatches
+        sellerRatingMatches &&
+        batteryLifeMatches &&
+        operatingSystemMatches &&
+        storageCapacityMatches &&
+        processorMatches &&
+        ramSizeMatches &&
+        typeMatches
       );
-    }).length;
+    })?.length;
 
     itemSmartTVCountList.push({
       itemSmartTV: item,
@@ -430,13 +540,21 @@ const getCountOnSellerRating = async (
       if (maxPrice != "")
         maxPriceCondition = (obj as any).price <= Number(maxPrice);
 
-      const selectedItemCondition = filter.itemCondition.length > 0;
-      const selectedScreenSizeCondition = filter.screenSize.length > 0;
-      const selectedResolutionCondition = filter.resolution.length > 0;
-      const selectedBrandCondition = filter.brand.length > 0;
-      const selectedSmartTVCondition = filter.smartTV.length > 0;
-      const selectedColorCondition = filter.colour.length > 0;
-      const selectedWarrantyCondition = filter.warrantyInformation.length > 0;
+      const selectedItemCondition = filter.itemCondition?.length > 0;
+      const selectedScreenSizeCondition = filter.screenSize?.length > 0;
+      const selectedResolutionCondition = filter.resolution?.length > 0;
+      const selectedBrandCondition = filter.brand?.length > 0;
+      const selectedSmartTVCondition = filter.smartTV?.length > 0;
+      const selectedColorCondition = filter.colour?.length > 0;
+      const selectedWarrantyCondition = filter.warrantyInformation?.length > 0;
+      const selectedBatteryLifeCondition = filter.batteryLife?.length > 0;
+      const selectedOperatingSystemCondition =
+        filter.operatingSystem?.length > 0;
+      const selectedStorageCapacityCondition =
+        filter.storageCapacity?.length > 0;
+      const selectedProcessorCondition = filter.processor?.length > 0;
+      const selectedRamSizeCondition = filter.ramSize?.length > 0;
+      const selectedTypeCondition = filter.type?.length > 0;
 
       const itemConditionMatches = selectedItemCondition
         ? filter.itemCondition.includes(
@@ -463,6 +581,28 @@ const getCountOnSellerRating = async (
             (obj as any)?.itemDetailInfo.warrantyInformation
           )
         : true;
+      const batteryLifeMatches = selectedBatteryLifeCondition
+        ? filter.batteryLife.includes((obj as any)?.itemDetailInfo.batteryLife)
+        : true;
+      const operatingSystemMatches = selectedOperatingSystemCondition
+        ? filter.operatingSystem.includes(
+            (obj as any)?.itemDetailInfo.operatingSystem
+          )
+        : true;
+      const storageCapacityMatches = selectedStorageCapacityCondition
+        ? filter.storageCapacity.includes(
+            (obj as any)?.itemDetailInfo.storageCapacity
+          )
+        : true;
+      const processorMatches = selectedProcessorCondition
+        ? filter.processor.includes((obj as any)?.itemDetailInfo.processor)
+        : true;
+      const ramSizeMatches = selectedRamSizeCondition
+        ? filter.ramSize.includes((obj as any)?.itemDetailInfo.ramSize)
+        : true;
+      const typeMatches = selectedTypeCondition
+        ? filter.type.includes((obj as any)?.itemDetailInfo.type)
+        : true;
 
       return (
         isMatchingRating &&
@@ -475,9 +615,15 @@ const getCountOnSellerRating = async (
         brandMatches &&
         smartTVMatches &&
         colourMatches &&
-        warrantyInformationMatches
+        warrantyInformationMatches &&
+        batteryLifeMatches &&
+        operatingSystemMatches &&
+        storageCapacityMatches &&
+        processorMatches &&
+        ramSizeMatches &&
+        typeMatches
       );
-    }).length;
+    })?.length;
 
     itemSellerRatingCountList.push({ itemSellerRating: item, count });
   });
@@ -508,13 +654,21 @@ const getCountOnBrand = async (
       if (maxPrice != "")
         maxPriceCondition = (obj as any).price <= Number(maxPrice);
 
-      const selectedItemCondition = filter.itemCondition.length > 0;
-      const selectedScreenSizeCondition = filter.screenSize.length > 0;
-      const selectedResolutionCondition = filter.resolution.length > 0;
-      const selectedSmartTVCondition = filter.smartTV.length > 0;
-      const selectedWarrantyCondition = filter.warrantyInformation.length > 0;
-      const selectedColorCondition = filter.colour.length > 0;
-      const selectedSellerRatingCondition = filter.sellerRating.length > 0;
+      const selectedItemCondition = filter.itemCondition?.length > 0;
+      const selectedScreenSizeCondition = filter.screenSize?.length > 0;
+      const selectedResolutionCondition = filter.resolution?.length > 0;
+      const selectedSmartTVCondition = filter.smartTV?.length > 0;
+      const selectedWarrantyCondition = filter.warrantyInformation?.length > 0;
+      const selectedColorCondition = filter.colour?.length > 0;
+      const selectedSellerRatingCondition = filter.sellerRating?.length > 0;
+      const selectedBatteryLifeCondition = filter.batteryLife?.length > 0;
+      const selectedOperatingSystemCondition =
+        filter.operatingSystem?.length > 0;
+      const selectedStorageCapacityCondition =
+        filter.storageCapacity?.length > 0;
+      const selectedProcessorCondition = filter.processor?.length > 0;
+      const selectedRamSizeCondition = filter.ramSize?.length > 0;
+      const selectedTypeCondition = filter.type?.length > 0;
 
       const itemConditionMatches = selectedItemCondition
         ? filter.itemCondition.includes(
@@ -543,6 +697,28 @@ const getCountOnBrand = async (
             parseInt((obj as any)?.userId.reviewMark).toString() + "*"
           )
         : true;
+      const batteryLifeMatches = selectedBatteryLifeCondition
+        ? filter.batteryLife.includes((obj as any)?.itemDetailInfo.batteryLife)
+        : true;
+      const operatingSystemMatches = selectedOperatingSystemCondition
+        ? filter.operatingSystem.includes(
+            (obj as any)?.itemDetailInfo.operatingSystem
+          )
+        : true;
+      const storageCapacityMatches = selectedStorageCapacityCondition
+        ? filter.storageCapacity.includes(
+            (obj as any)?.itemDetailInfo.storageCapacity
+          )
+        : true;
+      const processorMatches = selectedProcessorCondition
+        ? filter.processor.includes((obj as any)?.itemDetailInfo.processor)
+        : true;
+      const ramSizeMatches = selectedRamSizeCondition
+        ? filter.ramSize.includes((obj as any)?.itemDetailInfo.ramSize)
+        : true;
+      const typeMatches = selectedTypeCondition
+        ? filter.type.includes((obj as any)?.itemDetailInfo.type)
+        : true;
 
       return (
         isMatchingBrand &&
@@ -555,9 +731,15 @@ const getCountOnBrand = async (
         warrantyInformationMatches &&
         smartTVMatches &&
         colourMatches &&
-        sellerRatingMatches
+        sellerRatingMatches &&
+        batteryLifeMatches &&
+        operatingSystemMatches &&
+        storageCapacityMatches &&
+        processorMatches &&
+        ramSizeMatches &&
+        typeMatches
       );
-    }).length;
+    })?.length;
 
     itemBrandCountList.push({
       itemBrand: item,
@@ -590,13 +772,21 @@ const getCountOnColor = async (
       if (maxPrice != "")
         maxPriceCondition = (obj as any).price <= Number(maxPrice);
 
-      const selectedItemCondition = filter.itemCondition.length > 0;
-      const selectedScreenSizeCondition = filter.screenSize.length > 0;
-      const selectedResolutionCondition = filter.resolution.length > 0;
-      const selectedBrandCondition = filter.brand.length > 0;
-      const selectedSmartTVCondition = filter.smartTV.length > 0;
-      const selectedWarrantyCondition = filter.warrantyInformation.length > 0;
-      const selectedSellerRatingCondition = filter.sellerRating.length > 0;
+      const selectedItemCondition = filter.itemCondition?.length > 0;
+      const selectedScreenSizeCondition = filter.screenSize?.length > 0;
+      const selectedResolutionCondition = filter.resolution?.length > 0;
+      const selectedBrandCondition = filter.brand?.length > 0;
+      const selectedSmartTVCondition = filter.smartTV?.length > 0;
+      const selectedWarrantyCondition = filter.warrantyInformation?.length > 0;
+      const selectedSellerRatingCondition = filter.sellerRating?.length > 0;
+      const selectedBatteryLifeCondition = filter.batteryLife?.length > 0;
+      const selectedOperatingSystemCondition =
+        filter.operatingSystem?.length > 0;
+      const selectedStorageCapacityCondition =
+        filter.storageCapacity?.length > 0;
+      const selectedProcessorCondition = filter.processor?.length > 0;
+      const selectedRamSizeCondition = filter.ramSize?.length > 0;
+      const selectedTypeCondition = filter.type?.length > 0;
 
       const itemConditionMatches = selectedItemCondition
         ? filter.itemCondition.includes(
@@ -625,6 +815,28 @@ const getCountOnColor = async (
             parseInt((obj as any)?.userId.reviewMark).toString() + "*"
           )
         : true;
+      const batteryLifeMatches = selectedBatteryLifeCondition
+        ? filter.batteryLife.includes((obj as any)?.itemDetailInfo.batteryLife)
+        : true;
+      const operatingSystemMatches = selectedOperatingSystemCondition
+        ? filter.operatingSystem.includes(
+            (obj as any)?.itemDetailInfo.operatingSystem
+          )
+        : true;
+      const storageCapacityMatches = selectedStorageCapacityCondition
+        ? filter.storageCapacity.includes(
+            (obj as any)?.itemDetailInfo.storageCapacity
+          )
+        : true;
+      const processorMatches = selectedProcessorCondition
+        ? filter.processor.includes((obj as any)?.itemDetailInfo.processor)
+        : true;
+      const ramSizeMatches = selectedRamSizeCondition
+        ? filter.ramSize.includes((obj as any)?.itemDetailInfo.ramSize)
+        : true;
+      const typeMatches = selectedTypeCondition
+        ? filter.type.includes((obj as any)?.itemDetailInfo.type)
+        : true;
 
       return (
         isMatchingColour &&
@@ -637,9 +849,15 @@ const getCountOnColor = async (
         brandMatches &&
         smartTVMatches &&
         warrantyInformationMatches &&
-        sellerRatingMatches
+        sellerRatingMatches &&
+        batteryLifeMatches &&
+        operatingSystemMatches &&
+        storageCapacityMatches &&
+        processorMatches &&
+        ramSizeMatches &&
+        typeMatches
       );
-    }).length;
+    })?.length;
 
     itemColourCountList.push({
       itemColour: item,
@@ -673,13 +891,21 @@ const getCountOnResolution = async (
       if (maxPrice != "")
         maxPriceCondition = (obj as any).price <= Number(maxPrice);
 
-      const selectedItemCondition = filter.itemCondition.length > 0;
-      const selectedScreenSizeCondition = filter.screenSize.length > 0;
-      const selectedWarrantyCondition = filter.warrantyInformation.length > 0;
-      const selectedBrandCondition = filter.brand.length > 0;
-      const selectedSmartTVCondition = filter.smartTV.length > 0;
-      const selectedColorCondition = filter.colour.length > 0;
-      const selectedSellerRatingCondition = filter.sellerRating.length > 0;
+      const selectedItemCondition = filter.itemCondition?.length > 0;
+      const selectedScreenSizeCondition = filter.screenSize?.length > 0;
+      const selectedWarrantyCondition = filter.warrantyInformation?.length > 0;
+      const selectedBrandCondition = filter.brand?.length > 0;
+      const selectedSmartTVCondition = filter.smartTV?.length > 0;
+      const selectedColorCondition = filter.colour?.length > 0;
+      const selectedSellerRatingCondition = filter.sellerRating?.length > 0;
+      const selectedBatteryLifeCondition = filter.batteryLife?.length > 0;
+      const selectedOperatingSystemCondition =
+        filter.operatingSystem?.length > 0;
+      const selectedStorageCapacityCondition =
+        filter.storageCapacity?.length > 0;
+      const selectedProcessorCondition = filter.processor?.length > 0;
+      const selectedRamSizeCondition = filter.ramSize?.length > 0;
+      const selectedTypeCondition = filter.type?.length > 0;
 
       const itemConditionMatches = selectedItemCondition
         ? filter.itemCondition.includes(
@@ -708,6 +934,29 @@ const getCountOnResolution = async (
             parseInt((obj as any)?.userId.reviewMark).toString() + "*"
           )
         : true;
+      const batteryLifeMatches = selectedBatteryLifeCondition
+        ? filter.batteryLife.includes((obj as any)?.itemDetailInfo.batteryLife)
+        : true;
+      const operatingSystemMatches = selectedOperatingSystemCondition
+        ? filter.operatingSystem.includes(
+            (obj as any)?.itemDetailInfo.operatingSystem
+          )
+        : true;
+      const storageCapacityMatches = selectedStorageCapacityCondition
+        ? filter.storageCapacity.includes(
+            (obj as any)?.itemDetailInfo.storageCapacity
+          )
+        : true;
+      const processorMatches = selectedProcessorCondition
+        ? filter.processor.includes((obj as any)?.itemDetailInfo.processor)
+        : true;
+      const ramSizeMatches = selectedRamSizeCondition
+        ? filter.ramSize.includes((obj as any)?.itemDetailInfo.ramSize)
+        : true;
+      const typeMatches = selectedTypeCondition
+        ? filter.type.includes((obj as any)?.itemDetailInfo.type)
+        : true;
+
       return (
         isMatchingResolution &&
         isMatchingItemCategory &&
@@ -719,9 +968,15 @@ const getCountOnResolution = async (
         brandMatches &&
         smartTVMatches &&
         colourMatches &&
-        sellerRatingMatches
+        sellerRatingMatches &&
+        batteryLifeMatches &&
+        operatingSystemMatches &&
+        storageCapacityMatches &&
+        processorMatches &&
+        ramSizeMatches &&
+        typeMatches
       );
-    }).length;
+    })?.length;
 
     itemResolutionCountList.push({
       itemResolution: item,
@@ -755,13 +1010,21 @@ const getCountOnScreenSize = async (
       if (maxPrice != "")
         maxPriceCondition = (obj as any).price <= Number(maxPrice);
 
-      const selectedItemCondition = filter.itemCondition.length > 0;
-      const selectedWarrantyCondition = filter.warrantyInformation.length > 0;
-      const selectedResolutionCondition = filter.resolution.length > 0;
-      const selectedBrandCondition = filter.brand.length > 0;
-      const selectedSmartTVCondition = filter.smartTV.length > 0;
-      const selectedColorCondition = filter.colour.length > 0;
-      const selectedSellerRatingCondition = filter.sellerRating.length > 0;
+      const selectedItemCondition = filter.itemCondition?.length > 0;
+      const selectedWarrantyCondition = filter.warrantyInformation?.length > 0;
+      const selectedResolutionCondition = filter.resolution?.length > 0;
+      const selectedBrandCondition = filter.brand?.length > 0;
+      const selectedSmartTVCondition = filter.smartTV?.length > 0;
+      const selectedColorCondition = filter.colour?.length > 0;
+      const selectedSellerRatingCondition = filter.sellerRating?.length > 0;
+      const selectedBatteryLifeCondition = filter.batteryLife?.length > 0;
+      const selectedOperatingSystemCondition =
+        filter.operatingSystem?.length > 0;
+      const selectedStorageCapacityCondition =
+        filter.storageCapacity?.length > 0;
+      const selectedProcessorCondition = filter.processor?.length > 0;
+      const selectedRamSizeCondition = filter.ramSize?.length > 0;
+      const selectedTypeCondition = filter.type?.length > 0;
 
       const itemConditionMatches = selectedItemCondition
         ? filter.itemCondition.includes(
@@ -790,6 +1053,29 @@ const getCountOnScreenSize = async (
             parseInt((obj as any)?.userId.reviewMark).toString() + "*"
           )
         : true;
+      const batteryLifeMatches = selectedBatteryLifeCondition
+        ? filter.batteryLife.includes((obj as any)?.itemDetailInfo.batteryLife)
+        : true;
+      const operatingSystemMatches = selectedOperatingSystemCondition
+        ? filter.operatingSystem.includes(
+            (obj as any)?.itemDetailInfo.operatingSystem
+          )
+        : true;
+      const storageCapacityMatches = selectedStorageCapacityCondition
+        ? filter.storageCapacity.includes(
+            (obj as any)?.itemDetailInfo.storageCapacity
+          )
+        : true;
+      const processorMatches = selectedProcessorCondition
+        ? filter.processor.includes((obj as any)?.itemDetailInfo.processor)
+        : true;
+      const ramSizeMatches = selectedRamSizeCondition
+        ? filter.ramSize.includes((obj as any)?.itemDetailInfo.ramSize)
+        : true;
+      const typeMatches = selectedTypeCondition
+        ? filter.type.includes((obj as any)?.itemDetailInfo.type)
+        : true;
+
       return (
         isMatchingScreenSize &&
         isMatchingItemCategory &&
@@ -801,9 +1087,15 @@ const getCountOnScreenSize = async (
         brandMatches &&
         smartTVMatches &&
         colourMatches &&
-        sellerRatingMatches
+        sellerRatingMatches &&
+        batteryLifeMatches &&
+        operatingSystemMatches &&
+        storageCapacityMatches &&
+        processorMatches &&
+        ramSizeMatches &&
+        typeMatches
       );
-    }).length;
+    })?.length;
 
     itemScreenSizeCountList.push({
       itemScreenSize: item,
@@ -822,7 +1114,6 @@ const getCountOnItemCondition = async (
   maxPrice
 ) => {
   let itemConditionCountList: any = [];
-
   itemCondition.map((item: string, index: number) => {
     let count = 0;
     count = saleObj.filter((obj) => {
@@ -838,13 +1129,21 @@ const getCountOnItemCondition = async (
       if (maxPrice != "")
         maxPriceCondition = (obj as any).price <= Number(maxPrice);
 
-      const selectedWarrantyCondition = filter.warrantyInformation.length > 0;
-      const selectedScreenSizeCondition = filter.screenSize.length > 0;
-      const selectedResolutionCondition = filter.resolution.length > 0;
-      const selectedBrandCondition = filter.brand.length > 0;
-      const selectedSmartTVCondition = filter.smartTV.length > 0;
-      const selectedColorCondition = filter.colour.length > 0;
-      const selectedSellerRatingCondition = filter.sellerRating.length > 0;
+      const selectedWarrantyCondition = filter.warrantyInformation?.length > 0;
+      const selectedScreenSizeCondition = filter.screenSize?.length > 0;
+      const selectedResolutionCondition = filter.resolution?.length > 0;
+      const selectedBrandCondition = filter.brand?.length > 0;
+      const selectedSmartTVCondition = filter.smartTV?.length > 0;
+      const selectedColorCondition = filter.colour?.length > 0;
+      const selectedSellerRatingCondition = filter.sellerRating?.length > 0;
+      const selectedBatteryLifeCondition = filter.batteryLife?.length > 0;
+      const selectedOperatingSystemCondition =
+        filter.operatingSystem?.length > 0;
+      const selectedStorageCapacityCondition =
+        filter.storageCapacity?.length > 0;
+      const selectedProcessorCondition = filter.processor?.length > 0;
+      const selectedRamSizeCondition = filter.ramSize?.length > 0;
+      const selectedTypeCondition = filter.type?.length > 0;
 
       const warrantyInformationMatches = selectedWarrantyCondition
         ? filter.warrantyInformation.includes(
@@ -871,6 +1170,28 @@ const getCountOnItemCondition = async (
             parseInt((obj as any)?.userId.reviewMark).toString() + "*"
           )
         : true;
+      const batteryLifeMatches = selectedBatteryLifeCondition
+        ? filter.batteryLife.includes((obj as any)?.itemDetailInfo.batteryLife)
+        : true;
+      const operatingSystemMatches = selectedOperatingSystemCondition
+        ? filter.operatingSystem.includes(
+            (obj as any)?.itemDetailInfo.operatingSystem
+          )
+        : true;
+      const storageCapacityMatches = selectedStorageCapacityCondition
+        ? filter.storageCapacity.includes(
+            (obj as any)?.itemDetailInfo.storageCapacity
+          )
+        : true;
+      const processorMatches = selectedProcessorCondition
+        ? filter.processor.includes((obj as any)?.itemDetailInfo.processor)
+        : true;
+      const ramSizeMatches = selectedRamSizeCondition
+        ? filter.ramSize.includes((obj as any)?.itemDetailInfo.ramSize)
+        : true;
+      const typeMatches = selectedTypeCondition
+        ? filter.type.includes((obj as any)?.itemDetailInfo.type)
+        : true;
 
       return (
         isMatchingCondition &&
@@ -883,9 +1204,15 @@ const getCountOnItemCondition = async (
         brandMatches &&
         smartTVMatches &&
         colourMatches &&
-        sellerRatingMatches
+        sellerRatingMatches &&
+        batteryLifeMatches &&
+        operatingSystemMatches &&
+        storageCapacityMatches &&
+        processorMatches &&
+        ramSizeMatches &&
+        typeMatches
       );
-    }).length;
+    })?.length;
 
     itemConditionCountList.push({
       itemCondition: item,
@@ -906,14 +1233,21 @@ const getCountOnMinMaxPrice = async (minPrice, maxPrice, filter, saleObj) => {
     if (minPrice != "") minPriceCondition = obj.price >= Number(minPrice);
     if (maxPrice != "") maxPriceCondition = obj.price <= Number(maxPrice);
 
-    const selectedItemCondition = filter.itemCondition.length > 0;
-    const selectedScreenSizeCondition = filter.screenSize.length > 0;
-    const selectedResolutionCondition = filter.resolution.length > 0;
-    const selectedBrandCondition = filter.brand.length > 0;
-    const selectedSmartTVCondition = filter.smartTV.length > 0;
-    const selectedColorCondition = filter.colour.length > 0;
-    const selectedSellerRatingCondition = filter.sellerRating.length > 0;
-    const selectedWarrantyCondition = filter.warrantyInformation.length > 0;
+    const selectedItemCondition = filter.itemCondition?.length > 0;
+    const selectedScreenSizeCondition = filter.screenSize?.length > 0;
+    const selectedResolutionCondition = filter.resolution?.length > 0;
+    const selectedBrandCondition = filter.brand?.length > 0;
+    const selectedSmartTVCondition = filter.smartTV?.length > 0;
+    const selectedColorCondition = filter.colour?.length > 0;
+    const selectedSellerRatingCondition = filter.sellerRating?.length > 0;
+    const selectedWarrantyCondition = filter.warrantyInformation?.length > 0;
+    const selectedBatteryLifeCondition = filter.batteryLife?.length > 0;
+    const selectedOperatingSystemCondition = filter.operatingSystem?.length > 0;
+    const selectedStorageCapacityCondition = filter.storageCapacity?.length > 0;
+    const selectedProcessorCondition = filter.processor?.length > 0;
+    const selectedRamSizeCondition = filter.ramSize?.length > 0;
+    const selectedTypeCondition = filter.type?.length > 0;
+
     const itemConditionMatches = selectedItemCondition
       ? filter.itemCondition.includes(
           (obj as any)?.itemDetailInfo?.itemCondition
@@ -944,6 +1278,28 @@ const getCountOnMinMaxPrice = async (minPrice, maxPrice, filter, saleObj) => {
           parseInt((obj as any)?.userId.reviewMark).toString() + "*"
         )
       : true;
+    const batteryLifeMatches = selectedBatteryLifeCondition
+      ? filter.batteryLife.includes((obj as any)?.itemDetailInfo.batteryLife)
+      : true;
+    const operatingSystemMatches = selectedOperatingSystemCondition
+      ? filter.operatingSystem.includes(
+          (obj as any)?.itemDetailInfo.operatingSystem
+        )
+      : true;
+    const storageCapacityMatches = selectedStorageCapacityCondition
+      ? filter.storageCapacity.includes(
+          (obj as any)?.itemDetailInfo.storageCapacity
+        )
+      : true;
+    const processorMatches = selectedProcessorCondition
+      ? filter.processor.includes((obj as any)?.itemDetailInfo.processor)
+      : true;
+    const ramSizeMatches = selectedRamSizeCondition
+      ? filter.ramSize.includes((obj as any)?.itemDetailInfo.ramSize)
+      : true;
+    const typeMatches = selectedTypeCondition
+      ? filter.type.includes((obj as any)?.itemDetailInfo.type)
+      : true;
 
     return (
       minPriceCondition &&
@@ -955,11 +1311,714 @@ const getCountOnMinMaxPrice = async (minPrice, maxPrice, filter, saleObj) => {
       smartTVMatches &&
       colourMatches &&
       sellerRatingMatches &&
-      warrantyInformationMatches
+      warrantyInformationMatches &&
+      batteryLifeMatches &&
+      operatingSystemMatches &&
+      storageCapacityMatches &&
+      processorMatches &&
+      ramSizeMatches &&
+      typeMatches
     );
-  }).length;
-
+  })?.length;
   return countPerPrice;
+};
+
+const getCountOnBatteryLife = async (
+  itemBatteryLife,
+  filter,
+  itemCategory,
+  saleObj,
+  minPrice,
+  maxPrice
+) => {
+  let itemBatteryLifeCountList: any = [];
+
+  itemBatteryLife.map((item: string, index: number) => {
+    let count = 0;
+    count = saleObj.filter((obj) => {
+      const isMatchingBatteryLife =
+        (obj as any)?.itemDetailInfo?.batteryLife == item;
+      const isMatchingItemCategory = (obj as any).itemCategory == itemCategory;
+      let minPriceCondition = true;
+      let maxPriceCondition = true;
+
+      if (minPrice != "")
+        minPriceCondition = (obj as any).price >= Number(minPrice);
+      if (maxPrice != "")
+        maxPriceCondition = (obj as any).price <= Number(maxPrice);
+
+      const selectedItemCondition = filter.itemCondition?.length > 0;
+      const selectedScreenSizeCondition = filter.screenSize?.length > 0;
+      const selectedResolutionCondition = filter.resolution?.length > 0;
+      const selectedBrandCondition = filter.brand?.length > 0;
+      const selectedSmartTVCondition = filter.smartTV?.length > 0;
+      const selectedColorCondition = filter.colour?.length > 0;
+      const selectedSellerRatingCondition = filter.sellerRating?.length > 0;
+      const selectedWarrantyCondition = filter.warrantyInformation?.length > 0;
+      const selectedOperatingSystemCondition =
+        filter.operatingSystem?.length > 0;
+      const selectedStorageCapacityCondition =
+        filter.storageCapacity?.length > 0;
+      const selectedProcessorCondition = filter.processor?.length > 0;
+      const selectedRamSizeCondition = filter.ramSize?.length > 0;
+      const selectedTypeCondition = filter.type?.length > 0;
+
+      const itemConditionMatches = selectedItemCondition
+        ? filter.itemCondition.includes(
+            (obj as any)?.itemDetailInfo?.itemCondition
+          )
+        : true;
+      const screenSizeMatches = selectedScreenSizeCondition
+        ? filter.screenSize.includes((obj as any)?.itemDetailInfo?.screenSize)
+        : true;
+      const resolutionMatches = selectedResolutionCondition
+        ? filter.resolution.includes((obj as any)?.itemDetailInfo?.resolution)
+        : true;
+      const brandMatches = selectedBrandCondition
+        ? filter.brand.includes((obj as any)?.itemDetailInfo?.brand)
+        : true;
+      const smartTVMatches = selectedSmartTVCondition
+        ? filter.smartTV.includes((obj as any)?.itemDetailInfo.smartTV)
+        : true;
+      const colourMatches = selectedColorCondition
+        ? filter.colour.includes((obj as any)?.itemDetailInfo.colour)
+        : true;
+      const sellerRatingMatches = selectedSellerRatingCondition
+        ? filter.sellerRating.includes(
+            parseInt((obj as any)?.userId.reviewMark).toString() + "*"
+          )
+        : true;
+      const warrantyInformationMatches = selectedWarrantyCondition
+        ? filter.warrantyInformation.includes(
+            (obj as any)?.itemDetailInfo.warrantyInformation
+          )
+        : true;
+      const operatingSystemMatches = selectedOperatingSystemCondition
+        ? filter.operatingSystem.includes(
+            (obj as any)?.itemDetailInfo.operatingSystem
+          )
+        : true;
+      const storageCapacityMatches = selectedStorageCapacityCondition
+        ? filter.storageCapacity.includes(
+            (obj as any)?.itemDetailInfo.storageCapacity
+          )
+        : true;
+      const processorMatches = selectedProcessorCondition
+        ? filter.processor.includes((obj as any)?.itemDetailInfo.processor)
+        : true;
+      const ramSizeMatches = selectedRamSizeCondition
+        ? filter.ramSize.includes((obj as any)?.itemDetailInfo.ramSize)
+        : true;
+      const typeMatches = selectedTypeCondition
+        ? filter.type.includes((obj as any)?.itemDetailInfo.type)
+        : true;
+
+      return (
+        isMatchingBatteryLife &&
+        isMatchingItemCategory &&
+        minPriceCondition &&
+        maxPriceCondition &&
+        itemConditionMatches &&
+        screenSizeMatches &&
+        resolutionMatches &&
+        brandMatches &&
+        smartTVMatches &&
+        colourMatches &&
+        sellerRatingMatches &&
+        warrantyInformationMatches &&
+        operatingSystemMatches &&
+        storageCapacityMatches &&
+        processorMatches &&
+        ramSizeMatches &&
+        typeMatches
+      );
+    })?.length;
+    itemBatteryLifeCountList.push({
+      itemBatteryLife: item,
+      count,
+    });
+  });
+  return itemBatteryLifeCountList;
+};
+
+const getCountOnOperatingSystem = async (
+  itemOperatingSystem,
+  filter,
+  itemCategory,
+  saleObj,
+  minPrice,
+  maxPrice
+) => {
+  let itemOperatingSystemCountList: any = [];
+
+  itemOperatingSystem.map((item: string, index: number) => {
+    let count = 0;
+    count = saleObj.filter((obj) => {
+      const isMatchingOperatingSystem =
+        (obj as any)?.itemDetailInfo?.operatingSystem == item;
+      const isMatchingItemCategory = (obj as any).itemCategory == itemCategory;
+      let minPriceCondition = true;
+      let maxPriceCondition = true;
+
+      if (minPrice != "")
+        minPriceCondition = (obj as any).price >= Number(minPrice);
+      if (maxPrice != "")
+        maxPriceCondition = (obj as any).price <= Number(maxPrice);
+
+      const selectedItemCondition = filter.itemCondition?.length > 0;
+      const selectedScreenSizeCondition = filter.screenSize?.length > 0;
+      const selectedResolutionCondition = filter.resolution?.length > 0;
+      const selectedBrandCondition = filter.brand?.length > 0;
+      const selectedSmartTVCondition = filter.smartTV?.length > 0;
+      const selectedColorCondition = filter.colour?.length > 0;
+      const selectedSellerRatingCondition = filter.sellerRating?.length > 0;
+      const selectedBatteryLifeCondition = filter.batteryLife?.length > 0;
+      const selectedWarrantyCondition = filter.warrantyInformation?.length > 0;
+      const selectedStorageCapacityCondition =
+        filter.storageCapacity?.length > 0;
+      const selectedProcessorCondition = filter.processor?.length > 0;
+      const selectedRamSizeCondition = filter.ramSize?.length > 0;
+      const selectedTypeCondition = filter.type?.length > 0;
+
+      const itemConditionMatches = selectedItemCondition
+        ? filter.itemCondition.includes(
+            (obj as any)?.itemDetailInfo?.itemCondition
+          )
+        : true;
+      const screenSizeMatches = selectedScreenSizeCondition
+        ? filter.screenSize.includes((obj as any)?.itemDetailInfo?.screenSize)
+        : true;
+      const resolutionMatches = selectedResolutionCondition
+        ? filter.resolution.includes((obj as any)?.itemDetailInfo?.resolution)
+        : true;
+      const brandMatches = selectedBrandCondition
+        ? filter.brand.includes((obj as any)?.itemDetailInfo?.brand)
+        : true;
+      const smartTVMatches = selectedSmartTVCondition
+        ? filter.smartTV.includes((obj as any)?.itemDetailInfo.smartTV)
+        : true;
+      const colourMatches = selectedColorCondition
+        ? filter.colour.includes((obj as any)?.itemDetailInfo.colour)
+        : true;
+      const sellerRatingMatches = selectedSellerRatingCondition
+        ? filter.sellerRating.includes(
+            parseInt((obj as any)?.userId.reviewMark).toString() + "*"
+          )
+        : true;
+      const batteryLifeMatches = selectedBatteryLifeCondition
+        ? filter.batteryLife.includes((obj as any)?.itemDetailInfo.batteryLife)
+        : true;
+      const warrantyInformationMatches = selectedWarrantyCondition
+        ? filter.warrantyInformation.includes(
+            (obj as any)?.itemDetailInfo.warrantyInformation
+          )
+        : true;
+      const storageCapacityMatches = selectedStorageCapacityCondition
+        ? filter.storageCapacity.includes(
+            (obj as any)?.itemDetailInfo.storageCapacity
+          )
+        : true;
+      const processorMatches = selectedProcessorCondition
+        ? filter.processor.includes((obj as any)?.itemDetailInfo.processor)
+        : true;
+      const ramSizeMatches = selectedRamSizeCondition
+        ? filter.ramSize.includes((obj as any)?.itemDetailInfo.ramSize)
+        : true;
+      const typeMatches = selectedTypeCondition
+        ? filter.type.includes((obj as any)?.itemDetailInfo.type)
+        : true;
+
+      return (
+        isMatchingOperatingSystem &&
+        isMatchingItemCategory &&
+        minPriceCondition &&
+        maxPriceCondition &&
+        itemConditionMatches &&
+        screenSizeMatches &&
+        resolutionMatches &&
+        brandMatches &&
+        smartTVMatches &&
+        colourMatches &&
+        sellerRatingMatches &&
+        batteryLifeMatches &&
+        warrantyInformationMatches &&
+        storageCapacityMatches &&
+        processorMatches &&
+        ramSizeMatches &&
+        typeMatches
+      );
+    })?.length;
+    itemOperatingSystemCountList.push({
+      itemOperatingSystem: item,
+      count,
+    });
+  });
+  return itemOperatingSystemCountList;
+};
+
+const getCountOnStorageCapacity = async (
+  itemStorageCapacity,
+  filter,
+  itemCategory,
+  saleObj,
+  minPrice,
+  maxPrice
+) => {
+  let itemStorageCapacityCountList: any = [];
+
+  itemStorageCapacity.map((item: string, index: number) => {
+    let count = 0;
+    count = saleObj.filter((obj) => {
+      const isMatchingStorageCapacity =
+        (obj as any)?.itemDetailInfo?.storageCapacity == item;
+      const isMatchingItemCategory = (obj as any).itemCategory == itemCategory;
+      let minPriceCondition = true;
+      let maxPriceCondition = true;
+
+      if (minPrice != "")
+        minPriceCondition = (obj as any).price >= Number(minPrice);
+      if (maxPrice != "")
+        maxPriceCondition = (obj as any).price <= Number(maxPrice);
+
+      const selectedItemCondition = filter.itemCondition?.length > 0;
+      const selectedScreenSizeCondition = filter.screenSize?.length > 0;
+      const selectedResolutionCondition = filter.resolution?.length > 0;
+      const selectedBrandCondition = filter.brand?.length > 0;
+      const selectedSmartTVCondition = filter.smartTV?.length > 0;
+      const selectedColorCondition = filter.colour?.length > 0;
+      const selectedSellerRatingCondition = filter.sellerRating?.length > 0;
+      const selectedBatteryLifeCondition = filter.batteryLife?.length > 0;
+      const selectedOperatingSystemCondition =
+        filter.operatingSystem?.length > 0;
+      const selectedWarrantyCondition = filter.warrantyInformation?.length > 0;
+      const selectedProcessorCondition = filter.processor?.length > 0;
+      const selectedRamSizeCondition = filter.ramSize?.length > 0;
+      const selectedTypeCondition = filter.type?.length > 0;
+
+      const itemConditionMatches = selectedItemCondition
+        ? filter.itemCondition.includes(
+            (obj as any)?.itemDetailInfo?.itemCondition
+          )
+        : true;
+      const screenSizeMatches = selectedScreenSizeCondition
+        ? filter.screenSize.includes((obj as any)?.itemDetailInfo?.screenSize)
+        : true;
+      const resolutionMatches = selectedResolutionCondition
+        ? filter.resolution.includes((obj as any)?.itemDetailInfo?.resolution)
+        : true;
+      const brandMatches = selectedBrandCondition
+        ? filter.brand.includes((obj as any)?.itemDetailInfo?.brand)
+        : true;
+      const smartTVMatches = selectedSmartTVCondition
+        ? filter.smartTV.includes((obj as any)?.itemDetailInfo.smartTV)
+        : true;
+      const colourMatches = selectedColorCondition
+        ? filter.colour.includes((obj as any)?.itemDetailInfo.colour)
+        : true;
+      const sellerRatingMatches = selectedSellerRatingCondition
+        ? filter.sellerRating.includes(
+            parseInt((obj as any)?.userId.reviewMark).toString() + "*"
+          )
+        : true;
+      const batteryLifeMatches = selectedBatteryLifeCondition
+        ? filter.batteryLife.includes((obj as any)?.itemDetailInfo.batteryLife)
+        : true;
+      const operatingSystemMatches = selectedOperatingSystemCondition
+        ? filter.operatingSystem.includes(
+            (obj as any)?.itemDetailInfo.operatingSystem
+          )
+        : true;
+      const warrantyInformationMatches = selectedWarrantyCondition
+        ? filter.warrantyInformation.includes(
+            (obj as any)?.itemDetailInfo.warrantyInformation
+          )
+        : true;
+      const processorMatches = selectedProcessorCondition
+        ? filter.processor.includes((obj as any)?.itemDetailInfo.processor)
+        : true;
+      const ramSizeMatches = selectedRamSizeCondition
+        ? filter.ramSize.includes((obj as any)?.itemDetailInfo.ramSize)
+        : true;
+      const typeMatches = selectedTypeCondition
+        ? filter.type.includes((obj as any)?.itemDetailInfo.type)
+        : true;
+
+      return (
+        isMatchingStorageCapacity &&
+        isMatchingItemCategory &&
+        minPriceCondition &&
+        maxPriceCondition &&
+        itemConditionMatches &&
+        screenSizeMatches &&
+        resolutionMatches &&
+        brandMatches &&
+        smartTVMatches &&
+        colourMatches &&
+        sellerRatingMatches &&
+        batteryLifeMatches &&
+        operatingSystemMatches &&
+        warrantyInformationMatches &&
+        processorMatches &&
+        ramSizeMatches &&
+        typeMatches
+      );
+    })?.length;
+    itemStorageCapacityCountList.push({
+      itemStorageCapacity: item,
+      count,
+    });
+  });
+  return itemStorageCapacityCountList;
+};
+
+const getCountOnProcessor = async (
+  itemProcessor,
+  filter,
+  itemCategory,
+  saleObj,
+  minPrice,
+  maxPrice
+) => {
+  let itemProcessorCountList: any = [];
+
+  itemProcessor.map((item: string, index: number) => {
+    let count = 0;
+    count = saleObj.filter((obj) => {
+      const isMatchingProcessor =
+        (obj as any)?.itemDetailInfo?.processor == item;
+      const isMatchingItemCategory = (obj as any).itemCategory == itemCategory;
+      let minPriceCondition = true;
+      let maxPriceCondition = true;
+
+      if (minPrice != "")
+        minPriceCondition = (obj as any).price >= Number(minPrice);
+      if (maxPrice != "")
+        maxPriceCondition = (obj as any).price <= Number(maxPrice);
+
+      const selectedItemCondition = filter.itemCondition?.length > 0;
+      const selectedScreenSizeCondition = filter.screenSize?.length > 0;
+      const selectedResolutionCondition = filter.resolution?.length > 0;
+      const selectedBrandCondition = filter.brand?.length > 0;
+      const selectedSmartTVCondition = filter.smartTV?.length > 0;
+      const selectedColorCondition = filter.colour?.length > 0;
+      const selectedSellerRatingCondition = filter.sellerRating?.length > 0;
+      const selectedBatteryLifeCondition = filter.batteryLife?.length > 0;
+      const selectedOperatingSystemCondition =
+        filter.operatingSystem?.length > 0;
+      const selectedStorageCapacityCondition =
+        filter.storageCapacity?.length > 0;
+      const selectedWarrantyCondition = filter.warrantyInformation?.length > 0;
+      const selectedRamSizeCondition = filter.ramSize?.length > 0;
+      const selectedTypeCondition = filter.type?.length > 0;
+
+      const itemConditionMatches = selectedItemCondition
+        ? filter.itemCondition.includes(
+            (obj as any)?.itemDetailInfo?.itemCondition
+          )
+        : true;
+      const screenSizeMatches = selectedScreenSizeCondition
+        ? filter.screenSize.includes((obj as any)?.itemDetailInfo?.screenSize)
+        : true;
+      const resolutionMatches = selectedResolutionCondition
+        ? filter.resolution.includes((obj as any)?.itemDetailInfo?.resolution)
+        : true;
+      const brandMatches = selectedBrandCondition
+        ? filter.brand.includes((obj as any)?.itemDetailInfo?.brand)
+        : true;
+      const smartTVMatches = selectedSmartTVCondition
+        ? filter.smartTV.includes((obj as any)?.itemDetailInfo.smartTV)
+        : true;
+      const colourMatches = selectedColorCondition
+        ? filter.colour.includes((obj as any)?.itemDetailInfo.colour)
+        : true;
+      const sellerRatingMatches = selectedSellerRatingCondition
+        ? filter.sellerRating.includes(
+            parseInt((obj as any)?.userId.reviewMark).toString() + "*"
+          )
+        : true;
+      const batteryLifeMatches = selectedBatteryLifeCondition
+        ? filter.batteryLife.includes((obj as any)?.itemDetailInfo.batteryLife)
+        : true;
+      const operatingSystemMatches = selectedOperatingSystemCondition
+        ? filter.operatingSystem.includes(
+            (obj as any)?.itemDetailInfo.operatingSystem
+          )
+        : true;
+      const storageCapacityMatches = selectedStorageCapacityCondition
+        ? filter.storageCapacity.includes(
+            (obj as any)?.itemDetailInfo.storageCapacity
+          )
+        : true;
+      const warrantyInformationMatches = selectedWarrantyCondition
+        ? filter.warrantyInformation.includes(
+            (obj as any)?.itemDetailInfo.warrantyInformation
+          )
+        : true;
+      const ramSizeMatches = selectedRamSizeCondition
+        ? filter.ramSize.includes((obj as any)?.itemDetailInfo.ramSize)
+        : true;
+      const typeMatches = selectedTypeCondition
+        ? filter.type.includes((obj as any)?.itemDetailInfo.type)
+        : true;
+
+      return (
+        isMatchingProcessor &&
+        isMatchingItemCategory &&
+        minPriceCondition &&
+        maxPriceCondition &&
+        itemConditionMatches &&
+        screenSizeMatches &&
+        resolutionMatches &&
+        brandMatches &&
+        smartTVMatches &&
+        colourMatches &&
+        sellerRatingMatches &&
+        batteryLifeMatches &&
+        operatingSystemMatches &&
+        storageCapacityMatches &&
+        warrantyInformationMatches &&
+        ramSizeMatches &&
+        typeMatches
+      );
+    })?.length;
+    itemProcessorCountList.push({
+      itemProcessor: item,
+      count,
+    });
+  });
+  return itemProcessorCountList;
+};
+
+const getCountOnRamSize = async (
+  itemRamSize,
+  filter,
+  itemCategory,
+  saleObj,
+  minPrice,
+  maxPrice
+) => {
+  let itemRamSizeCountList: any = [];
+
+  itemRamSize.map((item: string, index: number) => {
+    let count = 0;
+    count = saleObj.filter((obj) => {
+      const isMatchingRamSize = (obj as any)?.itemDetailInfo?.ramSize == item;
+      const isMatchingItemCategory = (obj as any).itemCategory == itemCategory;
+      let minPriceCondition = true;
+      let maxPriceCondition = true;
+
+      if (minPrice != "")
+        minPriceCondition = (obj as any).price >= Number(minPrice);
+      if (maxPrice != "")
+        maxPriceCondition = (obj as any).price <= Number(maxPrice);
+
+      const selectedItemCondition = filter.itemCondition?.length > 0;
+      const selectedScreenSizeCondition = filter.screenSize?.length > 0;
+      const selectedResolutionCondition = filter.resolution?.length > 0;
+      const selectedBrandCondition = filter.brand?.length > 0;
+      const selectedSmartTVCondition = filter.smartTV?.length > 0;
+      const selectedColorCondition = filter.colour?.length > 0;
+      const selectedSellerRatingCondition = filter.sellerRating?.length > 0;
+      const selectedBatteryLifeCondition = filter.batteryLife?.length > 0;
+      const selectedOperatingSystemCondition =
+        filter.operatingSystem?.length > 0;
+      const selectedStorageCapacityCondition =
+        filter.storageCapacity?.length > 0;
+      const selectedProcessorCondition = filter.processor?.length > 0;
+      const selectedWarrantyCondition = filter.warrantyInformation?.length > 0;
+      const selectedTypeCondition = filter.type?.length > 0;
+
+      const itemConditionMatches = selectedItemCondition
+        ? filter.itemCondition.includes(
+            (obj as any)?.itemDetailInfo?.itemCondition
+          )
+        : true;
+      const screenSizeMatches = selectedScreenSizeCondition
+        ? filter.screenSize.includes((obj as any)?.itemDetailInfo?.screenSize)
+        : true;
+      const resolutionMatches = selectedResolutionCondition
+        ? filter.resolution.includes((obj as any)?.itemDetailInfo?.resolution)
+        : true;
+      const brandMatches = selectedBrandCondition
+        ? filter.brand.includes((obj as any)?.itemDetailInfo?.brand)
+        : true;
+      const smartTVMatches = selectedSmartTVCondition
+        ? filter.smartTV.includes((obj as any)?.itemDetailInfo.smartTV)
+        : true;
+      const colourMatches = selectedColorCondition
+        ? filter.colour.includes((obj as any)?.itemDetailInfo.colour)
+        : true;
+      const sellerRatingMatches = selectedSellerRatingCondition
+        ? filter.sellerRating.includes(
+            parseInt((obj as any)?.userId.reviewMark).toString() + "*"
+          )
+        : true;
+      const batteryLifeMatches = selectedBatteryLifeCondition
+        ? filter.batteryLife.includes((obj as any)?.itemDetailInfo.batteryLife)
+        : true;
+      const operatingSystemMatches = selectedOperatingSystemCondition
+        ? filter.operatingSystem.includes(
+            (obj as any)?.itemDetailInfo.operatingSystem
+          )
+        : true;
+      const storageCapacityMatches = selectedStorageCapacityCondition
+        ? filter.storageCapacity.includes(
+            (obj as any)?.itemDetailInfo.storageCapacity
+          )
+        : true;
+      const processorMatches = selectedProcessorCondition
+        ? filter.processor.includes((obj as any)?.itemDetailInfo.processor)
+        : true;
+      const warrantyInformationMatches = selectedWarrantyCondition
+        ? filter.warrantyInformation.includes(
+            (obj as any)?.itemDetailInfo.warrantyInformation
+          )
+        : true;
+      const typeMatches = selectedTypeCondition
+        ? filter.type.includes((obj as any)?.itemDetailInfo.type)
+        : true;
+
+      return (
+        isMatchingRamSize &&
+        isMatchingItemCategory &&
+        minPriceCondition &&
+        maxPriceCondition &&
+        itemConditionMatches &&
+        screenSizeMatches &&
+        resolutionMatches &&
+        brandMatches &&
+        smartTVMatches &&
+        colourMatches &&
+        sellerRatingMatches &&
+        batteryLifeMatches &&
+        operatingSystemMatches &&
+        storageCapacityMatches &&
+        processorMatches &&
+        warrantyInformationMatches &&
+        typeMatches
+      );
+    })?.length;
+    itemRamSizeCountList.push({
+      itemRamSize: item,
+      count,
+    });
+  });
+  return itemRamSizeCountList;
+};
+
+const getCountOnType = async (
+  itemType,
+  filter,
+  itemCategory,
+  saleObj,
+  minPrice,
+  maxPrice
+) => {
+  let itemTypeCountList: any = [];
+
+  itemType.map((item: string, index: number) => {
+    let count = 0;
+    count = saleObj.filter((obj) => {
+      const isMatchingType = (obj as any)?.itemDetailInfo?.type == item;
+      const isMatchingItemCategory = (obj as any).itemCategory == itemCategory;
+      let minPriceCondition = true;
+      let maxPriceCondition = true;
+
+      if (minPrice != "")
+        minPriceCondition = (obj as any).price >= Number(minPrice);
+      if (maxPrice != "")
+        maxPriceCondition = (obj as any).price <= Number(maxPrice);
+
+      const selectedItemCondition = filter.itemCondition?.length > 0;
+      const selectedScreenSizeCondition = filter.screenSize?.length > 0;
+      const selectedResolutionCondition = filter.resolution?.length > 0;
+      const selectedBrandCondition = filter.brand?.length > 0;
+      const selectedSmartTVCondition = filter.smartTV?.length > 0;
+      const selectedColorCondition = filter.colour?.length > 0;
+      const selectedSellerRatingCondition = filter.sellerRating?.length > 0;
+      const selectedBatteryLifeCondition = filter.batteryLife?.length > 0;
+      const selectedOperatingSystemCondition =
+        filter.operatingSystem?.length > 0;
+      const selectedStorageCapacityCondition =
+        filter.storageCapacity?.length > 0;
+      const selectedProcessorCondition = filter.processor?.length > 0;
+      const selectedRamSizeCondition = filter.ramSize?.length > 0;
+      const selectedWarrantyCondition = filter.warrantyInformation?.length > 0;
+
+      const itemConditionMatches = selectedItemCondition
+        ? filter.itemCondition.includes(
+            (obj as any)?.itemDetailInfo?.itemCondition
+          )
+        : true;
+      const screenSizeMatches = selectedScreenSizeCondition
+        ? filter.screenSize.includes((obj as any)?.itemDetailInfo?.screenSize)
+        : true;
+      const resolutionMatches = selectedResolutionCondition
+        ? filter.resolution.includes((obj as any)?.itemDetailInfo?.resolution)
+        : true;
+      const brandMatches = selectedBrandCondition
+        ? filter.brand.includes((obj as any)?.itemDetailInfo?.brand)
+        : true;
+      const smartTVMatches = selectedSmartTVCondition
+        ? filter.smartTV.includes((obj as any)?.itemDetailInfo.smartTV)
+        : true;
+      const colourMatches = selectedColorCondition
+        ? filter.colour.includes((obj as any)?.itemDetailInfo.colour)
+        : true;
+      const sellerRatingMatches = selectedSellerRatingCondition
+        ? filter.sellerRating.includes(
+            parseInt((obj as any)?.userId.reviewMark).toString() + "*"
+          )
+        : true;
+      const batteryLifeMatches = selectedBatteryLifeCondition
+        ? filter.batteryLife.includes((obj as any)?.itemDetailInfo.batteryLife)
+        : true;
+      const operatingSystemMatches = selectedOperatingSystemCondition
+        ? filter.operatingSystem.includes(
+            (obj as any)?.itemDetailInfo.operatingSystem
+          )
+        : true;
+      const storageCapacityMatches = selectedStorageCapacityCondition
+        ? filter.storageCapacity.includes(
+            (obj as any)?.itemDetailInfo.storageCapacity
+          )
+        : true;
+      const processorMatches = selectedProcessorCondition
+        ? filter.processor.includes((obj as any)?.itemDetailInfo.processor)
+        : true;
+      const ramSizeMatches = selectedRamSizeCondition
+        ? filter.ramSize.includes((obj as any)?.itemDetailInfo.ramSize)
+        : true;
+      const warrantyInformationMatches = selectedWarrantyCondition
+        ? filter.type.includes((obj as any)?.itemDetailInfo.type)
+        : true;
+
+      return (
+        isMatchingType &&
+        isMatchingItemCategory &&
+        minPriceCondition &&
+        maxPriceCondition &&
+        itemConditionMatches &&
+        screenSizeMatches &&
+        resolutionMatches &&
+        brandMatches &&
+        smartTVMatches &&
+        colourMatches &&
+        sellerRatingMatches &&
+        batteryLifeMatches &&
+        operatingSystemMatches &&
+        storageCapacityMatches &&
+        processorMatches &&
+        ramSizeMatches &&
+        warrantyInformationMatches
+      );
+    })?.length;
+    itemTypeCountList.push({
+      itemType: item,
+      count,
+    });
+  });
+  return itemTypeCountList;
 };
 
 export const getCountOfEachFilter = async (req: Request, res: Response) => {
@@ -987,7 +2046,6 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
 
     let itemSearchRangeCountList: any = [];
     let distanceList: any = [];
-
     if (req.body.centerLocationAvailable == true) {
       condition1.countryCode = req.body.selectedLocation.countryCode;
       condition1.itemCategory = req.body.itemCategory;
@@ -1003,18 +2061,28 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
             maxPriceCondition = (obj as any).price <= Number(req.body.maxPrice);
 
           const selectedItemCondition =
-            req.body.filter.itemCondition.length > 0;
+            req.body.filter.itemCondition?.length > 0;
           const selectedScreenSizeCondition =
-            req.body.filter.screenSize.length > 0;
+            req.body.filter.screenSize?.length > 0;
           const selectedResolutionCondition =
-            req.body.filter.resolution.length > 0;
-          const selectedBrandCondition = req.body.filter.brand.length > 0;
-          const selectedSmartTVCondition = req.body.filter.smartTV.length > 0;
-          const selectedColorCondition = req.body.filter.colour.length > 0;
+            req.body.filter.resolution?.length > 0;
+          const selectedBrandCondition = req.body.filter.brand?.length > 0;
+          const selectedSmartTVCondition = req.body.filter.smartTV?.length > 0;
+          const selectedColorCondition = req.body.filter.colour?.length > 0;
           const selectedSellerRatingCondition =
-            req.body.filter.sellerRating.length > 0;
+            req.body.filter.sellerRating?.length > 0;
           const selectedWarrantyCondition =
-            req.body.filter.warrantyInformation.length > 0;
+            req.body.filter.warrantyInformation?.length > 0;
+          const selectedBatteryLifeCondition =
+            req.body.filter.batteryLife?.length > 0;
+          const selectedOperatingSystemCondition =
+            req.body.filter.operatingSystem?.length > 0;
+          const selectedStorageCapacityCondition =
+            req.body.filter.storageCapacity?.length > 0;
+          const selectedProcessorCondition =
+            req.body.filter.processor?.length > 0;
+          const selectedRamSizeCondition = req.body.filter.ramSize?.length > 0;
+          const selectedTypeCondition = req.body.filter.type?.length > 0;
 
           const itemConditionMatches = selectedItemCondition
             ? req.body.filter.itemCondition.includes(
@@ -1056,6 +2124,35 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
                 parseInt((obj as any)?.userId.reviewMark).toString() + "*"
               )
             : true;
+          const batteryLifeMatches = selectedBatteryLifeCondition
+            ? req.body.filter.batteryLife.includes(
+                (obj as any)?.itemDetailInfo.batteryLife
+              )
+            : true;
+          const operatingSystemMatches = selectedOperatingSystemCondition
+            ? req.body.filter.operatingSystem.includes(
+                (obj as any)?.itemDetailInfo.operatingSystem
+              )
+            : true;
+          const storageCapacityMatches = selectedStorageCapacityCondition
+            ? req.body.filter.storageCapacity.includes(
+                (obj as any)?.itemDetailInfo.storageCapacity
+              )
+            : true;
+          const processorMatches = selectedProcessorCondition
+            ? req.body.filter.processor.includes(
+                (obj as any)?.itemDetailInfo.processor
+              )
+            : true;
+          const ramSizeMatches = selectedRamSizeCondition
+            ? req.body.filter.ramSize.includes(
+                (obj as any)?.itemDetailInfo.ramSize
+              )
+            : true;
+          const typeMatches = selectedTypeCondition
+            ? req.body.filter.type.includes((obj as any)?.itemDetailInfo.type)
+            : true;
+
           return (
             minPriceCondition &&
             maxPriceCondition &&
@@ -1066,7 +2163,13 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
             smartTVMatches &&
             colourMatches &&
             sellerRatingMatches &&
-            warrantyInformationMatches
+            warrantyInformationMatches &&
+            batteryLifeMatches &&
+            operatingSystemMatches &&
+            storageCapacityMatches &&
+            processorMatches &&
+            ramSizeMatches &&
+            typeMatches
           );
         })
         .map((item: any, index: number) => {
@@ -1079,17 +2182,16 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
             )
           );
         });
-
       req.body.itemSearchRange.map((item: number, index: number) => {
         if (item == -1) {
           itemSearchRangeCountList.push({
             range: -1,
-            distance: distanceList.length,
+            distance: distanceList?.length,
           });
         } else {
           itemSearchRangeCountList.push({
             range: item,
-            distance: distanceList.filter((dis) => dis <= item).length,
+            distance: distanceList.filter((dis) => dis <= item)?.length,
           });
         }
       });
@@ -1165,16 +2267,14 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
     }
 
     if (req.body.itemProcessor) {
-      req.body.itemProcessor.map((item: string, index: number) => {
-        let count = 0;
-        count = saleObj.filter(
-          (obj) =>
-            (obj as any)?.itemDetailInfo?.processor == item &&
-            (obj as any).itemCategory == req.body.itemCategory
-        ).length;
-
-        itemProcessorCountList.push({ itemProcessor: item, count });
-      });
+      itemProcessorCountList = await getCountOnProcessor(
+        req.body.itemProcessor,
+        req.body.filter,
+        req.body.itemCategory,
+        saleObj,
+        req.body.minPrice,
+        req.body.maxPrice
+      );
     }
     if (req.body.itemScreenSize) {
       itemScreenSizeCountList = await getCountOnScreenSize(
@@ -1221,71 +2321,58 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
     }
 
     if (req.body.itemOperatingSystem) {
-      req.body.itemOperatingSystem.map((item: string, index: number) => {
-        let count = 0;
-        count = saleObj.filter(
-          (obj) =>
-            (obj as any)?.itemDetailInfo?.operatingSystem == item &&
-            (obj as any).itemCategory == req.body.itemCategory
-        ).length;
-
-        itemOperatingSystemCountList.push({ itemOperatingSystem: item, count });
-      });
+      itemOperatingSystemCountList = await getCountOnOperatingSystem(
+        req.body.itemOperatingSystem,
+        req.body.filter,
+        req.body.itemCategory,
+        saleObj,
+        req.body.minPrice,
+        req.body.maxPrice
+      );
     }
 
     if (req.body.itemStorageCapacity) {
-      req.body.itemStorageCapacity.map((item: string, index: number) => {
-        let count = 0;
-        count = saleObj.filter(
-          (obj) =>
-            (obj as any)?.itemDetailInfo?.storageCapacity == item &&
-            (obj as any).itemCategory == req.body.itemCategory
-        ).length;
-
-        itemStorageCapacityCountList.push({ itemStorageCapacity: item, count });
-      });
+      itemStorageCapacityCountList = await getCountOnStorageCapacity(
+        req.body.itemStorageCapacity,
+        req.body.filter,
+        req.body.itemCategory,
+        saleObj,
+        req.body.minPrice,
+        req.body.maxPrice
+      );
     }
 
     if (req.body.itemType) {
-      req.body.itemType.map((item: string, index: number) => {
-        let count = 0;
-        count = saleObj.filter(
-          (obj) =>
-            (obj as any)?.itemDetailInfo?.type == item &&
-            (obj as any).itemCategory == req.body.itemCategory
-        ).length;
-
-        itemTypeCountList.push({ itemType: item, count });
-      });
+      itemTypeCountList = await getCountOnType(
+        req.body.itemType,
+        req.body.filter,
+        req.body.itemCategory,
+        saleObj,
+        req.body.minPrice,
+        req.body.maxPrice
+      );
     }
 
     if (req.body.itemBatteryLife) {
-      req.body.itemBatteryLife.map((item: string, index: number) => {
-        let count = 0;
-        count = saleObj.filter(
-          (obj) =>
-            (obj as any)?.itemDetailInfo?.batteryLife == item &&
-            (obj as any).itemCategory == req.body.itemCategory
-        ).length;
-
-        itemBatteryLifeCountList.push({
-          itemBatteryLife: item,
-          count,
-        });
-      });
+      itemBatteryLifeCountList = await getCountOnBatteryLife(
+        req.body.itemBatteryLife,
+        req.body.filter,
+        req.body.itemCategory,
+        saleObj,
+        req.body.minPrice,
+        req.body.maxPrice
+      );
     }
 
     if (req.body.itemRamSize) {
-      req.body.itemRamSize.map((item: string, index: number) => {
-        let count = 0;
-        count = saleObj.filter(
-          (obj) =>
-            (obj as any)?.itemDetailInfo?.ramSize == item &&
-            (obj as any).itemCategory == req.body.itemCategory
-        ).length;
-
-        itemRamSizeCountList.push({ itemRamSize: item, count });
-      });
+      itemRamSizeCountList = await getCountOnRamSize(
+        req.body.itemRamSize,
+        req.body.filter,
+        req.body.itemCategory,
+        saleObj,
+        req.body.minPrice,
+        req.body.maxPrice
+      );
     }
 
     if (req.body.itemColour) {
@@ -1349,8 +2436,8 @@ export const getCountForEachCategory = async (req: Request, res: Response) => {
     const saleObj = await ForSale.find(condition);
     req.body.itemCategory.map((item: string, index: number) => {
       let count = 0;
-      if (item == "All") count = saleObj.length;
-      else count = saleObj.filter((obj) => obj.itemCategory == item).length;
+      if (item == "All") count = saleObj?.length;
+      else count = saleObj.filter((obj) => obj.itemCategory == item)?.length;
       countList.push({ itemCategory: item, count });
     });
     return res.json({
