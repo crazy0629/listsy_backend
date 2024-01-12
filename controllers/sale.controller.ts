@@ -203,6 +203,18 @@ export const getMoreForSaleAds = async (req: Request, res: Response) => {
         (item: any) => req.body.type.indexOf(item.itemDetailInfo.type) !== -1
       );
     }
+    if (req.body.storage && req.body.storage?.length) {
+      nextForSaleAds = nextForSaleAds.filter(
+        (item: any) =>
+          req.body.storage.indexOf(item.itemDetailInfo.storage) !== -1
+      );
+    }
+    if (req.body.memory && req.body.memory?.length) {
+      nextForSaleAds = nextForSaleAds.filter(
+        (item: any) =>
+          req.body.memory.indexOf(item.itemDetailInfo.memory) !== -1
+      );
+    }
     if (req.body.minPrice && req.body.minPrice != "") {
       nextForSaleAds = nextForSaleAds.filter(
         (item: any) => Number(req.body.minPrice) <= item.price
@@ -321,6 +333,8 @@ const getCountOnWarrantyInformation = async (
       const selectedProcessorCondition = filter.processor?.length > 0;
       const selectedRamSizeCondition = filter.ramSize?.length > 0;
       const selectedTypeCondition = filter.type?.length > 0;
+      const selectedStorageCondition = filter.storage?.length > 0;
+      const selectedMemoryCondition = filter.memory?.length > 0;
 
       const itemConditionMatches = selectedItemCondition
         ? filter.itemCondition.includes(
@@ -369,6 +383,12 @@ const getCountOnWarrantyInformation = async (
       const typeMatches = selectedTypeCondition
         ? filter.type.includes((obj as any)?.itemDetailInfo.type)
         : true;
+      const storageMatches = selectedStorageCondition
+        ? filter.storage.includes((obj as any)?.itemDetailInfo.storage)
+        : true;
+      const memoryMatches = selectedMemoryCondition
+        ? filter.memory.includes((obj as any)?.itemDetailInfo.memory)
+        : true;
 
       return (
         isMatchingWarrantyInformation &&
@@ -387,7 +407,9 @@ const getCountOnWarrantyInformation = async (
         storageCapacityMatches &&
         processorMatches &&
         ramSizeMatches &&
-        typeMatches
+        typeMatches &&
+        storageMatches &&
+        memoryMatches
       );
     })?.length;
     itemWarrantyInformationCountList.push({
@@ -436,6 +458,8 @@ const getCountOnSmartTV = async (
       const selectedProcessorCondition = filter.processor?.length > 0;
       const selectedRamSizeCondition = filter.ramSize?.length > 0;
       const selectedTypeCondition = filter.type?.length > 0;
+      const selectedStorageCondition = filter.storage?.length > 0;
+      const selectedMemoryCondition = filter.memory?.length > 0;
 
       const itemConditionMatches = selectedItemCondition
         ? filter.itemCondition.includes(
@@ -486,6 +510,12 @@ const getCountOnSmartTV = async (
       const typeMatches = selectedTypeCondition
         ? filter.type.includes((obj as any)?.itemDetailInfo.type)
         : true;
+      const storageMatches = selectedStorageCondition
+        ? filter.storage.includes((obj as any)?.itemDetailInfo.storage)
+        : true;
+      const memoryMatches = selectedMemoryCondition
+        ? filter.memory.includes((obj as any)?.itemDetailInfo.memory)
+        : true;
 
       return (
         isMatchingSmart &&
@@ -504,7 +534,9 @@ const getCountOnSmartTV = async (
         storageCapacityMatches &&
         processorMatches &&
         ramSizeMatches &&
-        typeMatches
+        typeMatches &&
+        storageMatches &&
+        memoryMatches
       );
     })?.length;
 
@@ -555,6 +587,8 @@ const getCountOnSellerRating = async (
       const selectedProcessorCondition = filter.processor?.length > 0;
       const selectedRamSizeCondition = filter.ramSize?.length > 0;
       const selectedTypeCondition = filter.type?.length > 0;
+      const selectedStorageCondition = filter.storage?.length > 0;
+      const selectedMemoryCondition = filter.memory?.length > 0;
 
       const itemConditionMatches = selectedItemCondition
         ? filter.itemCondition.includes(
@@ -603,6 +637,12 @@ const getCountOnSellerRating = async (
       const typeMatches = selectedTypeCondition
         ? filter.type.includes((obj as any)?.itemDetailInfo.type)
         : true;
+      const storageMatches = selectedStorageCondition
+        ? filter.storage.includes((obj as any)?.itemDetailInfo.storage)
+        : true;
+      const memoryMatches = selectedMemoryCondition
+        ? filter.memory.includes((obj as any)?.itemDetailInfo.memory)
+        : true;
 
       return (
         isMatchingRating &&
@@ -621,7 +661,9 @@ const getCountOnSellerRating = async (
         storageCapacityMatches &&
         processorMatches &&
         ramSizeMatches &&
-        typeMatches
+        typeMatches &&
+        storageMatches &&
+        memoryMatches
       );
     })?.length;
 
@@ -669,6 +711,8 @@ const getCountOnBrand = async (
       const selectedProcessorCondition = filter.processor?.length > 0;
       const selectedRamSizeCondition = filter.ramSize?.length > 0;
       const selectedTypeCondition = filter.type?.length > 0;
+      const selectedStorageCondition = filter.storage?.length > 0;
+      const selectedMemoryCondition = filter.memory?.length > 0;
 
       const itemConditionMatches = selectedItemCondition
         ? filter.itemCondition.includes(
@@ -719,6 +763,12 @@ const getCountOnBrand = async (
       const typeMatches = selectedTypeCondition
         ? filter.type.includes((obj as any)?.itemDetailInfo.type)
         : true;
+      const storageMatches = selectedStorageCondition
+        ? filter.storage.includes((obj as any)?.itemDetailInfo.storage)
+        : true;
+      const memoryMatches = selectedMemoryCondition
+        ? filter.memory.includes((obj as any)?.itemDetailInfo.memory)
+        : true;
 
       return (
         isMatchingBrand &&
@@ -737,7 +787,9 @@ const getCountOnBrand = async (
         storageCapacityMatches &&
         processorMatches &&
         ramSizeMatches &&
-        typeMatches
+        typeMatches &&
+        storageMatches &&
+        memoryMatches
       );
     })?.length;
 
@@ -787,6 +839,8 @@ const getCountOnColor = async (
       const selectedProcessorCondition = filter.processor?.length > 0;
       const selectedRamSizeCondition = filter.ramSize?.length > 0;
       const selectedTypeCondition = filter.type?.length > 0;
+      const selectedStorageCondition = filter.storage?.length > 0;
+      const selectedMemoryCondition = filter.memory?.length > 0;
 
       const itemConditionMatches = selectedItemCondition
         ? filter.itemCondition.includes(
@@ -837,6 +891,12 @@ const getCountOnColor = async (
       const typeMatches = selectedTypeCondition
         ? filter.type.includes((obj as any)?.itemDetailInfo.type)
         : true;
+      const storageMatches = selectedStorageCondition
+        ? filter.storage.includes((obj as any)?.itemDetailInfo.storage)
+        : true;
+      const memoryMatches = selectedMemoryCondition
+        ? filter.memory.includes((obj as any)?.itemDetailInfo.memory)
+        : true;
 
       return (
         isMatchingColour &&
@@ -855,7 +915,9 @@ const getCountOnColor = async (
         storageCapacityMatches &&
         processorMatches &&
         ramSizeMatches &&
-        typeMatches
+        typeMatches &&
+        storageMatches &&
+        memoryMatches
       );
     })?.length;
 
@@ -906,6 +968,8 @@ const getCountOnResolution = async (
       const selectedProcessorCondition = filter.processor?.length > 0;
       const selectedRamSizeCondition = filter.ramSize?.length > 0;
       const selectedTypeCondition = filter.type?.length > 0;
+      const selectedStorageCondition = filter.storage?.length > 0;
+      const selectedMemoryCondition = filter.memory?.length > 0;
 
       const itemConditionMatches = selectedItemCondition
         ? filter.itemCondition.includes(
@@ -956,6 +1020,12 @@ const getCountOnResolution = async (
       const typeMatches = selectedTypeCondition
         ? filter.type.includes((obj as any)?.itemDetailInfo.type)
         : true;
+      const storageMatches = selectedStorageCondition
+        ? filter.storage.includes((obj as any)?.itemDetailInfo.storage)
+        : true;
+      const memoryMatches = selectedMemoryCondition
+        ? filter.memory.includes((obj as any)?.itemDetailInfo.memory)
+        : true;
 
       return (
         isMatchingResolution &&
@@ -974,7 +1044,9 @@ const getCountOnResolution = async (
         storageCapacityMatches &&
         processorMatches &&
         ramSizeMatches &&
-        typeMatches
+        typeMatches &&
+        storageMatches &&
+        memoryMatches
       );
     })?.length;
 
@@ -1025,6 +1097,8 @@ const getCountOnScreenSize = async (
       const selectedProcessorCondition = filter.processor?.length > 0;
       const selectedRamSizeCondition = filter.ramSize?.length > 0;
       const selectedTypeCondition = filter.type?.length > 0;
+      const selectedStorageCondition = filter.storage?.length > 0;
+      const selectedMemoryCondition = filter.memory?.length > 0;
 
       const itemConditionMatches = selectedItemCondition
         ? filter.itemCondition.includes(
@@ -1075,6 +1149,12 @@ const getCountOnScreenSize = async (
       const typeMatches = selectedTypeCondition
         ? filter.type.includes((obj as any)?.itemDetailInfo.type)
         : true;
+      const storageMatches = selectedStorageCondition
+        ? filter.storage.includes((obj as any)?.itemDetailInfo.storage)
+        : true;
+      const memoryMatches = selectedMemoryCondition
+        ? filter.memory.includes((obj as any)?.itemDetailInfo.memory)
+        : true;
 
       return (
         isMatchingScreenSize &&
@@ -1093,7 +1173,9 @@ const getCountOnScreenSize = async (
         storageCapacityMatches &&
         processorMatches &&
         ramSizeMatches &&
-        typeMatches
+        typeMatches &&
+        storageMatches &&
+        memoryMatches
       );
     })?.length;
 
@@ -1144,6 +1226,8 @@ const getCountOnItemCondition = async (
       const selectedProcessorCondition = filter.processor?.length > 0;
       const selectedRamSizeCondition = filter.ramSize?.length > 0;
       const selectedTypeCondition = filter.type?.length > 0;
+      const selectedStorageCondition = filter.storage?.length > 0;
+      const selectedMemoryCondition = filter.memory?.length > 0;
 
       const warrantyInformationMatches = selectedWarrantyCondition
         ? filter.warrantyInformation.includes(
@@ -1192,6 +1276,12 @@ const getCountOnItemCondition = async (
       const typeMatches = selectedTypeCondition
         ? filter.type.includes((obj as any)?.itemDetailInfo.type)
         : true;
+      const storageMatches = selectedStorageCondition
+        ? filter.storage.includes((obj as any)?.itemDetailInfo.storage)
+        : true;
+      const memoryMatches = selectedMemoryCondition
+        ? filter.memory.includes((obj as any)?.itemDetailInfo.memory)
+        : true;
 
       return (
         isMatchingCondition &&
@@ -1210,7 +1300,9 @@ const getCountOnItemCondition = async (
         storageCapacityMatches &&
         processorMatches &&
         ramSizeMatches &&
-        typeMatches
+        typeMatches &&
+        storageMatches &&
+        memoryMatches
       );
     })?.length;
 
@@ -1247,6 +1339,8 @@ const getCountOnMinMaxPrice = async (minPrice, maxPrice, filter, saleObj) => {
     const selectedProcessorCondition = filter.processor?.length > 0;
     const selectedRamSizeCondition = filter.ramSize?.length > 0;
     const selectedTypeCondition = filter.type?.length > 0;
+    const selectedStorageCondition = filter.storage?.length > 0;
+    const selectedMemoryCondition = filter.memory?.length > 0;
 
     const itemConditionMatches = selectedItemCondition
       ? filter.itemCondition.includes(
@@ -1300,6 +1394,12 @@ const getCountOnMinMaxPrice = async (minPrice, maxPrice, filter, saleObj) => {
     const typeMatches = selectedTypeCondition
       ? filter.type.includes((obj as any)?.itemDetailInfo.type)
       : true;
+    const storageMatches = selectedStorageCondition
+      ? filter.storage.includes((obj as any)?.itemDetailInfo.storage)
+      : true;
+    const memoryMatches = selectedMemoryCondition
+      ? filter.memory.includes((obj as any)?.itemDetailInfo.memory)
+      : true;
 
     return (
       minPriceCondition &&
@@ -1317,7 +1417,9 @@ const getCountOnMinMaxPrice = async (minPrice, maxPrice, filter, saleObj) => {
       storageCapacityMatches &&
       processorMatches &&
       ramSizeMatches &&
-      typeMatches
+      typeMatches &&
+      storageMatches &&
+      memoryMatches
     );
   })?.length;
   return countPerPrice;
@@ -1362,6 +1464,8 @@ const getCountOnBatteryLife = async (
       const selectedProcessorCondition = filter.processor?.length > 0;
       const selectedRamSizeCondition = filter.ramSize?.length > 0;
       const selectedTypeCondition = filter.type?.length > 0;
+      const selectedStorageCondition = filter.storage?.length > 0;
+      const selectedMemoryCondition = filter.memory?.length > 0;
 
       const itemConditionMatches = selectedItemCondition
         ? filter.itemCondition.includes(
@@ -1412,6 +1516,12 @@ const getCountOnBatteryLife = async (
       const typeMatches = selectedTypeCondition
         ? filter.type.includes((obj as any)?.itemDetailInfo.type)
         : true;
+      const storageMatches = selectedStorageCondition
+        ? filter.storage.includes((obj as any)?.itemDetailInfo.storage)
+        : true;
+      const memoryMatches = selectedMemoryCondition
+        ? filter.memory.includes((obj as any)?.itemDetailInfo.memory)
+        : true;
 
       return (
         isMatchingBatteryLife &&
@@ -1430,7 +1540,9 @@ const getCountOnBatteryLife = async (
         storageCapacityMatches &&
         processorMatches &&
         ramSizeMatches &&
-        typeMatches
+        typeMatches &&
+        storageMatches &&
+        memoryMatches
       );
     })?.length;
     itemBatteryLifeCountList.push({
@@ -1479,6 +1591,8 @@ const getCountOnOperatingSystem = async (
       const selectedProcessorCondition = filter.processor?.length > 0;
       const selectedRamSizeCondition = filter.ramSize?.length > 0;
       const selectedTypeCondition = filter.type?.length > 0;
+      const selectedStorageCondition = filter.storage?.length > 0;
+      const selectedMemoryCondition = filter.memory?.length > 0;
 
       const itemConditionMatches = selectedItemCondition
         ? filter.itemCondition.includes(
@@ -1527,6 +1641,12 @@ const getCountOnOperatingSystem = async (
       const typeMatches = selectedTypeCondition
         ? filter.type.includes((obj as any)?.itemDetailInfo.type)
         : true;
+      const storageMatches = selectedStorageCondition
+        ? filter.storage.includes((obj as any)?.itemDetailInfo.storage)
+        : true;
+      const memoryMatches = selectedMemoryCondition
+        ? filter.memory.includes((obj as any)?.itemDetailInfo.memory)
+        : true;
 
       return (
         isMatchingOperatingSystem &&
@@ -1545,7 +1665,9 @@ const getCountOnOperatingSystem = async (
         storageCapacityMatches &&
         processorMatches &&
         ramSizeMatches &&
-        typeMatches
+        typeMatches &&
+        storageMatches &&
+        memoryMatches
       );
     })?.length;
     itemOperatingSystemCountList.push({
@@ -1594,6 +1716,8 @@ const getCountOnStorageCapacity = async (
       const selectedProcessorCondition = filter.processor?.length > 0;
       const selectedRamSizeCondition = filter.ramSize?.length > 0;
       const selectedTypeCondition = filter.type?.length > 0;
+      const selectedStorageCondition = filter.storage?.length > 0;
+      const selectedMemoryCondition = filter.memory?.length > 0;
 
       const itemConditionMatches = selectedItemCondition
         ? filter.itemCondition.includes(
@@ -1642,6 +1766,12 @@ const getCountOnStorageCapacity = async (
       const typeMatches = selectedTypeCondition
         ? filter.type.includes((obj as any)?.itemDetailInfo.type)
         : true;
+      const storageMatches = selectedStorageCondition
+        ? filter.storage.includes((obj as any)?.itemDetailInfo.storage)
+        : true;
+      const memoryMatches = selectedMemoryCondition
+        ? filter.memory.includes((obj as any)?.itemDetailInfo.memory)
+        : true;
 
       return (
         isMatchingStorageCapacity &&
@@ -1660,7 +1790,9 @@ const getCountOnStorageCapacity = async (
         warrantyInformationMatches &&
         processorMatches &&
         ramSizeMatches &&
-        typeMatches
+        typeMatches &&
+        storageMatches &&
+        memoryMatches
       );
     })?.length;
     itemStorageCapacityCountList.push({
@@ -1710,6 +1842,8 @@ const getCountOnProcessor = async (
       const selectedWarrantyCondition = filter.warrantyInformation?.length > 0;
       const selectedRamSizeCondition = filter.ramSize?.length > 0;
       const selectedTypeCondition = filter.type?.length > 0;
+      const selectedStorageCondition = filter.storage?.length > 0;
+      const selectedMemoryCondition = filter.memory?.length > 0;
 
       const itemConditionMatches = selectedItemCondition
         ? filter.itemCondition.includes(
@@ -1760,6 +1894,12 @@ const getCountOnProcessor = async (
       const typeMatches = selectedTypeCondition
         ? filter.type.includes((obj as any)?.itemDetailInfo.type)
         : true;
+      const storageMatches = selectedStorageCondition
+        ? filter.storage.includes((obj as any)?.itemDetailInfo.storage)
+        : true;
+      const memoryMatches = selectedMemoryCondition
+        ? filter.memory.includes((obj as any)?.itemDetailInfo.memory)
+        : true;
 
       return (
         isMatchingProcessor &&
@@ -1778,7 +1918,9 @@ const getCountOnProcessor = async (
         storageCapacityMatches &&
         warrantyInformationMatches &&
         ramSizeMatches &&
-        typeMatches
+        typeMatches &&
+        storageMatches &&
+        memoryMatches
       );
     })?.length;
     itemProcessorCountList.push({
@@ -1827,6 +1969,8 @@ const getCountOnRamSize = async (
       const selectedProcessorCondition = filter.processor?.length > 0;
       const selectedWarrantyCondition = filter.warrantyInformation?.length > 0;
       const selectedTypeCondition = filter.type?.length > 0;
+      const selectedStorageCondition = filter.storage?.length > 0;
+      const selectedMemoryCondition = filter.memory?.length > 0;
 
       const itemConditionMatches = selectedItemCondition
         ? filter.itemCondition.includes(
@@ -1877,6 +2021,12 @@ const getCountOnRamSize = async (
       const typeMatches = selectedTypeCondition
         ? filter.type.includes((obj as any)?.itemDetailInfo.type)
         : true;
+      const storageMatches = selectedStorageCondition
+        ? filter.storage.includes((obj as any)?.itemDetailInfo.storage)
+        : true;
+      const memoryMatches = selectedMemoryCondition
+        ? filter.memory.includes((obj as any)?.itemDetailInfo.memory)
+        : true;
 
       return (
         isMatchingRamSize &&
@@ -1895,7 +2045,9 @@ const getCountOnRamSize = async (
         storageCapacityMatches &&
         processorMatches &&
         warrantyInformationMatches &&
-        typeMatches
+        typeMatches &&
+        storageMatches &&
+        memoryMatches
       );
     })?.length;
     itemRamSizeCountList.push({
@@ -1944,6 +2096,8 @@ const getCountOnType = async (
       const selectedProcessorCondition = filter.processor?.length > 0;
       const selectedRamSizeCondition = filter.ramSize?.length > 0;
       const selectedWarrantyCondition = filter.warrantyInformation?.length > 0;
+      const selectedStorageCondition = filter.storage?.length > 0;
+      const selectedMemoryCondition = filter.memory?.length > 0;
 
       const itemConditionMatches = selectedItemCondition
         ? filter.itemCondition.includes(
@@ -1992,6 +2146,12 @@ const getCountOnType = async (
       const warrantyInformationMatches = selectedWarrantyCondition
         ? filter.type.includes((obj as any)?.itemDetailInfo.type)
         : true;
+      const storageMatches = selectedStorageCondition
+        ? filter.storage.includes((obj as any)?.itemDetailInfo.storage)
+        : true;
+      const memoryMatches = selectedMemoryCondition
+        ? filter.memory.includes((obj as any)?.itemDetailInfo.memory)
+        : true;
 
       return (
         isMatchingType &&
@@ -2010,7 +2170,9 @@ const getCountOnType = async (
         storageCapacityMatches &&
         processorMatches &&
         ramSizeMatches &&
-        warrantyInformationMatches
+        warrantyInformationMatches &&
+        storageMatches &&
+        memoryMatches
       );
     })?.length;
     itemTypeCountList.push({
@@ -2019,6 +2181,258 @@ const getCountOnType = async (
     });
   });
   return itemTypeCountList;
+};
+
+const getCountOnStorage = async (
+  itemStorage,
+  filter,
+  itemCategory,
+  saleObj,
+  minPrice,
+  maxPrice
+) => {
+  let itemStorageCountList: any = [];
+
+  itemStorage.map((item: string, index: number) => {
+    let count = 0;
+    count = saleObj.filter((obj) => {
+      const isMatchingStorage = (obj as any)?.itemDetailInfo?.storage == item;
+      const isMatchingItemCategory = (obj as any).itemCategory == itemCategory;
+      let minPriceCondition = true;
+      let maxPriceCondition = true;
+
+      if (minPrice != "")
+        minPriceCondition = (obj as any).price >= Number(minPrice);
+      if (maxPrice != "")
+        maxPriceCondition = (obj as any).price <= Number(maxPrice);
+
+      const selectedItemCondition = filter.itemCondition?.length > 0;
+      const selectedScreenSizeCondition = filter.screenSize?.length > 0;
+      const selectedResolutionCondition = filter.resolution?.length > 0;
+      const selectedBrandCondition = filter.brand?.length > 0;
+      const selectedSmartTVCondition = filter.smartTV?.length > 0;
+      const selectedColorCondition = filter.colour?.length > 0;
+      const selectedSellerRatingCondition = filter.sellerRating?.length > 0;
+      const selectedBatteryLifeCondition = filter.batteryLife?.length > 0;
+      const selectedOperatingSystemCondition =
+        filter.operatingSystem?.length > 0;
+      const selectedStorageCapacityCondition =
+        filter.storageCapacity?.length > 0;
+      const selectedProcessorCondition = filter.processor?.length > 0;
+      const selectedRamSizeCondition = filter.ramSize?.length > 0;
+      const selectedTypeCondition = filter.type?.length > 0;
+      const selectedWarrantyCondition = filter.warrantyInformation?.length > 0;
+      const selectedMemoryCondition = filter.memory?.length > 0;
+
+      const itemConditionMatches = selectedItemCondition
+        ? filter.itemCondition.includes(
+            (obj as any)?.itemDetailInfo?.itemCondition
+          )
+        : true;
+      const screenSizeMatches = selectedScreenSizeCondition
+        ? filter.screenSize.includes((obj as any)?.itemDetailInfo?.screenSize)
+        : true;
+      const resolutionMatches = selectedResolutionCondition
+        ? filter.resolution.includes((obj as any)?.itemDetailInfo?.resolution)
+        : true;
+      const brandMatches = selectedBrandCondition
+        ? filter.brand.includes((obj as any)?.itemDetailInfo?.brand)
+        : true;
+      const smartTVMatches = selectedSmartTVCondition
+        ? filter.smartTV.includes((obj as any)?.itemDetailInfo.smartTV)
+        : true;
+      const colourMatches = selectedColorCondition
+        ? filter.colour.includes((obj as any)?.itemDetailInfo.colour)
+        : true;
+      const sellerRatingMatches = selectedSellerRatingCondition
+        ? filter.sellerRating.includes(
+            parseInt((obj as any)?.userId.reviewMark).toString() + "*"
+          )
+        : true;
+      const batteryLifeMatches = selectedBatteryLifeCondition
+        ? filter.batteryLife.includes((obj as any)?.itemDetailInfo.batteryLife)
+        : true;
+      const operatingSystemMatches = selectedOperatingSystemCondition
+        ? filter.operatingSystem.includes(
+            (obj as any)?.itemDetailInfo.operatingSystem
+          )
+        : true;
+      const storageCapacityMatches = selectedStorageCapacityCondition
+        ? filter.storageCapacity.includes(
+            (obj as any)?.itemDetailInfo.storageCapacity
+          )
+        : true;
+      const processorMatches = selectedProcessorCondition
+        ? filter.processor.includes((obj as any)?.itemDetailInfo.processor)
+        : true;
+      const ramSizeMatches = selectedRamSizeCondition
+        ? filter.ramSize.includes((obj as any)?.itemDetailInfo.ramSize)
+        : true;
+      const typeMatches = selectedTypeCondition
+        ? filter.type.includes((obj as any)?.itemDetailInfo.type)
+        : true;
+      const warrantyInformationMatches = selectedWarrantyCondition
+        ? filter.warrantyInformation.includes(
+            (obj as any)?.itemDetailInfo.warrantyInformation
+          )
+        : true;
+      const memoryMatches = selectedMemoryCondition
+        ? filter.memory.includes((obj as any)?.itemDetailInfo.memory)
+        : true;
+
+      return (
+        isMatchingStorage &&
+        isMatchingItemCategory &&
+        minPriceCondition &&
+        maxPriceCondition &&
+        itemConditionMatches &&
+        screenSizeMatches &&
+        resolutionMatches &&
+        brandMatches &&
+        smartTVMatches &&
+        colourMatches &&
+        sellerRatingMatches &&
+        batteryLifeMatches &&
+        operatingSystemMatches &&
+        storageCapacityMatches &&
+        processorMatches &&
+        ramSizeMatches &&
+        typeMatches &&
+        warrantyInformationMatches &&
+        memoryMatches
+      );
+    })?.length;
+    itemStorageCountList.push({
+      itemStorage: item,
+      count,
+    });
+  });
+  return itemStorageCountList;
+};
+
+const getCountOnMemory = async (
+  itemMemory,
+  filter,
+  itemCategory,
+  saleObj,
+  minPrice,
+  maxPrice
+) => {
+  let itemMemoryCountList: any = [];
+
+  itemMemory.map((item: string, index: number) => {
+    let count = 0;
+    count = saleObj.filter((obj) => {
+      const isMatchingMemory = (obj as any)?.itemDetailInfo?.memory == item;
+      const isMatchingItemCategory = (obj as any).itemCategory == itemCategory;
+      let minPriceCondition = true;
+      let maxPriceCondition = true;
+
+      if (minPrice != "")
+        minPriceCondition = (obj as any).price >= Number(minPrice);
+      if (maxPrice != "")
+        maxPriceCondition = (obj as any).price <= Number(maxPrice);
+
+      const selectedItemCondition = filter.itemCondition?.length > 0;
+      const selectedScreenSizeCondition = filter.screenSize?.length > 0;
+      const selectedResolutionCondition = filter.resolution?.length > 0;
+      const selectedBrandCondition = filter.brand?.length > 0;
+      const selectedSmartTVCondition = filter.smartTV?.length > 0;
+      const selectedColorCondition = filter.colour?.length > 0;
+      const selectedSellerRatingCondition = filter.sellerRating?.length > 0;
+      const selectedBatteryLifeCondition = filter.batteryLife?.length > 0;
+      const selectedOperatingSystemCondition =
+        filter.operatingSystem?.length > 0;
+      const selectedStorageCapacityCondition =
+        filter.storageCapacity?.length > 0;
+      const selectedProcessorCondition = filter.processor?.length > 0;
+      const selectedRamSizeCondition = filter.ramSize?.length > 0;
+      const selectedTypeCondition = filter.type?.length > 0;
+      const selectedStorageCondition = filter.storage?.length > 0;
+      const selectedWarrantyCondition = filter.warrantyInformation?.length > 0;
+
+      const itemConditionMatches = selectedItemCondition
+        ? filter.itemCondition.includes(
+            (obj as any)?.itemDetailInfo?.itemCondition
+          )
+        : true;
+      const screenSizeMatches = selectedScreenSizeCondition
+        ? filter.screenSize.includes((obj as any)?.itemDetailInfo?.screenSize)
+        : true;
+      const resolutionMatches = selectedResolutionCondition
+        ? filter.resolution.includes((obj as any)?.itemDetailInfo?.resolution)
+        : true;
+      const brandMatches = selectedBrandCondition
+        ? filter.brand.includes((obj as any)?.itemDetailInfo?.brand)
+        : true;
+      const smartTVMatches = selectedSmartTVCondition
+        ? filter.smartTV.includes((obj as any)?.itemDetailInfo.smartTV)
+        : true;
+      const colourMatches = selectedColorCondition
+        ? filter.colour.includes((obj as any)?.itemDetailInfo.colour)
+        : true;
+      const sellerRatingMatches = selectedSellerRatingCondition
+        ? filter.sellerRating.includes(
+            parseInt((obj as any)?.userId.reviewMark).toString() + "*"
+          )
+        : true;
+      const batteryLifeMatches = selectedBatteryLifeCondition
+        ? filter.batteryLife.includes((obj as any)?.itemDetailInfo.batteryLife)
+        : true;
+      const operatingSystemMatches = selectedOperatingSystemCondition
+        ? filter.operatingSystem.includes(
+            (obj as any)?.itemDetailInfo.operatingSystem
+          )
+        : true;
+      const storageCapacityMatches = selectedStorageCapacityCondition
+        ? filter.storageCapacity.includes(
+            (obj as any)?.itemDetailInfo.storageCapacity
+          )
+        : true;
+      const processorMatches = selectedProcessorCondition
+        ? filter.processor.includes((obj as any)?.itemDetailInfo.processor)
+        : true;
+      const ramSizeMatches = selectedRamSizeCondition
+        ? filter.ramSize.includes((obj as any)?.itemDetailInfo.ramSize)
+        : true;
+      const typeMatches = selectedTypeCondition
+        ? filter.type.includes((obj as any)?.itemDetailInfo.type)
+        : true;
+      const storageMatches = selectedStorageCondition
+        ? filter.storage.includes((obj as any)?.itemDetailInfo.storage)
+        : true;
+      const warrantyInformationMatches = selectedWarrantyCondition
+        ? filter.storage.includes((obj as any)?.itemDetailInfo.storage)
+        : true;
+
+      return (
+        isMatchingMemory &&
+        isMatchingItemCategory &&
+        minPriceCondition &&
+        maxPriceCondition &&
+        itemConditionMatches &&
+        screenSizeMatches &&
+        resolutionMatches &&
+        brandMatches &&
+        smartTVMatches &&
+        colourMatches &&
+        sellerRatingMatches &&
+        batteryLifeMatches &&
+        operatingSystemMatches &&
+        storageCapacityMatches &&
+        processorMatches &&
+        ramSizeMatches &&
+        typeMatches &&
+        storageMatches &&
+        warrantyInformationMatches
+      );
+    })?.length;
+    itemMemoryCountList.push({
+      itemMemory: item,
+      count,
+    });
+  });
+  return itemMemoryCountList;
 };
 
 export const getCountOfEachFilter = async (req: Request, res: Response) => {
@@ -2083,6 +2497,8 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
             req.body.filter.processor?.length > 0;
           const selectedRamSizeCondition = req.body.filter.ramSize?.length > 0;
           const selectedTypeCondition = req.body.filter.type?.length > 0;
+          const selectedStorageCondition = req.body.filter.storage?.length > 0;
+          const selectedMemoryCondition = req.body.filter.memory?.length > 0;
 
           const itemConditionMatches = selectedItemCondition
             ? req.body.filter.itemCondition.includes(
@@ -2152,6 +2568,16 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
           const typeMatches = selectedTypeCondition
             ? req.body.filter.type.includes((obj as any)?.itemDetailInfo.type)
             : true;
+          const storageMatches = selectedStorageCondition
+            ? req.body.filter.storage.includes(
+                (obj as any)?.itemDetailInfo.storage
+              )
+            : true;
+          const memoryMatches = selectedMemoryCondition
+            ? req.body.filter.memory.includes(
+                (obj as any)?.itemDetailInfo.memory
+              )
+            : true;
 
           return (
             minPriceCondition &&
@@ -2169,7 +2595,9 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
             storageCapacityMatches &&
             processorMatches &&
             ramSizeMatches &&
-            typeMatches
+            typeMatches &&
+            storageMatches &&
+            memoryMatches
           );
         })
         .map((item: any, index: number) => {
@@ -2211,6 +2639,8 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
     let itemStorageCapacityCountList: any = [];
     let itemProcessorCountList: any = [];
     let itemRamSizeCountList: any = [];
+    let itemStorageCountList: any = [];
+    let itemMemoryCountList: any = [];
 
     let saleObj = await ForSale.find(condition).populate(
       "userId",
@@ -2243,6 +2673,28 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
       req.body.filter,
       saleObj
     );
+
+    if (req.body.itemStorage) {
+      itemStorageCountList = await getCountOnStorage(
+        req.body.itemStorage,
+        req.body.filter,
+        req.body.itemCategory,
+        saleObj,
+        req.body.minPrice,
+        req.body.maxPrice
+      );
+    }
+
+    if (req.body.itemMemory) {
+      itemMemoryCountList = await getCountOnMemory(
+        req.body.itemMemory,
+        req.body.filter,
+        req.body.itemCategory,
+        saleObj,
+        req.body.minPrice,
+        req.body.maxPrice
+      );
+    }
 
     if (req.body.itemSellerRating) {
       itemSellerRatingCountList = await getCountOnSellerRating(
@@ -2415,6 +2867,8 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
       itemProcessor: itemProcessorCountList,
       itemRamSize: itemRamSizeCountList,
       itemType: itemTypeCountList,
+      itemStorage: itemStorageCountList,
+      itemMemory: itemMemoryCountList,
     });
   } catch (error) {
     res.json({ success: false, message: "Error happpend while getting data!" });
