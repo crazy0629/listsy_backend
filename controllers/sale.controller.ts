@@ -232,6 +232,7 @@ export const getMoreForSaleAds = async (req: Request, res: Response) => {
       data: nextForSaleAds,
     });
   } catch (error) {
+    console.log(error);
     return res.json({
       success: false,
       message: "Error found while loading more electronics ads",
