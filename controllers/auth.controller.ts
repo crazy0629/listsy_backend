@@ -125,7 +125,7 @@ export const signIn = async (req: Request, res: Response) => {
   if (isMatch) {
     return res.json({
       success: true,
-      message: "Successfully signed!",
+      message: "Success! You're in",
       token: generateToken(user),
       isVerified: true,
     });
@@ -133,7 +133,7 @@ export const signIn = async (req: Request, res: Response) => {
 
   return res.json({
     success: false,
-    message: "The email or password are incorrect!",
+    message: "Incorrect email or password. Please try again.",
   });
 };
 

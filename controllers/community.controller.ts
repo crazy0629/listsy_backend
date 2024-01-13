@@ -25,13 +25,13 @@ export const addCommunity = async (req: Request, res: Response) => {
 
     res.json({
       success: true,
-      message: "Community is sucessfully added!",
+      message: "Post successful! It's now live in the community space",
       model: latestCommunity,
     });
   } catch (error) {
     res.json({
       success: false,
-      message: "Error happened while adding new community!",
+      message: "Oops! Something went wrong. Please try again later",
     });
   }
 };
