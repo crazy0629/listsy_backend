@@ -75,7 +75,7 @@ export const changePhoneNumberShare = async (req: Request, res: Response) => {
 
       return res.json({
         success: true,
-        message: "Your profile is successfully edited",
+        message: "Profile updated successfully",
         data: model,
         token: generateToken(model),
       });
@@ -102,7 +102,7 @@ export const editProfile = async (req: Request, res: Response) => {
 
       return res.json({
         success: true,
-        message: "Your profile is successfully edited",
+        message: "Profile updated successfully",
         data: model,
         token: generateToken(model),
       });
