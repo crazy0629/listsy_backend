@@ -17,13 +17,23 @@ export const getLocationList = async (req: Request, res: Response) => {
       let result: any = [];
       for (let index = 0; index < models.length; index++) {
         const element = models[index];
-        result.push({
-          address: element.address,
-          lat: element.lat,
-          lng: element.lng,
-        });
+        const isDuplicate = result.some(
+          (item: any) => item.lat === element.lat && item.lng === element.lng
+        );
+        if (!isDuplicate) {
+          result.push({
+            address: element.address,
+            lat: element.lat,
+            lng: element.lng,
+            count: 1,
+          });
+        } else {
+          result.filter(
+            (item: any) => item.lat === element.lat && item.lng === element.lng
+          )[0].count++;
+        }
       }
-      res.json({ sucess: true, data: result });
+      res.json({ success: true, data: result });
     });
   } catch (error) {
     res.json({ success: false, message: "Error happened while loading data" });
