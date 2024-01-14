@@ -5,11 +5,17 @@ import User from "../models/User";
 import Multer from "multer";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import { chatReplyCheckEmail } from "../service/chatReplyCheckEmail";
 
 dotenv.config();
 
 const socketIO = require("socket.io");
 const clients = new Set();
+
+const mailgun = require("mailgun-js")({
+  apiKey: process.env.Mailgun_API_KEY,
+  domain: "spyderreceipts.com",
+});
 
 export const setupWebSocket = (server) => {
   const io = require("socket.io")(server, {
@@ -113,6 +119,46 @@ const addChatUser = async (data: any) => {
   }
 };
 
+const checkForReply = async (messageId) => {
+  const originalMsg = await Chat.findById(
+    new mongoose.Types.ObjectId(messageId)
+  );
+
+  const replyMsg = await Chat.findOne({
+    senderId: originalMsg?.receiverId,
+    receiverId: originalMsg?.senderId,
+    createdAt: {
+      $gt: originalMsg?.createdAt,
+    },
+  });
+
+  if (replyMsg) return true;
+  return false;
+};
+
+const sendChatReplyEmail = async (
+  email: string,
+  name: string,
+  senderName: string,
+  senderId: string
+) => {
+  const link = `${process.env.HOST_URL}/message/${senderId}`;
+  const html = chatReplyCheckEmail(link, name, senderName);
+  const data = {
+    from: "Listsy <support@spyderreceipts.com>",
+    to: email,
+    subject: "New Message Alert on Listsy",
+    html,
+  };
+
+  mailgun.messages().send(data, (error: Error, body) => {
+    if (error) {
+      return false;
+    }
+    return true;
+  });
+};
+
 const addMessage = async (data: any) => {
   try {
     let newChatObj = new Chat();
@@ -121,6 +167,28 @@ const addMessage = async (data: any) => {
     newChatObj.message = data.message;
     newChatObj.readState = false;
     await newChatObj.save();
+
+    setTimeout(() => {
+      // Check if a reply has been received
+      checkForReply(newChatObj.id).then(async (hasReply) => {
+        let chatItem = await Chat.findById(
+          new mongoose.Types.ObjectId(newChatObj.id)
+        )
+          .populate("senderId", "firstName lastName")
+          .populate("receiverId", "firstName lastName email")
+          .then((model: any) => {
+            if (!hasReply) {
+              const email = model?.receiverId.email;
+              const senderName =
+                model?.senderId.firstName + " " + model?.senderId.lastName;
+              const receiverName =
+                model?.receiverId.firstName + " " + model?.receiverId.lastName;
+              const senderId = model?.senderId._id;
+              sendChatReplyEmail(email, receiverName, senderName, senderId);
+            }
+          });
+      });
+    }, 60000);
 
     const newMessage = await Chat.findById(newChatObj.id)
       .populate("senderId")

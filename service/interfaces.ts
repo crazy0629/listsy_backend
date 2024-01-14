@@ -155,6 +155,8 @@ export interface IChat extends Document {
   readState: boolean;
   attachedFileNames: Array<string>;
   originalFileNames: Array<string>;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface IReview extends Document {
