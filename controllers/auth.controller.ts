@@ -189,7 +189,7 @@ export const forgetPassword = async (req: Request, res: Response) => {
   return res.json({
     success: true,
     message:
-      "Verification email is successfully sent to your email, please check your inbox and follow instructions to reset password",
+      "Password Reset Email Sent! Check your inbox (and spam folder) for instructions on resetting your password. If you don't receive an email, contact support.",
   });
 };
 
