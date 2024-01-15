@@ -188,7 +188,7 @@ const addMessage = async (data: any) => {
             }
           });
       });
-    }, 60000);
+    }, 3600000);
 
     const newMessage = await Chat.findById(newChatObj.id)
       .populate("senderId")
