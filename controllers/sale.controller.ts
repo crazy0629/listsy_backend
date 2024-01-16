@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import ForSale from "../models/ForSale";
 import mongoose from "mongoose";
 import Ad from "../models/Ad";
+import User from "../models/User";
+import { generateToken } from "../service/helper";
 
 /**
  * This function is called when users upload items for sale ads.
@@ -210,9 +212,27 @@ export const loadForSaleInfo = async (req: Request, res: Response) => {
       newForSale.itemDetailInfo = req.body.itemDetailInfo;
 
       await newForSale.save();
+    }
+  );
+  User.findById(new mongoose.Types.ObjectId(req.body.userId)).then(
+    async (model: any) => {
+      if (!model) {
+        return res.json({
+          success: false,
+          message: "Error found!",
+        });
+      }
+      if (model.telephoneNumber == undefined) {
+        model.telephoneNumber = req.body.telephoneNumber;
+        model.phoneNumberShare = req.body.phoneNumberShare;
+        await model.save();
+      }
+
       return res.json({
         success: true,
         message: "Successfully saved sale media information!",
+        data: model,
+        token: generateToken(model),
       });
     }
   );
