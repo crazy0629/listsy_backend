@@ -69,7 +69,8 @@ export const uploadAd = async (req: Request, res: Response) => {
 
   res.json({
     success: true,
-    message: "Ad is uploaded successfully",
+    message:
+      "Success! Your video has been uploaded and is now part of your advert. We're excited to help showcase your content.",
     filename,
     originalname,
     model: newAd,
