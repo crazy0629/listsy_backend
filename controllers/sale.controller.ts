@@ -175,6 +175,25 @@ const checkFeaturesMatches = (filter, obj) => {
   }
 };
 
+const checkConnectivityMatches = (filter, obj) => {
+  const selectedConnectivityCondition = filter.connectivity?.length > 0;
+  const connectivityMatches = selectedConnectivityCondition
+    ? filter.connectivity.includes((obj as any)?.itemDetailInfo.connectivity)
+    : true;
+  return connectivityMatches;
+};
+
+const checkSupportedStandardsMatches = (filter, obj) => {
+  const selectedSupportedStandardsCondition =
+    filter.supportedStandards?.length > 0;
+  const supportedStandardsMatches = selectedSupportedStandardsCondition
+    ? filter.supportedStandards.includes(
+        (obj as any)?.itemDetailInfo.supportedStandards
+      )
+    : true;
+  return supportedStandardsMatches;
+};
+
 export const loadForSaleInfo = async (req: Request, res: Response) => {
   ForSale.find({ adId: new mongoose.Types.ObjectId(req.body.adId) }).then(
     async (model: any) => {
@@ -388,6 +407,20 @@ export const getMoreForSaleAds = async (req: Request, res: Response) => {
           req.body.memory.indexOf(item.itemDetailInfo.memory) !== -1
       );
     }
+    if (req.body.connectivity && req.body.connectivity?.length) {
+      nextForSaleAds = nextForSaleAds.filter(
+        (item: any) =>
+          req.body.connectivity.indexOf(item.itemDetailInfo.connectivity) !== -1
+      );
+    }
+    if (req.body.supportedStandards && req.body.supportedStandards?.length) {
+      nextForSaleAds = nextForSaleAds.filter(
+        (item: any) =>
+          req.body.supportedStandards.indexOf(
+            item.itemDetailInfo.supportedStandards
+          ) !== -1
+      );
+    }
     if (req.body.features && req.body.features?.length) {
       nextForSaleAds = nextForSaleAds.filter((item: any) => {
         const set = new Set(req.body.features);
@@ -506,7 +539,9 @@ const getCountOnWarrantyInformation = async (
         checkTypeMatches(filter, obj) &&
         checkStorageMatches(filter, obj) &&
         checkMemoryMatches(filter, obj) &&
-        checkFeaturesMatches(filter, obj)
+        checkFeaturesMatches(filter, obj) &&
+        checkConnectivityMatches(filter, obj) &&
+        checkSupportedStandardsMatches(filter, obj)
       );
     })?.length;
     itemWarrantyInformationCountList.push({
@@ -552,7 +587,9 @@ const getCountOnSmartTV = async (
         checkTypeMatches(filter, obj) &&
         checkStorageMatches(filter, obj) &&
         checkMemoryMatches(filter, obj) &&
-        checkFeaturesMatches(filter, obj)
+        checkFeaturesMatches(filter, obj) &&
+        checkConnectivityMatches(filter, obj) &&
+        checkSupportedStandardsMatches(filter, obj)
       );
     })?.length;
 
@@ -600,7 +637,9 @@ const getCountOnSellerRating = async (
         checkTypeMatches(filter, obj) &&
         checkStorageMatches(filter, obj) &&
         checkMemoryMatches(filter, obj) &&
-        checkFeaturesMatches(filter, obj)
+        checkFeaturesMatches(filter, obj) &&
+        checkConnectivityMatches(filter, obj) &&
+        checkSupportedStandardsMatches(filter, obj)
       );
     })?.length;
 
@@ -645,7 +684,9 @@ const getCountOnBrand = async (
         checkTypeMatches(filter, obj) &&
         checkStorageMatches(filter, obj) &&
         checkMemoryMatches(filter, obj) &&
-        checkFeaturesMatches(filter, obj)
+        checkFeaturesMatches(filter, obj) &&
+        checkConnectivityMatches(filter, obj) &&
+        checkSupportedStandardsMatches(filter, obj)
       );
     })?.length;
 
@@ -692,7 +733,9 @@ const getCountOnColor = async (
         checkTypeMatches(filter, obj) &&
         checkStorageMatches(filter, obj) &&
         checkMemoryMatches(filter, obj) &&
-        checkFeaturesMatches(filter, obj)
+        checkFeaturesMatches(filter, obj) &&
+        checkConnectivityMatches(filter, obj) &&
+        checkSupportedStandardsMatches(filter, obj)
       );
     })?.length;
 
@@ -740,7 +783,9 @@ const getCountOnResolution = async (
         checkTypeMatches(filter, obj) &&
         checkStorageMatches(filter, obj) &&
         checkMemoryMatches(filter, obj) &&
-        checkFeaturesMatches(filter, obj)
+        checkFeaturesMatches(filter, obj) &&
+        checkConnectivityMatches(filter, obj) &&
+        checkSupportedStandardsMatches(filter, obj)
       );
     })?.length;
 
@@ -788,7 +833,9 @@ const getCountOnScreenSize = async (
         checkTypeMatches(filter, obj) &&
         checkStorageMatches(filter, obj) &&
         checkMemoryMatches(filter, obj) &&
-        checkFeaturesMatches(filter, obj)
+        checkFeaturesMatches(filter, obj) &&
+        checkConnectivityMatches(filter, obj) &&
+        checkSupportedStandardsMatches(filter, obj)
       );
     })?.length;
 
@@ -835,7 +882,9 @@ const getCountOnItemCondition = async (
         checkTypeMatches(filter, obj) &&
         checkStorageMatches(filter, obj) &&
         checkMemoryMatches(filter, obj) &&
-        checkFeaturesMatches(filter, obj)
+        checkFeaturesMatches(filter, obj) &&
+        checkConnectivityMatches(filter, obj) &&
+        checkSupportedStandardsMatches(filter, obj)
       );
     })?.length;
 
@@ -869,7 +918,9 @@ const getCountOnMinMaxPrice = async (mainParam, saleObj) => {
       checkTypeMatches(mainParam.filter, obj) &&
       checkStorageMatches(mainParam.filter, obj) &&
       checkMemoryMatches(mainParam.filter, obj) &&
-      checkFeaturesMatches(mainParam.filter, obj)
+      checkFeaturesMatches(mainParam.filter, obj) &&
+      checkConnectivityMatches(mainParam.filter, obj) &&
+      checkSupportedStandardsMatches(mainParam.filter, obj)
     );
   })?.length;
   return countPerPrice;
@@ -911,7 +962,9 @@ const getCountOnBatteryLife = async (
         checkTypeMatches(filter, obj) &&
         checkStorageMatches(filter, obj) &&
         checkMemoryMatches(filter, obj) &&
-        checkFeaturesMatches(filter, obj)
+        checkFeaturesMatches(filter, obj) &&
+        checkConnectivityMatches(filter, obj) &&
+        checkSupportedStandardsMatches(filter, obj)
       );
     })?.length;
     itemBatteryLifeCountList.push({
@@ -958,7 +1011,9 @@ const getCountOnOperatingSystem = async (
         checkTypeMatches(filter, obj) &&
         checkStorageMatches(filter, obj) &&
         checkMemoryMatches(filter, obj) &&
-        checkFeaturesMatches(filter, obj)
+        checkFeaturesMatches(filter, obj) &&
+        checkConnectivityMatches(filter, obj) &&
+        checkSupportedStandardsMatches(filter, obj)
       );
     })?.length;
     itemOperatingSystemCountList.push({
@@ -1005,7 +1060,9 @@ const getCountOnStorageCapacity = async (
         checkTypeMatches(filter, obj) &&
         checkStorageMatches(filter, obj) &&
         checkMemoryMatches(filter, obj) &&
-        checkFeaturesMatches(filter, obj)
+        checkFeaturesMatches(filter, obj) &&
+        checkConnectivityMatches(filter, obj) &&
+        checkSupportedStandardsMatches(filter, obj)
       );
     })?.length;
     itemStorageCapacityCountList.push({
@@ -1052,7 +1109,9 @@ const getCountOnProcessor = async (
         checkTypeMatches(filter, obj) &&
         checkStorageMatches(filter, obj) &&
         checkMemoryMatches(filter, obj) &&
-        checkFeaturesMatches(filter, obj)
+        checkFeaturesMatches(filter, obj) &&
+        checkConnectivityMatches(filter, obj) &&
+        checkSupportedStandardsMatches(filter, obj)
       );
     })?.length;
     itemProcessorCountList.push({
@@ -1098,7 +1157,9 @@ const getCountOnRamSize = async (
         checkTypeMatches(filter, obj) &&
         checkStorageMatches(filter, obj) &&
         checkMemoryMatches(filter, obj) &&
-        checkFeaturesMatches(filter, obj)
+        checkFeaturesMatches(filter, obj) &&
+        checkConnectivityMatches(filter, obj) &&
+        checkSupportedStandardsMatches(filter, obj)
       );
     })?.length;
     itemRamSizeCountList.push({
@@ -1144,7 +1205,9 @@ const getCountOnType = async (
         checkWarrantyInformationMatches(filter, obj) &&
         checkStorageMatches(filter, obj) &&
         checkMemoryMatches(filter, obj) &&
-        checkFeaturesMatches(filter, obj)
+        checkFeaturesMatches(filter, obj) &&
+        checkConnectivityMatches(filter, obj) &&
+        checkSupportedStandardsMatches(filter, obj)
       );
     })?.length;
     itemTypeCountList.push({
@@ -1184,7 +1247,9 @@ const getCountOnStorage = async (mainParam, saleObj) => {
         checkTypeMatches(mainParam.filter, obj) &&
         checkWarrantyInformationMatches(mainParam.filter, obj) &&
         checkMemoryMatches(mainParam.filter, obj) &&
-        checkFeaturesMatches(mainParam.filter, obj)
+        checkFeaturesMatches(mainParam.filter, obj) &&
+        checkConnectivityMatches(mainParam.filter, obj) &&
+        checkSupportedStandardsMatches(mainParam.filter, obj)
       );
     })?.length;
     itemStorageCountList.push({
@@ -1224,7 +1289,9 @@ const getCountOnMemory = async (mainParam, saleObj) => {
         checkTypeMatches(mainParam.filter, obj) &&
         checkStorageMatches(mainParam.filter, obj) &&
         checkWarrantyInformationMatches(mainParam.filter, obj) &&
-        checkFeaturesMatches(mainParam.filter, obj)
+        checkFeaturesMatches(mainParam.filter, obj) &&
+        checkConnectivityMatches(mainParam.filter, obj) &&
+        checkSupportedStandardsMatches(mainParam.filter, obj)
       );
     })?.length;
     itemMemoryCountList.push({
@@ -1267,7 +1334,9 @@ const getCountOnFeatures = async (mainParam, saleObj) => {
         checkStorageMatches(mainParam.filter, obj) &&
         checkMemoryMatches(mainParam.filter, obj) &&
         checkWarrantyInformationMatches(mainParam.filter, obj) &&
-        checkFeaturesMatches(mainParam.filter, obj)
+        checkFeaturesMatches(mainParam.filter, obj) &&
+        checkConnectivityMatches(mainParam.filter, obj) &&
+        checkSupportedStandardsMatches(mainParam.filter, obj)
       );
     })?.length;
     itemFeaturesCountList.push({
@@ -1276,6 +1345,104 @@ const getCountOnFeatures = async (mainParam, saleObj) => {
     });
   });
   return itemFeaturesCountList;
+};
+
+const getCountOnConnectivity = async (
+  itemConnectivity,
+  filter,
+  itemCategory,
+  saleObj,
+  minPrice,
+  maxPrice
+) => {
+  let itemConnectivityCountList: any = [];
+
+  itemConnectivity.map((item: string, index: number) => {
+    let count = 0;
+    count = saleObj.filter((obj) => {
+      const isMatchingConnectivity =
+        (obj as any)?.itemDetailInfo?.connectivity == item;
+      const isMatchingItemCategory = (obj as any).itemCategory == itemCategory;
+
+      return (
+        isMatchingConnectivity &&
+        isMatchingItemCategory &&
+        checkPriceMatches(minPrice, maxPrice, obj) &&
+        checkItemConditionMatches(filter, obj) &&
+        checkScreenSizeMatches(filter, obj) &&
+        checkResolutionMatches(filter, obj) &&
+        checkBrandMatches(filter, obj) &&
+        checkSmartTVMatches(filter, obj) &&
+        checkColourMatches(filter, obj) &&
+        checkSellerRatingMatches(filter, obj) &&
+        checkBatteryLifeMatches(filter, obj) &&
+        checkOperatingSystemMatches(filter, obj) &&
+        checkStorageCapacityMatches(filter, obj) &&
+        checkProcessorMatches(filter, obj) &&
+        checkRamSizeMatches(filter, obj) &&
+        checkTypeMatches(filter, obj) &&
+        checkStorageMatches(filter, obj) &&
+        checkMemoryMatches(filter, obj) &&
+        checkFeaturesMatches(filter, obj) &&
+        checkWarrantyInformationMatches(filter, obj) &&
+        checkSupportedStandardsMatches(filter, obj)
+      );
+    })?.length;
+    itemConnectivityCountList.push({
+      itemConnectivity: item,
+      count,
+    });
+  });
+  return itemConnectivityCountList;
+};
+
+const getCountOnSupportedStandards = async (
+  itemSupportedStandards,
+  filter,
+  itemCategory,
+  saleObj,
+  minPrice,
+  maxPrice
+) => {
+  let itemSupportedStandardsCountList: any = [];
+
+  itemSupportedStandards.map((item: string, index: number) => {
+    let count = 0;
+    count = saleObj.filter((obj) => {
+      const isMatchingSuppportedStandards =
+        (obj as any)?.itemDetailInfo?.supportedStandards == item;
+      const isMatchingItemCategory = (obj as any).itemCategory == itemCategory;
+
+      return (
+        isMatchingSuppportedStandards &&
+        isMatchingItemCategory &&
+        checkPriceMatches(minPrice, maxPrice, obj) &&
+        checkItemConditionMatches(filter, obj) &&
+        checkScreenSizeMatches(filter, obj) &&
+        checkResolutionMatches(filter, obj) &&
+        checkBrandMatches(filter, obj) &&
+        checkSmartTVMatches(filter, obj) &&
+        checkColourMatches(filter, obj) &&
+        checkSellerRatingMatches(filter, obj) &&
+        checkBatteryLifeMatches(filter, obj) &&
+        checkOperatingSystemMatches(filter, obj) &&
+        checkStorageCapacityMatches(filter, obj) &&
+        checkProcessorMatches(filter, obj) &&
+        checkRamSizeMatches(filter, obj) &&
+        checkTypeMatches(filter, obj) &&
+        checkStorageMatches(filter, obj) &&
+        checkMemoryMatches(filter, obj) &&
+        checkFeaturesMatches(filter, obj) &&
+        checkConnectivityMatches(filter, obj) &&
+        checkWarrantyInformationMatches(filter, obj)
+      );
+    })?.length;
+    itemSupportedStandardsCountList.push({
+      itemSupportedStandards: item,
+      count,
+    });
+  });
+  return itemSupportedStandardsCountList;
 };
 
 export const getCountOfEachFilter = async (req: Request, res: Response) => {
@@ -1306,7 +1473,11 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
     if (req.body.centerLocationAvailable == true) {
       condition1.countryCode = req.body.selectedLocation.countryCode;
       condition1.itemCategory = req.body.itemCategory;
-      const saleObjPerCountry = await ForSale.find(condition1);
+      const saleObjPerCountry = await ForSale.find(condition1).populate(
+        "userId",
+        "firstName lastName avatar reviewCount reviewMark"
+      );
+
       saleObjPerCountry
         .filter((obj) => {
           return (
@@ -1327,7 +1498,9 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
             checkTypeMatches(req.body.filter, obj) &&
             checkStorageMatches(req.body.filter, obj) &&
             checkMemoryMatches(req.body.filter, obj) &&
-            checkFeaturesMatches(req.body.filter, obj)
+            checkFeaturesMatches(req.body.filter, obj) &&
+            checkConnectivityMatches(req.body.filter, obj) &&
+            checkSupportedStandardsMatches(req.body.filter, obj)
           );
         })
         .map((item: any, index: number) => {
@@ -1372,6 +1545,8 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
     let itemStorageCountList: any = [];
     let itemMemoryCountList: any = [];
     let itemFeaturesCountList: any = [];
+    let itemConnectivityCountList: any = [];
+    let itemSupportedStandardsCountList: any = [];
 
     let saleObj = await ForSale.find(condition).populate(
       "userId",
@@ -1565,6 +1740,27 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
       );
     }
 
+    if (req.body.itemConnectivity) {
+      itemConnectivityCountList = await getCountOnConnectivity(
+        req.body.itemConnectivity,
+        req.body.filter,
+        req.body.itemCategory,
+        saleObj,
+        req.body.minPrice,
+        req.body.maxPrice
+      );
+    }
+
+    if (req.body.itemSupportedStandards) {
+      itemSupportedStandardsCountList = await getCountOnSupportedStandards(
+        req.body.itemSupportedStandards,
+        req.body.filter,
+        req.body.itemCategory,
+        saleObj,
+        req.body.minPrice,
+        req.body.maxPrice
+      );
+    }
     return res.json({
       success: true,
       itemCondition: itemConditionCountList,
@@ -1586,6 +1782,8 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
       itemStorage: itemStorageCountList,
       itemMemory: itemMemoryCountList,
       itemFeatures: itemFeaturesCountList,
+      itemConnectivity: itemConnectivityCountList,
+      itemSupportedStandards: itemSupportedStandardsCountList,
     });
   } catch (error) {
     res.json({ success: false, message: "Error happpend while getting data!" });
