@@ -194,6 +194,91 @@ const checkSupportedStandardsMatches = (filter, obj) => {
   return supportedStandardsMatches;
 };
 
+const checkMegapixelsMatches = (filter, obj) => {
+  const selectedMegapixelsCondition = filter.megapixels?.length > 0;
+  const megapixelsMatches = selectedMegapixelsCondition
+    ? filter.megapixels.includes((obj as any)?.itemDetailInfo.megapixels)
+    : true;
+  return megapixelsMatches;
+};
+
+const checkWalkieTalkiesTypeMatches = (filter, obj) => {
+  const selectedWalkieTalkiesTypeCondition =
+    filter.walkieTalkiesType?.length > 0;
+  const walkieTalkiesTypeMatches = selectedWalkieTalkiesTypeCondition
+    ? filter.walkieTalkiesType.includes(
+        (obj as any)?.itemDetailInfo.walkieTalkiesType
+      )
+    : true;
+  return walkieTalkiesTypeMatches;
+};
+
+const checkLandLineTypeMatches = (filter, obj) => {
+  const selectedLandLineTypeCondition = filter.landLineType?.length > 0;
+  const landLineTypeMatches = selectedLandLineTypeCondition
+    ? filter.landLineType.includes((obj as any)?.itemDetailInfo.landLineType)
+    : true;
+  return landLineTypeMatches;
+};
+
+const checkAccessoryTypeMatches = (filter, obj) => {
+  const selectedAccessoryTypeCondition = filter.accessoryType?.length > 0;
+  const accessoryTypeMatches = selectedAccessoryTypeCondition
+    ? filter.accessoryType.includes((obj as any)?.itemDetailInfo.accessoryType)
+    : true;
+  return accessoryTypeMatches;
+};
+
+const checkNetworkProviderMatches = (filter, obj) => {
+  const selectedNetworkProviderCondition = filter.networkProvider?.length > 0;
+  const networkProviderMatches = selectedNetworkProviderCondition
+    ? filter.networkProvider.includes(
+        (obj as any)?.itemDetailInfo.networkProvider
+      )
+    : true;
+  return networkProviderMatches;
+};
+
+const checkScreenSizeRangeMatches = (filter, obj) => {
+  const selectedScreenSizeRangeCondition = filter.screenSizeRange?.length > 0;
+  const screenSizeRangeMatches = selectedScreenSizeRangeCondition
+    ? filter.screenSizeRange.includes(
+        (obj as any)?.itemDetailInfo.screenSizeRange
+      )
+    : true;
+  return screenSizeRangeMatches;
+};
+
+const checkMemoryCapacityMatches = (filter, obj) => {
+  const selectedMemoryCapacityCondition = filter.memoryCapacity?.length > 0;
+  const memoryCapacityMatches = selectedMemoryCapacityCondition
+    ? filter.memoryCapacity.includes(
+        (obj as any)?.itemDetailInfo.memoryCapacity
+      )
+    : true;
+  return memoryCapacityMatches;
+};
+
+const checkCameraResolutionMatches = (filter, obj) => {
+  const selectedCameraResolutionCondition = filter.cameraResolution?.length > 0;
+  const cameraResolutionMatches = selectedCameraResolutionCondition
+    ? filter.cameraResolution.includes(
+        (obj as any)?.itemDetailInfo.cameraResolution
+      )
+    : true;
+  return cameraResolutionMatches;
+};
+
+const checkBatteryCapacityMatches = (filter, obj) => {
+  const selectedBatteryCapacityCondition = filter.batteryCapacity?.length > 0;
+  const batteryCapacityMatches = selectedBatteryCapacityCondition
+    ? filter.batteryCapacity.includes(
+        (obj as any)?.itemDetailInfo.batteryCapacity
+      )
+    : true;
+  return batteryCapacityMatches;
+};
+
 export const loadForSaleInfo = async (req: Request, res: Response) => {
   ForSale.find({ adId: new mongoose.Types.ObjectId(req.body.adId) }).then(
     async (model: any) => {
@@ -421,6 +506,73 @@ export const getMoreForSaleAds = async (req: Request, res: Response) => {
           ) !== -1
       );
     }
+    if (req.body.megapixels && req.body.megapixels?.length) {
+      nextForSaleAds = nextForSaleAds.filter(
+        (item: any) =>
+          req.body.megapixels.indexOf(item.itemDetailInfo.megapixels) !== -1
+      );
+    }
+    if (req.body.walkieTalkiesType && req.body.walkieTalkiesType?.length) {
+      nextForSaleAds = nextForSaleAds.filter(
+        (item: any) =>
+          req.body.walkieTalkiesType.indexOf(
+            item.itemDetailInfo.walkieTalkiesType
+          ) !== -1
+      );
+    }
+    if (req.body.landLineType && req.body.landLineType?.length) {
+      nextForSaleAds = nextForSaleAds.filter(
+        (item: any) =>
+          req.body.landLineType.indexOf(item.itemDetailInfo.landLineType) !== -1
+      );
+    }
+    if (req.body.accessoryType && req.body.accessoryType?.length) {
+      nextForSaleAds = nextForSaleAds.filter(
+        (item: any) =>
+          req.body.accessoryType.indexOf(item.itemDetailInfo.accessoryType) !==
+          -1
+      );
+    }
+    if (req.body.networkProvider && req.body.networkProvider?.length) {
+      nextForSaleAds = nextForSaleAds.filter(
+        (item: any) =>
+          req.body.networkProvider.indexOf(
+            item.itemDetailInfo.networkProvider
+          ) !== -1
+      );
+    }
+    if (req.body.screenSizeRange && req.body.screenSizeRange?.length) {
+      nextForSaleAds = nextForSaleAds.filter(
+        (item: any) =>
+          req.body.screenSizeRange.indexOf(
+            item.itemDetailInfo.screenSizeRange
+          ) !== -1
+      );
+    }
+    if (req.body.cameraResolution && req.body.cameraResolution?.length) {
+      nextForSaleAds = nextForSaleAds.filter(
+        (item: any) =>
+          req.body.cameraResolution.indexOf(
+            item.itemDetailInfo.cameraResolution
+          ) !== -1
+      );
+    }
+    if (req.body.batteryCapacity && req.body.batteryCapacity?.length) {
+      nextForSaleAds = nextForSaleAds.filter(
+        (item: any) =>
+          req.body.batteryCapacity.indexOf(
+            item.itemDetailInfo.batteryCapacity
+          ) !== -1
+      );
+    }
+    if (req.body.memoryCapacity && req.body.memoryCapacity?.length) {
+      nextForSaleAds = nextForSaleAds.filter(
+        (item: any) =>
+          req.body.memoryCapacity.indexOf(
+            item.itemDetailInfo.memoryCapacity
+          ) !== -1
+      );
+    }
     if (req.body.features && req.body.features?.length) {
       nextForSaleAds = nextForSaleAds.filter((item: any) => {
         const set = new Set(req.body.features);
@@ -512,7 +664,6 @@ const getCountOnWarrantyInformation = async (
   maxPrice
 ) => {
   let itemWarrantyInformationCountList: any = [];
-
   itemWarrantyInformation.map((item: string, index: number) => {
     let count = 0;
     count = saleObj.filter((obj) => {
@@ -541,7 +692,16 @@ const getCountOnWarrantyInformation = async (
         checkMemoryMatches(filter, obj) &&
         checkFeaturesMatches(filter, obj) &&
         checkConnectivityMatches(filter, obj) &&
-        checkSupportedStandardsMatches(filter, obj)
+        checkSupportedStandardsMatches(filter, obj) &&
+        checkMegapixelsMatches(filter, obj) &&
+        checkWalkieTalkiesTypeMatches(filter, obj) &&
+        checkLandLineTypeMatches(filter, obj) &&
+        checkAccessoryTypeMatches(filter, obj) &&
+        checkNetworkProviderMatches(filter, obj) &&
+        checkScreenSizeRangeMatches(filter, obj) &&
+        checkMemoryCapacityMatches(filter, obj) &&
+        checkCameraResolutionMatches(filter, obj) &&
+        checkBatteryCapacityMatches(filter, obj)
       );
     })?.length;
     itemWarrantyInformationCountList.push({
@@ -589,7 +749,16 @@ const getCountOnSmartTV = async (
         checkMemoryMatches(filter, obj) &&
         checkFeaturesMatches(filter, obj) &&
         checkConnectivityMatches(filter, obj) &&
-        checkSupportedStandardsMatches(filter, obj)
+        checkSupportedStandardsMatches(filter, obj) &&
+        checkMegapixelsMatches(filter, obj) &&
+        checkWalkieTalkiesTypeMatches(filter, obj) &&
+        checkLandLineTypeMatches(filter, obj) &&
+        checkAccessoryTypeMatches(filter, obj) &&
+        checkNetworkProviderMatches(filter, obj) &&
+        checkScreenSizeRangeMatches(filter, obj) &&
+        checkMemoryCapacityMatches(filter, obj) &&
+        checkCameraResolutionMatches(filter, obj) &&
+        checkBatteryCapacityMatches(filter, obj)
       );
     })?.length;
 
@@ -639,7 +808,16 @@ const getCountOnSellerRating = async (
         checkMemoryMatches(filter, obj) &&
         checkFeaturesMatches(filter, obj) &&
         checkConnectivityMatches(filter, obj) &&
-        checkSupportedStandardsMatches(filter, obj)
+        checkSupportedStandardsMatches(filter, obj) &&
+        checkMegapixelsMatches(filter, obj) &&
+        checkWalkieTalkiesTypeMatches(filter, obj) &&
+        checkLandLineTypeMatches(filter, obj) &&
+        checkAccessoryTypeMatches(filter, obj) &&
+        checkNetworkProviderMatches(filter, obj) &&
+        checkScreenSizeRangeMatches(filter, obj) &&
+        checkMemoryCapacityMatches(filter, obj) &&
+        checkCameraResolutionMatches(filter, obj) &&
+        checkBatteryCapacityMatches(filter, obj)
       );
     })?.length;
 
@@ -686,7 +864,16 @@ const getCountOnBrand = async (
         checkMemoryMatches(filter, obj) &&
         checkFeaturesMatches(filter, obj) &&
         checkConnectivityMatches(filter, obj) &&
-        checkSupportedStandardsMatches(filter, obj)
+        checkSupportedStandardsMatches(filter, obj) &&
+        checkMegapixelsMatches(filter, obj) &&
+        checkWalkieTalkiesTypeMatches(filter, obj) &&
+        checkLandLineTypeMatches(filter, obj) &&
+        checkAccessoryTypeMatches(filter, obj) &&
+        checkNetworkProviderMatches(filter, obj) &&
+        checkScreenSizeRangeMatches(filter, obj) &&
+        checkMemoryCapacityMatches(filter, obj) &&
+        checkCameraResolutionMatches(filter, obj) &&
+        checkBatteryCapacityMatches(filter, obj)
       );
     })?.length;
 
@@ -735,7 +922,16 @@ const getCountOnColor = async (
         checkMemoryMatches(filter, obj) &&
         checkFeaturesMatches(filter, obj) &&
         checkConnectivityMatches(filter, obj) &&
-        checkSupportedStandardsMatches(filter, obj)
+        checkSupportedStandardsMatches(filter, obj) &&
+        checkMegapixelsMatches(filter, obj) &&
+        checkWalkieTalkiesTypeMatches(filter, obj) &&
+        checkLandLineTypeMatches(filter, obj) &&
+        checkAccessoryTypeMatches(filter, obj) &&
+        checkNetworkProviderMatches(filter, obj) &&
+        checkScreenSizeRangeMatches(filter, obj) &&
+        checkMemoryCapacityMatches(filter, obj) &&
+        checkCameraResolutionMatches(filter, obj) &&
+        checkBatteryCapacityMatches(filter, obj)
       );
     })?.length;
 
@@ -785,7 +981,16 @@ const getCountOnResolution = async (
         checkMemoryMatches(filter, obj) &&
         checkFeaturesMatches(filter, obj) &&
         checkConnectivityMatches(filter, obj) &&
-        checkSupportedStandardsMatches(filter, obj)
+        checkSupportedStandardsMatches(filter, obj) &&
+        checkMegapixelsMatches(filter, obj) &&
+        checkWalkieTalkiesTypeMatches(filter, obj) &&
+        checkLandLineTypeMatches(filter, obj) &&
+        checkAccessoryTypeMatches(filter, obj) &&
+        checkNetworkProviderMatches(filter, obj) &&
+        checkScreenSizeRangeMatches(filter, obj) &&
+        checkMemoryCapacityMatches(filter, obj) &&
+        checkCameraResolutionMatches(filter, obj) &&
+        checkBatteryCapacityMatches(filter, obj)
       );
     })?.length;
 
@@ -835,7 +1040,16 @@ const getCountOnScreenSize = async (
         checkMemoryMatches(filter, obj) &&
         checkFeaturesMatches(filter, obj) &&
         checkConnectivityMatches(filter, obj) &&
-        checkSupportedStandardsMatches(filter, obj)
+        checkSupportedStandardsMatches(filter, obj) &&
+        checkMegapixelsMatches(filter, obj) &&
+        checkWalkieTalkiesTypeMatches(filter, obj) &&
+        checkLandLineTypeMatches(filter, obj) &&
+        checkAccessoryTypeMatches(filter, obj) &&
+        checkNetworkProviderMatches(filter, obj) &&
+        checkScreenSizeRangeMatches(filter, obj) &&
+        checkMemoryCapacityMatches(filter, obj) &&
+        checkCameraResolutionMatches(filter, obj) &&
+        checkBatteryCapacityMatches(filter, obj)
       );
     })?.length;
 
@@ -884,7 +1098,16 @@ const getCountOnItemCondition = async (
         checkMemoryMatches(filter, obj) &&
         checkFeaturesMatches(filter, obj) &&
         checkConnectivityMatches(filter, obj) &&
-        checkSupportedStandardsMatches(filter, obj)
+        checkSupportedStandardsMatches(filter, obj) &&
+        checkMegapixelsMatches(filter, obj) &&
+        checkWalkieTalkiesTypeMatches(filter, obj) &&
+        checkLandLineTypeMatches(filter, obj) &&
+        checkAccessoryTypeMatches(filter, obj) &&
+        checkNetworkProviderMatches(filter, obj) &&
+        checkScreenSizeRangeMatches(filter, obj) &&
+        checkMemoryCapacityMatches(filter, obj) &&
+        checkCameraResolutionMatches(filter, obj) &&
+        checkBatteryCapacityMatches(filter, obj)
       );
     })?.length;
 
@@ -920,7 +1143,16 @@ const getCountOnMinMaxPrice = async (mainParam, saleObj) => {
       checkMemoryMatches(mainParam.filter, obj) &&
       checkFeaturesMatches(mainParam.filter, obj) &&
       checkConnectivityMatches(mainParam.filter, obj) &&
-      checkSupportedStandardsMatches(mainParam.filter, obj)
+      checkSupportedStandardsMatches(mainParam.filter, obj) &&
+      checkMegapixelsMatches(mainParam.filter, obj) &&
+      checkWalkieTalkiesTypeMatches(mainParam.filter, obj) &&
+      checkLandLineTypeMatches(mainParam.filter, obj) &&
+      checkAccessoryTypeMatches(mainParam.filter, obj) &&
+      checkNetworkProviderMatches(mainParam.filter, obj) &&
+      checkScreenSizeRangeMatches(mainParam.filter, obj) &&
+      checkMemoryCapacityMatches(mainParam.filter, obj) &&
+      checkCameraResolutionMatches(mainParam.filter, obj) &&
+      checkBatteryCapacityMatches(mainParam.filter, obj)
     );
   })?.length;
   return countPerPrice;
@@ -964,7 +1196,16 @@ const getCountOnBatteryLife = async (
         checkMemoryMatches(filter, obj) &&
         checkFeaturesMatches(filter, obj) &&
         checkConnectivityMatches(filter, obj) &&
-        checkSupportedStandardsMatches(filter, obj)
+        checkSupportedStandardsMatches(filter, obj) &&
+        checkMegapixelsMatches(filter, obj) &&
+        checkWalkieTalkiesTypeMatches(filter, obj) &&
+        checkLandLineTypeMatches(filter, obj) &&
+        checkAccessoryTypeMatches(filter, obj) &&
+        checkNetworkProviderMatches(filter, obj) &&
+        checkScreenSizeRangeMatches(filter, obj) &&
+        checkMemoryCapacityMatches(filter, obj) &&
+        checkCameraResolutionMatches(filter, obj) &&
+        checkBatteryCapacityMatches(filter, obj)
       );
     })?.length;
     itemBatteryLifeCountList.push({
@@ -1013,7 +1254,16 @@ const getCountOnOperatingSystem = async (
         checkMemoryMatches(filter, obj) &&
         checkFeaturesMatches(filter, obj) &&
         checkConnectivityMatches(filter, obj) &&
-        checkSupportedStandardsMatches(filter, obj)
+        checkSupportedStandardsMatches(filter, obj) &&
+        checkMegapixelsMatches(filter, obj) &&
+        checkWalkieTalkiesTypeMatches(filter, obj) &&
+        checkLandLineTypeMatches(filter, obj) &&
+        checkAccessoryTypeMatches(filter, obj) &&
+        checkNetworkProviderMatches(filter, obj) &&
+        checkScreenSizeRangeMatches(filter, obj) &&
+        checkMemoryCapacityMatches(filter, obj) &&
+        checkCameraResolutionMatches(filter, obj) &&
+        checkBatteryCapacityMatches(filter, obj)
       );
     })?.length;
     itemOperatingSystemCountList.push({
@@ -1062,7 +1312,16 @@ const getCountOnStorageCapacity = async (
         checkMemoryMatches(filter, obj) &&
         checkFeaturesMatches(filter, obj) &&
         checkConnectivityMatches(filter, obj) &&
-        checkSupportedStandardsMatches(filter, obj)
+        checkSupportedStandardsMatches(filter, obj) &&
+        checkMegapixelsMatches(filter, obj) &&
+        checkWalkieTalkiesTypeMatches(filter, obj) &&
+        checkLandLineTypeMatches(filter, obj) &&
+        checkAccessoryTypeMatches(filter, obj) &&
+        checkNetworkProviderMatches(filter, obj) &&
+        checkScreenSizeRangeMatches(filter, obj) &&
+        checkMemoryCapacityMatches(filter, obj) &&
+        checkCameraResolutionMatches(filter, obj) &&
+        checkBatteryCapacityMatches(filter, obj)
       );
     })?.length;
     itemStorageCapacityCountList.push({
@@ -1111,7 +1370,16 @@ const getCountOnProcessor = async (
         checkMemoryMatches(filter, obj) &&
         checkFeaturesMatches(filter, obj) &&
         checkConnectivityMatches(filter, obj) &&
-        checkSupportedStandardsMatches(filter, obj)
+        checkSupportedStandardsMatches(filter, obj) &&
+        checkMegapixelsMatches(filter, obj) &&
+        checkWalkieTalkiesTypeMatches(filter, obj) &&
+        checkLandLineTypeMatches(filter, obj) &&
+        checkAccessoryTypeMatches(filter, obj) &&
+        checkNetworkProviderMatches(filter, obj) &&
+        checkScreenSizeRangeMatches(filter, obj) &&
+        checkMemoryCapacityMatches(filter, obj) &&
+        checkCameraResolutionMatches(filter, obj) &&
+        checkBatteryCapacityMatches(filter, obj)
       );
     })?.length;
     itemProcessorCountList.push({
@@ -1159,7 +1427,16 @@ const getCountOnRamSize = async (
         checkMemoryMatches(filter, obj) &&
         checkFeaturesMatches(filter, obj) &&
         checkConnectivityMatches(filter, obj) &&
-        checkSupportedStandardsMatches(filter, obj)
+        checkSupportedStandardsMatches(filter, obj) &&
+        checkMegapixelsMatches(filter, obj) &&
+        checkWalkieTalkiesTypeMatches(filter, obj) &&
+        checkLandLineTypeMatches(filter, obj) &&
+        checkAccessoryTypeMatches(filter, obj) &&
+        checkNetworkProviderMatches(filter, obj) &&
+        checkScreenSizeRangeMatches(filter, obj) &&
+        checkMemoryCapacityMatches(filter, obj) &&
+        checkCameraResolutionMatches(filter, obj) &&
+        checkBatteryCapacityMatches(filter, obj)
       );
     })?.length;
     itemRamSizeCountList.push({
@@ -1207,7 +1484,16 @@ const getCountOnType = async (
         checkMemoryMatches(filter, obj) &&
         checkFeaturesMatches(filter, obj) &&
         checkConnectivityMatches(filter, obj) &&
-        checkSupportedStandardsMatches(filter, obj)
+        checkSupportedStandardsMatches(filter, obj) &&
+        checkMegapixelsMatches(filter, obj) &&
+        checkWalkieTalkiesTypeMatches(filter, obj) &&
+        checkLandLineTypeMatches(filter, obj) &&
+        checkAccessoryTypeMatches(filter, obj) &&
+        checkNetworkProviderMatches(filter, obj) &&
+        checkScreenSizeRangeMatches(filter, obj) &&
+        checkMemoryCapacityMatches(filter, obj) &&
+        checkCameraResolutionMatches(filter, obj) &&
+        checkBatteryCapacityMatches(filter, obj)
       );
     })?.length;
     itemTypeCountList.push({
@@ -1249,7 +1535,16 @@ const getCountOnStorage = async (mainParam, saleObj) => {
         checkMemoryMatches(mainParam.filter, obj) &&
         checkFeaturesMatches(mainParam.filter, obj) &&
         checkConnectivityMatches(mainParam.filter, obj) &&
-        checkSupportedStandardsMatches(mainParam.filter, obj)
+        checkSupportedStandardsMatches(mainParam.filter, obj) &&
+        checkMegapixelsMatches(mainParam.filter, obj) &&
+        checkWalkieTalkiesTypeMatches(mainParam.filter, obj) &&
+        checkLandLineTypeMatches(mainParam.filter, obj) &&
+        checkAccessoryTypeMatches(mainParam.filter, obj) &&
+        checkNetworkProviderMatches(mainParam.filter, obj) &&
+        checkScreenSizeRangeMatches(mainParam.filter, obj) &&
+        checkMemoryCapacityMatches(mainParam.filter, obj) &&
+        checkCameraResolutionMatches(mainParam.filter, obj) &&
+        checkBatteryCapacityMatches(mainParam.filter, obj)
       );
     })?.length;
     itemStorageCountList.push({
@@ -1291,7 +1586,16 @@ const getCountOnMemory = async (mainParam, saleObj) => {
         checkWarrantyInformationMatches(mainParam.filter, obj) &&
         checkFeaturesMatches(mainParam.filter, obj) &&
         checkConnectivityMatches(mainParam.filter, obj) &&
-        checkSupportedStandardsMatches(mainParam.filter, obj)
+        checkSupportedStandardsMatches(mainParam.filter, obj) &&
+        checkMegapixelsMatches(mainParam.filter, obj) &&
+        checkWalkieTalkiesTypeMatches(mainParam.filter, obj) &&
+        checkLandLineTypeMatches(mainParam.filter, obj) &&
+        checkAccessoryTypeMatches(mainParam.filter, obj) &&
+        checkNetworkProviderMatches(mainParam.filter, obj) &&
+        checkScreenSizeRangeMatches(mainParam.filter, obj) &&
+        checkMemoryCapacityMatches(mainParam.filter, obj) &&
+        checkCameraResolutionMatches(mainParam.filter, obj) &&
+        checkBatteryCapacityMatches(mainParam.filter, obj)
       );
     })?.length;
     itemMemoryCountList.push({
@@ -1336,7 +1640,16 @@ const getCountOnFeatures = async (mainParam, saleObj) => {
         checkWarrantyInformationMatches(mainParam.filter, obj) &&
         checkFeaturesMatches(mainParam.filter, obj) &&
         checkConnectivityMatches(mainParam.filter, obj) &&
-        checkSupportedStandardsMatches(mainParam.filter, obj)
+        checkSupportedStandardsMatches(mainParam.filter, obj) &&
+        checkMegapixelsMatches(mainParam.filter, obj) &&
+        checkWalkieTalkiesTypeMatches(mainParam.filter, obj) &&
+        checkLandLineTypeMatches(mainParam.filter, obj) &&
+        checkAccessoryTypeMatches(mainParam.filter, obj) &&
+        checkNetworkProviderMatches(mainParam.filter, obj) &&
+        checkScreenSizeRangeMatches(mainParam.filter, obj) &&
+        checkMemoryCapacityMatches(mainParam.filter, obj) &&
+        checkCameraResolutionMatches(mainParam.filter, obj) &&
+        checkBatteryCapacityMatches(mainParam.filter, obj)
       );
     })?.length;
     itemFeaturesCountList.push({
@@ -1385,7 +1698,16 @@ const getCountOnConnectivity = async (
         checkMemoryMatches(filter, obj) &&
         checkFeaturesMatches(filter, obj) &&
         checkWarrantyInformationMatches(filter, obj) &&
-        checkSupportedStandardsMatches(filter, obj)
+        checkSupportedStandardsMatches(filter, obj) &&
+        checkMegapixelsMatches(filter, obj) &&
+        checkWalkieTalkiesTypeMatches(filter, obj) &&
+        checkLandLineTypeMatches(filter, obj) &&
+        checkAccessoryTypeMatches(filter, obj) &&
+        checkNetworkProviderMatches(filter, obj) &&
+        checkScreenSizeRangeMatches(filter, obj) &&
+        checkMemoryCapacityMatches(filter, obj) &&
+        checkCameraResolutionMatches(filter, obj) &&
+        checkBatteryCapacityMatches(filter, obj)
       );
     })?.length;
     itemConnectivityCountList.push({
@@ -1434,7 +1756,16 @@ const getCountOnSupportedStandards = async (
         checkMemoryMatches(filter, obj) &&
         checkFeaturesMatches(filter, obj) &&
         checkConnectivityMatches(filter, obj) &&
-        checkWarrantyInformationMatches(filter, obj)
+        checkWarrantyInformationMatches(filter, obj) &&
+        checkMegapixelsMatches(filter, obj) &&
+        checkWalkieTalkiesTypeMatches(filter, obj) &&
+        checkLandLineTypeMatches(filter, obj) &&
+        checkAccessoryTypeMatches(filter, obj) &&
+        checkNetworkProviderMatches(filter, obj) &&
+        checkScreenSizeRangeMatches(filter, obj) &&
+        checkMemoryCapacityMatches(filter, obj) &&
+        checkCameraResolutionMatches(filter, obj) &&
+        checkBatteryCapacityMatches(filter, obj)
       );
     })?.length;
     itemSupportedStandardsCountList.push({
@@ -1445,8 +1776,562 @@ const getCountOnSupportedStandards = async (
   return itemSupportedStandardsCountList;
 };
 
+const getCountOnMegapixels = async (
+  itemMegapixels,
+  filter,
+  itemCategory,
+  saleObj,
+  minPrice,
+  maxPrice
+) => {
+  let itemMegapixelsCountList: any = [];
+
+  itemMegapixels.map((item: string, index: number) => {
+    let count = 0;
+    count = saleObj.filter((obj) => {
+      const isMatchingMegapixels =
+        (obj as any)?.itemDetailInfo?.megapixels == item;
+      const isMatchingItemCategory = (obj as any).itemCategory == itemCategory;
+
+      return (
+        isMatchingMegapixels &&
+        isMatchingItemCategory &&
+        checkPriceMatches(minPrice, maxPrice, obj) &&
+        checkItemConditionMatches(filter, obj) &&
+        checkScreenSizeMatches(filter, obj) &&
+        checkResolutionMatches(filter, obj) &&
+        checkBrandMatches(filter, obj) &&
+        checkSmartTVMatches(filter, obj) &&
+        checkColourMatches(filter, obj) &&
+        checkSellerRatingMatches(filter, obj) &&
+        checkBatteryLifeMatches(filter, obj) &&
+        checkOperatingSystemMatches(filter, obj) &&
+        checkStorageCapacityMatches(filter, obj) &&
+        checkProcessorMatches(filter, obj) &&
+        checkRamSizeMatches(filter, obj) &&
+        checkTypeMatches(filter, obj) &&
+        checkStorageMatches(filter, obj) &&
+        checkMemoryMatches(filter, obj) &&
+        checkFeaturesMatches(filter, obj) &&
+        checkConnectivityMatches(filter, obj) &&
+        checkWarrantyInformationMatches(filter, obj) &&
+        checkSupportedStandardsMatches(filter, obj) &&
+        checkWalkieTalkiesTypeMatches(filter, obj) &&
+        checkLandLineTypeMatches(filter, obj) &&
+        checkAccessoryTypeMatches(filter, obj) &&
+        checkNetworkProviderMatches(filter, obj) &&
+        checkScreenSizeRangeMatches(filter, obj) &&
+        checkMemoryCapacityMatches(filter, obj) &&
+        checkCameraResolutionMatches(filter, obj) &&
+        checkBatteryCapacityMatches(filter, obj)
+      );
+    })?.length;
+    itemMegapixelsCountList.push({
+      itemMegapixels: item,
+      count,
+    });
+  });
+  return itemMegapixelsCountList;
+};
+
+const getCountOnWalkieTalkiesType = async (
+  itemWalkieTalkiesType,
+  filter,
+  itemCategory,
+  saleObj,
+  minPrice,
+  maxPrice
+) => {
+  let itemWalkieTalkiesTypeCountList: any = [];
+
+  itemWalkieTalkiesType.map((item: string, index: number) => {
+    let count = 0;
+    count = saleObj.filter((obj) => {
+      const isMatchingWalkieTalkiesType =
+        (obj as any)?.itemDetailInfo?.walkieTalkiesType == item;
+      const isMatchingItemCategory = (obj as any).itemCategory == itemCategory;
+
+      return (
+        isMatchingWalkieTalkiesType &&
+        isMatchingItemCategory &&
+        checkPriceMatches(minPrice, maxPrice, obj) &&
+        checkItemConditionMatches(filter, obj) &&
+        checkScreenSizeMatches(filter, obj) &&
+        checkResolutionMatches(filter, obj) &&
+        checkBrandMatches(filter, obj) &&
+        checkSmartTVMatches(filter, obj) &&
+        checkColourMatches(filter, obj) &&
+        checkSellerRatingMatches(filter, obj) &&
+        checkBatteryLifeMatches(filter, obj) &&
+        checkOperatingSystemMatches(filter, obj) &&
+        checkStorageCapacityMatches(filter, obj) &&
+        checkProcessorMatches(filter, obj) &&
+        checkRamSizeMatches(filter, obj) &&
+        checkTypeMatches(filter, obj) &&
+        checkStorageMatches(filter, obj) &&
+        checkMemoryMatches(filter, obj) &&
+        checkFeaturesMatches(filter, obj) &&
+        checkConnectivityMatches(filter, obj) &&
+        checkWarrantyInformationMatches(filter, obj) &&
+        checkSupportedStandardsMatches(filter, obj) &&
+        checkMegapixelsMatches(filter, obj) &&
+        checkLandLineTypeMatches(filter, obj) &&
+        checkAccessoryTypeMatches(filter, obj) &&
+        checkNetworkProviderMatches(filter, obj) &&
+        checkScreenSizeRangeMatches(filter, obj) &&
+        checkMemoryCapacityMatches(filter, obj) &&
+        checkCameraResolutionMatches(filter, obj) &&
+        checkBatteryCapacityMatches(filter, obj)
+      );
+    })?.length;
+    itemWalkieTalkiesTypeCountList.push({
+      itemWalkieTalkiesType: item,
+      count,
+    });
+  });
+  return itemWalkieTalkiesTypeCountList;
+};
+
+const getCountOnLandLineType = async (
+  itemLandlineType,
+  filter,
+  itemCategory,
+  saleObj,
+  minPrice,
+  maxPrice
+) => {
+  let itemLandLineTypeCountList: any = [];
+
+  itemLandlineType.map((item: string, index: number) => {
+    let count = 0;
+    count = saleObj.filter((obj) => {
+      const isMatchingLandLineType =
+        (obj as any)?.itemDetailInfo?.landLineType == item;
+      const isMatchingItemCategory = (obj as any).itemCategory == itemCategory;
+
+      return (
+        isMatchingLandLineType &&
+        isMatchingItemCategory &&
+        checkPriceMatches(minPrice, maxPrice, obj) &&
+        checkItemConditionMatches(filter, obj) &&
+        checkScreenSizeMatches(filter, obj) &&
+        checkResolutionMatches(filter, obj) &&
+        checkBrandMatches(filter, obj) &&
+        checkSmartTVMatches(filter, obj) &&
+        checkColourMatches(filter, obj) &&
+        checkSellerRatingMatches(filter, obj) &&
+        checkBatteryLifeMatches(filter, obj) &&
+        checkOperatingSystemMatches(filter, obj) &&
+        checkStorageCapacityMatches(filter, obj) &&
+        checkProcessorMatches(filter, obj) &&
+        checkRamSizeMatches(filter, obj) &&
+        checkTypeMatches(filter, obj) &&
+        checkStorageMatches(filter, obj) &&
+        checkMemoryMatches(filter, obj) &&
+        checkFeaturesMatches(filter, obj) &&
+        checkConnectivityMatches(filter, obj) &&
+        checkWarrantyInformationMatches(filter, obj) &&
+        checkSupportedStandardsMatches(filter, obj) &&
+        checkMegapixelsMatches(filter, obj) &&
+        checkWalkieTalkiesTypeMatches(filter, obj) &&
+        checkAccessoryTypeMatches(filter, obj) &&
+        checkNetworkProviderMatches(filter, obj) &&
+        checkScreenSizeRangeMatches(filter, obj) &&
+        checkMemoryCapacityMatches(filter, obj) &&
+        checkCameraResolutionMatches(filter, obj) &&
+        checkBatteryCapacityMatches(filter, obj)
+      );
+    })?.length;
+    itemLandLineTypeCountList.push({
+      itemLandLineType: item,
+      count,
+    });
+  });
+  return itemLandLineTypeCountList;
+};
+
+const getCountOnAccessoryType = async (
+  itemAccessoryType,
+  filter,
+  itemCategory,
+  saleObj,
+  minPrice,
+  maxPrice
+) => {
+  let itemAccessoryTypeCountList: any = [];
+
+  itemAccessoryType.map((item: string, index: number) => {
+    let count = 0;
+    count = saleObj.filter((obj) => {
+      const isMatchingAccessoryType =
+        (obj as any)?.itemDetailInfo?.accessoryType == item;
+      const isMatchingItemCategory = (obj as any).itemCategory == itemCategory;
+
+      return (
+        isMatchingAccessoryType &&
+        isMatchingItemCategory &&
+        checkPriceMatches(minPrice, maxPrice, obj) &&
+        checkItemConditionMatches(filter, obj) &&
+        checkScreenSizeMatches(filter, obj) &&
+        checkResolutionMatches(filter, obj) &&
+        checkBrandMatches(filter, obj) &&
+        checkSmartTVMatches(filter, obj) &&
+        checkColourMatches(filter, obj) &&
+        checkSellerRatingMatches(filter, obj) &&
+        checkBatteryLifeMatches(filter, obj) &&
+        checkOperatingSystemMatches(filter, obj) &&
+        checkStorageCapacityMatches(filter, obj) &&
+        checkProcessorMatches(filter, obj) &&
+        checkRamSizeMatches(filter, obj) &&
+        checkTypeMatches(filter, obj) &&
+        checkStorageMatches(filter, obj) &&
+        checkMemoryMatches(filter, obj) &&
+        checkFeaturesMatches(filter, obj) &&
+        checkConnectivityMatches(filter, obj) &&
+        checkWarrantyInformationMatches(filter, obj) &&
+        checkSupportedStandardsMatches(filter, obj) &&
+        checkMegapixelsMatches(filter, obj) &&
+        checkWalkieTalkiesTypeMatches(filter, obj) &&
+        checkLandLineTypeMatches(filter, obj) &&
+        checkNetworkProviderMatches(filter, obj) &&
+        checkScreenSizeRangeMatches(filter, obj) &&
+        checkMemoryCapacityMatches(filter, obj) &&
+        checkCameraResolutionMatches(filter, obj) &&
+        checkBatteryCapacityMatches(filter, obj)
+      );
+    })?.length;
+    itemAccessoryTypeCountList.push({
+      itemAccessoryType: item,
+      count,
+    });
+  });
+  return itemAccessoryTypeCountList;
+};
+
+const getCountOnNetworkProvider = async (
+  itemNetworkProvider,
+  filter,
+  itemCategory,
+  saleObj,
+  minPrice,
+  maxPrice
+) => {
+  let itemNetworkProviderCountList: any = [];
+
+  itemNetworkProvider.map((item: string, index: number) => {
+    let count = 0;
+    count = saleObj.filter((obj) => {
+      const isMatchingNetworkProvider =
+        (obj as any)?.itemDetailInfo?.networkProvider == item;
+      const isMatchingItemCategory = (obj as any).itemCategory == itemCategory;
+
+      return (
+        isMatchingNetworkProvider &&
+        isMatchingItemCategory &&
+        checkPriceMatches(minPrice, maxPrice, obj) &&
+        checkItemConditionMatches(filter, obj) &&
+        checkScreenSizeMatches(filter, obj) &&
+        checkResolutionMatches(filter, obj) &&
+        checkBrandMatches(filter, obj) &&
+        checkSmartTVMatches(filter, obj) &&
+        checkColourMatches(filter, obj) &&
+        checkSellerRatingMatches(filter, obj) &&
+        checkBatteryLifeMatches(filter, obj) &&
+        checkOperatingSystemMatches(filter, obj) &&
+        checkStorageCapacityMatches(filter, obj) &&
+        checkProcessorMatches(filter, obj) &&
+        checkRamSizeMatches(filter, obj) &&
+        checkTypeMatches(filter, obj) &&
+        checkStorageMatches(filter, obj) &&
+        checkMemoryMatches(filter, obj) &&
+        checkFeaturesMatches(filter, obj) &&
+        checkConnectivityMatches(filter, obj) &&
+        checkWarrantyInformationMatches(filter, obj) &&
+        checkSupportedStandardsMatches(filter, obj) &&
+        checkMegapixelsMatches(filter, obj) &&
+        checkWalkieTalkiesTypeMatches(filter, obj) &&
+        checkLandLineTypeMatches(filter, obj) &&
+        checkAccessoryTypeMatches(filter, obj) &&
+        checkScreenSizeRangeMatches(filter, obj) &&
+        checkMemoryCapacityMatches(filter, obj) &&
+        checkCameraResolutionMatches(filter, obj) &&
+        checkBatteryCapacityMatches(filter, obj)
+      );
+    })?.length;
+    itemNetworkProviderCountList.push({
+      itemNetworkProvider: item,
+      count,
+    });
+  });
+  return itemNetworkProviderCountList;
+};
+
+const getCountOnScreenSizeRange = async (
+  itemScreenSizeRange,
+  filter,
+  itemCategory,
+  saleObj,
+  minPrice,
+  maxPrice
+) => {
+  let itemScreenSizeRangeCountList: any = [];
+
+  itemScreenSizeRange.map((item: string, index: number) => {
+    let count = 0;
+    count = saleObj.filter((obj) => {
+      const isMatchingScreenSizeRange =
+        (obj as any)?.itemDetailInfo?.screenSizeRange == item;
+      const isMatchingItemCategory = (obj as any).itemCategory == itemCategory;
+
+      return (
+        isMatchingScreenSizeRange &&
+        isMatchingItemCategory &&
+        checkPriceMatches(minPrice, maxPrice, obj) &&
+        checkItemConditionMatches(filter, obj) &&
+        checkScreenSizeMatches(filter, obj) &&
+        checkResolutionMatches(filter, obj) &&
+        checkBrandMatches(filter, obj) &&
+        checkSmartTVMatches(filter, obj) &&
+        checkColourMatches(filter, obj) &&
+        checkSellerRatingMatches(filter, obj) &&
+        checkBatteryLifeMatches(filter, obj) &&
+        checkOperatingSystemMatches(filter, obj) &&
+        checkStorageCapacityMatches(filter, obj) &&
+        checkProcessorMatches(filter, obj) &&
+        checkRamSizeMatches(filter, obj) &&
+        checkTypeMatches(filter, obj) &&
+        checkStorageMatches(filter, obj) &&
+        checkMemoryMatches(filter, obj) &&
+        checkFeaturesMatches(filter, obj) &&
+        checkConnectivityMatches(filter, obj) &&
+        checkWarrantyInformationMatches(filter, obj) &&
+        checkSupportedStandardsMatches(filter, obj) &&
+        checkMegapixelsMatches(filter, obj) &&
+        checkWalkieTalkiesTypeMatches(filter, obj) &&
+        checkLandLineTypeMatches(filter, obj) &&
+        checkAccessoryTypeMatches(filter, obj) &&
+        checkNetworkProviderMatches(filter, obj) &&
+        checkMemoryCapacityMatches(filter, obj) &&
+        checkCameraResolutionMatches(filter, obj) &&
+        checkBatteryCapacityMatches(filter, obj)
+      );
+    })?.length;
+    itemScreenSizeRangeCountList.push({
+      itemScreenSizeRange: item,
+      count,
+    });
+  });
+  return itemScreenSizeRangeCountList;
+};
+
+const getCountOnMemoryCapacity = async (
+  itemMemoryCapacity,
+  filter,
+  itemCategory,
+  saleObj,
+  minPrice,
+  maxPrice
+) => {
+  let itemMemoryCapacityCountList: any = [];
+
+  itemMemoryCapacity.map((item: string, index: number) => {
+    let count = 0;
+    count = saleObj.filter((obj) => {
+      const isMatchingMemoryCapacity =
+        (obj as any)?.itemDetailInfo?.memoryCapacity == item;
+      const isMatchingItemCategory = (obj as any).itemCategory == itemCategory;
+
+      return (
+        isMatchingMemoryCapacity &&
+        isMatchingItemCategory &&
+        checkPriceMatches(minPrice, maxPrice, obj) &&
+        checkItemConditionMatches(filter, obj) &&
+        checkScreenSizeMatches(filter, obj) &&
+        checkResolutionMatches(filter, obj) &&
+        checkBrandMatches(filter, obj) &&
+        checkSmartTVMatches(filter, obj) &&
+        checkColourMatches(filter, obj) &&
+        checkSellerRatingMatches(filter, obj) &&
+        checkBatteryLifeMatches(filter, obj) &&
+        checkOperatingSystemMatches(filter, obj) &&
+        checkStorageCapacityMatches(filter, obj) &&
+        checkProcessorMatches(filter, obj) &&
+        checkRamSizeMatches(filter, obj) &&
+        checkTypeMatches(filter, obj) &&
+        checkStorageMatches(filter, obj) &&
+        checkMemoryMatches(filter, obj) &&
+        checkFeaturesMatches(filter, obj) &&
+        checkConnectivityMatches(filter, obj) &&
+        checkWarrantyInformationMatches(filter, obj) &&
+        checkSupportedStandardsMatches(filter, obj) &&
+        checkMegapixelsMatches(filter, obj) &&
+        checkWalkieTalkiesTypeMatches(filter, obj) &&
+        checkLandLineTypeMatches(filter, obj) &&
+        checkAccessoryTypeMatches(filter, obj) &&
+        checkNetworkProviderMatches(filter, obj) &&
+        checkScreenSizeRangeMatches(filter, obj) &&
+        checkCameraResolutionMatches(filter, obj) &&
+        checkBatteryCapacityMatches(filter, obj)
+      );
+    })?.length;
+    itemMemoryCapacityCountList.push({
+      itemMemoryCapacity: item,
+      count,
+    });
+  });
+  return itemMemoryCapacityCountList;
+};
+
+const getCountOnCameraResolution = async (
+  itemCameraResolution,
+  filter,
+  itemCategory,
+  saleObj,
+  minPrice,
+  maxPrice
+) => {
+  let itemCameraResolutionCountList: any = [];
+
+  itemCameraResolution.map((item: string, index: number) => {
+    let count = 0;
+    count = saleObj.filter((obj) => {
+      const isMatchingCameraResolution =
+        (obj as any)?.itemDetailInfo?.cameraResolution == item;
+      const isMatchingItemCategory = (obj as any).itemCategory == itemCategory;
+
+      return (
+        isMatchingCameraResolution &&
+        isMatchingItemCategory &&
+        checkPriceMatches(minPrice, maxPrice, obj) &&
+        checkItemConditionMatches(filter, obj) &&
+        checkScreenSizeMatches(filter, obj) &&
+        checkResolutionMatches(filter, obj) &&
+        checkBrandMatches(filter, obj) &&
+        checkSmartTVMatches(filter, obj) &&
+        checkColourMatches(filter, obj) &&
+        checkSellerRatingMatches(filter, obj) &&
+        checkBatteryLifeMatches(filter, obj) &&
+        checkOperatingSystemMatches(filter, obj) &&
+        checkStorageCapacityMatches(filter, obj) &&
+        checkProcessorMatches(filter, obj) &&
+        checkRamSizeMatches(filter, obj) &&
+        checkTypeMatches(filter, obj) &&
+        checkStorageMatches(filter, obj) &&
+        checkMemoryMatches(filter, obj) &&
+        checkFeaturesMatches(filter, obj) &&
+        checkConnectivityMatches(filter, obj) &&
+        checkWarrantyInformationMatches(filter, obj) &&
+        checkSupportedStandardsMatches(filter, obj) &&
+        checkMegapixelsMatches(filter, obj) &&
+        checkWalkieTalkiesTypeMatches(filter, obj) &&
+        checkLandLineTypeMatches(filter, obj) &&
+        checkAccessoryTypeMatches(filter, obj) &&
+        checkNetworkProviderMatches(filter, obj) &&
+        checkScreenSizeRangeMatches(filter, obj) &&
+        checkMemoryCapacityMatches(filter, obj) &&
+        checkBatteryCapacityMatches(filter, obj)
+      );
+    })?.length;
+    itemCameraResolutionCountList.push({
+      itemCameraResolution: item,
+      count,
+    });
+  });
+  return itemCameraResolutionCountList;
+};
+
+const getCountOnBatteryCapacity = async (
+  itemBatteryCapacity,
+  filter,
+  itemCategory,
+  saleObj,
+  minPrice,
+  maxPrice
+) => {
+  let itemBatteryCapacityCountList: any = [];
+
+  itemBatteryCapacity.map((item: string, index: number) => {
+    let count = 0;
+    count = saleObj.filter((obj) => {
+      const isMatchingBatteryCapacity =
+        (obj as any)?.itemDetailInfo?.batteryCapacity == item;
+      const isMatchingItemCategory = (obj as any).itemCategory == itemCategory;
+
+      return (
+        isMatchingBatteryCapacity &&
+        isMatchingItemCategory &&
+        checkPriceMatches(minPrice, maxPrice, obj) &&
+        checkItemConditionMatches(filter, obj) &&
+        checkScreenSizeMatches(filter, obj) &&
+        checkResolutionMatches(filter, obj) &&
+        checkBrandMatches(filter, obj) &&
+        checkSmartTVMatches(filter, obj) &&
+        checkColourMatches(filter, obj) &&
+        checkSellerRatingMatches(filter, obj) &&
+        checkBatteryLifeMatches(filter, obj) &&
+        checkOperatingSystemMatches(filter, obj) &&
+        checkStorageCapacityMatches(filter, obj) &&
+        checkProcessorMatches(filter, obj) &&
+        checkRamSizeMatches(filter, obj) &&
+        checkTypeMatches(filter, obj) &&
+        checkStorageMatches(filter, obj) &&
+        checkMemoryMatches(filter, obj) &&
+        checkFeaturesMatches(filter, obj) &&
+        checkConnectivityMatches(filter, obj) &&
+        checkWarrantyInformationMatches(filter, obj) &&
+        checkSupportedStandardsMatches(filter, obj) &&
+        checkMegapixelsMatches(filter, obj) &&
+        checkWalkieTalkiesTypeMatches(filter, obj) &&
+        checkLandLineTypeMatches(filter, obj) &&
+        checkAccessoryTypeMatches(filter, obj) &&
+        checkNetworkProviderMatches(filter, obj) &&
+        checkScreenSizeRangeMatches(filter, obj) &&
+        checkMemoryCapacityMatches(filter, obj) &&
+        checkCameraResolutionMatches(filter, obj)
+      );
+    })?.length;
+    itemBatteryCapacityCountList.push({
+      itemBatteryCapacity: item,
+      count,
+    });
+  });
+  return itemBatteryCapacityCountList;
+};
+
 export const getCountOfEachFilter = async (req: Request, res: Response) => {
   try {
+    let filterObj: any = {};
+    if (req.body.itemCategory == "Phones") {
+      filterObj = {
+        SearchWithin: req.body.filter.SearchWithin,
+        type: req.body.filter.type,
+        centerLocationSelected: req.body.filter.centerLocationSelected,
+        selectedLocation: req.body.filter.selectedLocation,
+      };
+      if (req.body.filter.type == "Cell Phones") {
+        filterObj = {
+          ...filterObj,
+          ...req.body.filter.cellPhone,
+        };
+      } else if (req.body.filter.type == "Cell Phone Accessories") {
+        filterObj = {
+          ...filterObj,
+          ...req.body.filter.cellPhoneAccessories,
+        };
+      } else if (req.body.filter.type == "Landlines") {
+        filterObj = {
+          ...filterObj,
+          ...req.body.filter.landLine,
+        };
+      } else if (req.body.filter.type == "Walkie Talkies") {
+        filterObj = {
+          ...filterObj,
+          ...req.body.filter.walkieTalkies,
+        };
+      }
+      req.body.filter = filterObj;
+    }
+
     let condition: any = {};
     let condition1: any = {};
 
@@ -1500,7 +2385,16 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
             checkMemoryMatches(req.body.filter, obj) &&
             checkFeaturesMatches(req.body.filter, obj) &&
             checkConnectivityMatches(req.body.filter, obj) &&
-            checkSupportedStandardsMatches(req.body.filter, obj)
+            checkSupportedStandardsMatches(req.body.filter, obj) &&
+            checkMegapixelsMatches(req.body.filter, obj) &&
+            checkWalkieTalkiesTypeMatches(req.body.filter, obj) &&
+            checkLandLineTypeMatches(req.body.filter, obj) &&
+            checkAccessoryTypeMatches(req.body.filter, obj) &&
+            checkNetworkProviderMatches(req.body.filter, obj) &&
+            checkScreenSizeRangeMatches(req.body.filter, obj) &&
+            checkMemoryCapacityMatches(req.body.filter, obj) &&
+            checkCameraResolutionMatches(req.body.filter, obj) &&
+            checkBatteryCapacityMatches(req.body.filter, obj)
           );
         })
         .map((item: any, index: number) => {
@@ -1547,6 +2441,15 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
     let itemFeaturesCountList: any = [];
     let itemConnectivityCountList: any = [];
     let itemSupportedStandardsCountList: any = [];
+    let itemMegapixelsCountList: any = [];
+    let itemWalkieTalkiesTypeCountList: any = [];
+    let itemLandLineTypeCountList: any = [];
+    let itemAccessoryTypeCountList: any = [];
+    let itemNetworkProviderCountList: any = [];
+    let itemScreenSizeRangeCountList: any = [];
+    let itemMemoryCapacityCountList: any = [];
+    let itemCameraResolutionCountList: any = [];
+    let itemBatteryCapacityCountList: any = [];
 
     let saleObj = await ForSale.find(condition).populate(
       "userId",
@@ -1761,6 +2664,109 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
         req.body.maxPrice
       );
     }
+
+    if (req.body.itemMegapixels) {
+      itemMegapixelsCountList = await getCountOnMegapixels(
+        req.body.itemMegapixels,
+        req.body.filter,
+        req.body.itemCategory,
+        saleObj,
+        req.body.minPrice,
+        req.body.maxPrice
+      );
+    }
+
+    if (req.body.itemWalkieTalkiesType) {
+      itemWalkieTalkiesTypeCountList = await getCountOnWalkieTalkiesType(
+        req.body.itemWalkieTalkiesType,
+        req.body.filter,
+        req.body.itemCategory,
+        saleObj,
+        req.body.minPrice,
+        req.body.maxPrice
+      );
+    }
+
+    if (req.body.itemLandLineType) {
+      itemLandLineTypeCountList = await getCountOnLandLineType(
+        req.body.itemLandLineType,
+        req.body.filter,
+        req.body.itemCategory,
+        saleObj,
+        req.body.minPrice,
+        req.body.maxPrice
+      );
+    }
+    if (req.body.itemAccessoryType) {
+      itemAccessoryTypeCountList = await getCountOnAccessoryType(
+        req.body.itemAccessoryType,
+        req.body.filter,
+        req.body.itemCategory,
+        saleObj,
+        req.body.minPrice,
+        req.body.maxPrice
+      );
+    }
+    if (req.body.itemNetworkProvider) {
+      itemNetworkProviderCountList = await getCountOnNetworkProvider(
+        req.body.itemNetworkProvider,
+        req.body.filter,
+        req.body.itemCategory,
+        saleObj,
+        req.body.minPrice,
+        req.body.maxPrice
+      );
+    }
+    if (req.body.itemNetworkProvider) {
+      itemNetworkProviderCountList = await getCountOnNetworkProvider(
+        req.body.itemNetworkProvider,
+        req.body.filter,
+        req.body.itemCategory,
+        saleObj,
+        req.body.minPrice,
+        req.body.maxPrice
+      );
+    }
+    if (req.body.itemScreenSizeRange) {
+      itemScreenSizeRangeCountList = await getCountOnScreenSizeRange(
+        req.body.itemScreenSizeRange,
+        req.body.filter,
+        req.body.itemCategory,
+        saleObj,
+        req.body.minPrice,
+        req.body.maxPrice
+      );
+    }
+    if (req.body.itemMemoryCapacity) {
+      itemMemoryCapacityCountList = await getCountOnMemoryCapacity(
+        req.body.itemMemoryCapacity,
+        req.body.filter,
+        req.body.itemCategory,
+        saleObj,
+        req.body.minPrice,
+        req.body.maxPrice
+      );
+    }
+    if (req.body.itemCameraResolution) {
+      itemCameraResolutionCountList = await getCountOnCameraResolution(
+        req.body.itemCameraResolution,
+        req.body.filter,
+        req.body.itemCategory,
+        saleObj,
+        req.body.minPrice,
+        req.body.maxPrice
+      );
+    }
+    if (req.body.itemBatteryCapacity) {
+      itemBatteryCapacityCountList = await getCountOnBatteryCapacity(
+        req.body.itemBatteryCapacity,
+        req.body.filter,
+        req.body.itemCategory,
+        saleObj,
+        req.body.minPrice,
+        req.body.maxPrice
+      );
+    }
     return res.json({
       success: true,
       itemCondition: itemConditionCountList,
@@ -1784,6 +2790,15 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
       itemFeatures: itemFeaturesCountList,
       itemConnectivity: itemConnectivityCountList,
       itemSupportedStandards: itemSupportedStandardsCountList,
+      itemMegapixels: itemMegapixelsCountList,
+      itemWalkieTalkiesType: itemWalkieTalkiesTypeCountList,
+      itemLandLineType: itemLandLineTypeCountList,
+      itemAccessoryType: itemAccessoryTypeCountList,
+      itemNetworkProvider: itemNetworkProviderCountList,
+      itemScreenSizeRange: itemScreenSizeRangeCountList,
+      itemMemoryCapacity: itemMemoryCapacityCountList,
+      itemCameraResolution: itemCameraResolutionCountList,
+      itemBatteryCapacity: itemBatteryCapacityCountList,
     });
   } catch (error) {
     res.json({ success: false, message: "Error happpend while getting data!" });
