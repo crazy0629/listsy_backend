@@ -368,7 +368,7 @@ export const getMoreForSaleAds = async (req: Request, res: Response) => {
       .sort({ postDate: -1 })
       .skip(req.body.index * 50)
       .limit(50);
-
+    //////-----------------------
     if (
       req.body.centerLocationSelected == true &&
       req.body.SearchWithin != "" &&
