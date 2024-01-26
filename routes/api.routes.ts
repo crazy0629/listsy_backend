@@ -15,6 +15,7 @@ import * as sports from "../controllers/sports.controller";
 import * as children from "../controllers/children.controller";
 import * as art from "../controllers/art.controller";
 import * as education from "../controllers/education.controller";
+import * as pet from "../controllers/pet.controller";
 
 import multer from "multer";
 import { v4 as uuidv4 } from "uuid";
@@ -147,6 +148,13 @@ router.post("/sale/getForSaleAds", sale.getMoreForSaleAds);
 router.post("/sale/getAdDetailInfo", sale.getAdDetailInfo);
 router.post("/sale/getCountForEachCategory", sale.getCountForEachCategory);
 router.post("/sale/getCountOfEachFilter", sale.getCountOfEachFilter);
+
+// Pet
+
+router.post("/pet/loadPetInfo", pet.loadPetInfo);
+router.post("/pet/getAdDetailInfo", pet.getAdDetailInfo);
+router.post("/pet/getCountForEachCategory", pet.getCountForEachCategory);
+router.post("/pet/getPetAds", pet.getMorePetAds);
 
 // Garden
 
