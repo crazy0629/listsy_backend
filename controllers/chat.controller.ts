@@ -216,6 +216,51 @@ const addMessage = async (data: any) => {
   }
 };
 
+export const deleteUserConversion = async (req: Request, res: Response) => {
+  try {
+    const curChatConnection = await ChatConnection.findOneAndDelete({
+      $or: [
+        {
+          fromUserId: new mongoose.Types.ObjectId(req.body.fromUserId),
+          toUserId: new mongoose.Types.ObjectId(req.body.toUserId),
+        },
+        {
+          fromUserId: new mongoose.Types.ObjectId(req.body.toUserId),
+          toUserId: new mongoose.Types.ObjectId(req.body.fromUserId),
+        },
+      ],
+    });
+    if (!curChatConnection) {
+      return res.json({
+        success: false,
+        message: "Error found",
+      });
+    }
+    const deletedChatMsg = await Chat.deleteMany({
+      $or: [
+        {
+          senderId: new mongoose.Types.ObjectId(req.body.fromUserId),
+          receiverId: new mongoose.Types.ObjectId(req.body.toUserId),
+        },
+        {
+          senderId: new mongoose.Types.ObjectId(req.body.toUserId),
+          receiverId: new mongoose.Types.ObjectId(req.body.fromUserId),
+        },
+      ],
+    });
+    return res.json({
+      success: true,
+      message: "Successfully deleted!",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.json({
+      success: false,
+      message: "Error found",
+    });
+  }
+};
+
 /*
 export const editMessage = async (req: Request, res: Response) => {
   try {

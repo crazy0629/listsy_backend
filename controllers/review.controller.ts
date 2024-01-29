@@ -157,7 +157,10 @@ export const deleteReview = async (req: Request, res: Response) => {
 
 export const getAllRviews = async (req: Request, res: Response) => {
   try {
-    const reviewItems = await Review.find({ toUserId: req.body.toUserId });
+    const reviewItems = await Review.find({
+      toUserId: req.body.toUserId,
+    }).populate("fromUserId", "firstName lastName avatar");
+
     return res.json({
       success: true,
       message: "Successfully loaded all reviews",

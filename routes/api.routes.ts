@@ -16,6 +16,7 @@ import * as children from "../controllers/children.controller";
 import * as art from "../controllers/art.controller";
 import * as education from "../controllers/education.controller";
 import * as pet from "../controllers/pet.controller";
+import * as chat from "../controllers/chat.controller";
 
 import multer from "multer";
 import { v4 as uuidv4 } from "uuid";
@@ -111,6 +112,9 @@ router.post("/community/add", community.addCommunity);
 router.post("/community/getLatest", community.getLatesetCommunity);
 router.post("/community/delete", community.deleteCommunity);
 router.post("/community/getMore", community.getMoreCommunity);
+
+// Chat
+router.post("/chat/deleteConversation", chat.deleteUserConversion);
 
 // Profile
 
@@ -219,5 +223,5 @@ router.post("/review/checkReviewExists", review.checkReviewExists);
 router.post("/review/addReview", review.addReview);
 router.post("/review/deleteReview", review.deleteReview);
 router.post("/review/changeReview", review.changeReview);
-
+router.post("/review/getAllReviews", review.getAllRviews);
 export default router;
