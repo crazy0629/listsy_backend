@@ -393,7 +393,7 @@ export const getMoreForSaleAds = async (req: Request, res: Response) => {
       nextForSaleAds = nextForSaleAds.filter(
         (item: any) =>
           req.body.sellerRating.indexOf(
-            item.userId.reviewMark.toString() + "*"
+            Math.floor(item.userId.reviewMark).toString() + "*"
           ) !== -1
       );
     }
@@ -784,7 +784,8 @@ const getCountOnSellerRating = async (
     let rating = Number(item.at(0));
     let count = 0;
     count = saleObj.filter((obj) => {
-      const isMatchingRating = (obj as any)?.userId.reviewMark == rating;
+      const isMatchingRating =
+        Math.floor((obj as any)?.userId.reviewMark) == rating;
       const isMatchingItemCategory = (obj as any).itemCategory == itemCategory;
 
       return (
