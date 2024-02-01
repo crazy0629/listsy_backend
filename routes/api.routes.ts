@@ -17,6 +17,7 @@ import * as art from "../controllers/art.controller";
 import * as education from "../controllers/education.controller";
 import * as pet from "../controllers/pet.controller";
 import * as chat from "../controllers/chat.controller";
+import * as food from "../controllers/food.controller";
 
 import multer from "multer";
 import { v4 as uuidv4 } from "uuid";
@@ -139,11 +140,17 @@ router.post(
 );
 router.post("/upload/cancel", ad.cancelUpload);
 router.post("/ad/getLocationList", ad.getLocationList);
+
 // Real Estate
 
 router.post("/estate/loadEstateInfo", estate.loadEstateInfo);
 router.post("/estate/getEstateObjects", estate.getMoreEstateAds);
 router.post("/estate/getAdDetailInfo", estate.getAdDetailInfo);
+
+// Food
+
+router.post("/food/loadFoodInfo", food.loadFoodInfo);
+router.post("/food/getAdDetailInfo", food.getAdDetailInfo);
 
 // ForSale
 
