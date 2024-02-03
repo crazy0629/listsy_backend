@@ -40,7 +40,7 @@ export const getMorePetAds = async (req: Request, res: Response) => {
     console.log(error);
     return res.json({
       success: false,
-      message: "Error found while loading more electronics ads",
+      message: "Error found while loading more food ads",
     });
   }
 };
