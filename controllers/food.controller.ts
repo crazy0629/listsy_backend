@@ -100,3 +100,96 @@ export const getAdDetailInfo = async (req: Request, res: Response) => {
     console.log(error);
   }
 };
+
+export const getCountForEachCategory = async (req: Request, res: Response) => {
+  try {
+    let condition: any = {};
+    if (req.body.countryCode != null) {
+      if (req.body.countryCode == "") {
+        condition.address = req.body.address;
+      } else {
+        condition.countryCode = req.body.countryCode;
+      }
+    }
+
+    let countList: any = [];
+    const foodModel = await Food.find(condition);
+    req.body.itemCategory.map((item: string, index: number) => {
+      let count = 0;
+      if (item == "All") count = foodModel?.length;
+      else count = foodModel.filter((obj) => obj.itemCategory == item)?.length;
+      countList.push({ itemCategory: item, count });
+    });
+    return res.json({
+      success: true,
+      countList,
+    });
+  } catch (error) {
+    return res.json({
+      success: false,
+      message: "Error happened while getting data!",
+    });
+  }
+};
+
+export const getMoreFoodAds = async (req: Request, res: Response) => {
+  try {
+    let condition: any = {};
+    if (
+      req.body.centerLocationSelected == true &&
+      req.body.SearchWithin != ""
+    ) {
+      condition.countryCode = req.body.selectedLocation.countryCode;
+    } else {
+      if (req.body.countryCode != null) {
+        if (req.body.countryCode == "") {
+          condition.address = req.body.address;
+        } else {
+          condition.countryCode = req.body.countryCode;
+        }
+      }
+    }
+    if (req.body.itemCategory != "All" && req.body.itemCategory != "") {
+      condition.itemCategory = req.body.itemCategory;
+    }
+    let nextFoodAds = await Food.find(condition)
+      .populate("userId", "firstName lastName avatar reviewCount reviewMark")
+      .populate("adId", "adFileName imagesFileName uploadDate duration")
+      .sort({ postDate: -1 })
+      .skip(req.body.index * 50)
+      .limit(50);
+    return res.json({
+      success: true,
+      message: "Successfully loaded!",
+      data: nextFoodAds,
+    });
+  } catch (error) {
+    return res.json({
+      success: false,
+      message: "Error found while loading more food ads",
+    });
+  }
+};
+
+export const getCountOfEachFilter = async (req: Request, res: Response) => {
+  try {
+    let condition: any = {};
+    let condition1: any = {};
+    if (
+      req.body.centerLocationAvailable == true &&
+      req.body.filter.SearchWithin != ""
+    ) {
+      condition.countryCode = req.body.selectedLocation.countryCode;
+    } else {
+      if (req.body.countryCode != null) {
+        if (req.body.countryCode == "") {
+          condition.address = req.body.address;
+        } else {
+          condition.countryCode = req.body.countryCode;
+        }
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
