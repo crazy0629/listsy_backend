@@ -158,6 +158,9 @@ router.post("/food/getFoodAds", food.getMoreFoodAds);
 // Diy
 
 router.post("/diy/loadDiyInfo", diy.loadDiyInfo);
+router.post("/diy/getAdDetailInfo", diy.getAdDetailInfo);
+router.post("/diy/getDiyAds", diy.getMoreDiyAds);
+router.post("/diy/getCountForEachCategory", diy.getCountForEachCategory);
 
 // ForSale
 
