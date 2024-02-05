@@ -154,6 +154,7 @@ router.post("/food/loadFoodInfo", food.loadFoodInfo);
 router.post("/food/getAdDetailInfo", food.getAdDetailInfo);
 router.post("/food/getCountForEachCategory", food.getCountForEachCategory);
 router.post("/food/getFoodAds", food.getMoreFoodAds);
+router.post("/food/getCountOfEachFilter", food.getCountOfEachFilter);
 
 // Diy
 
@@ -182,6 +183,7 @@ router.post("/pet/getPetAds", pet.getMorePetAds);
 router.post("/garden/loadGardenInfo", garden.loadGardenInfo);
 router.post("/garden/getGardenAds", garden.getMoreGardenAds);
 router.post("/garden/getAdDetailInfo", garden.getAdDetailInfo);
+router.post("/garden/getCountForEachCategory", garden.getCountForEachCategory);
 
 // Fashion
 
