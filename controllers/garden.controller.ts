@@ -55,13 +55,24 @@ export const loadGardenInfo = async (req: Request, res: Response) => {
 export const getMoreGardenAds = async (req: Request, res: Response) => {
   try {
     let condition: any = {};
-    if (req.body.itemCategory.length) {
-      condition.itemCategory = { $in: req.body.itemCategory };
+    if (
+      req.body.centerLocationSelected == true &&
+      req.body.SearchWithin != ""
+    ) {
+      condition.countryCode = req.body.selectedLocation.countryCode;
+    } else {
+      if (req.body.countryCode != null) {
+        if (req.body.countryCode == "") {
+          condition.address = req.body.address;
+        } else {
+          condition.countryCode = req.body.countryCode;
+        }
+      }
     }
-    if (req.body.itemCondition.length) {
-      condition.itemCondition = { $in: req.body.itemCondition };
+    if (req.body.itemCategory != "All" && req.body.itemCategory != "") {
+      condition.itemCategory = req.body.itemCategory;
     }
-    const nextGardenAds = await Garden.find()
+    let nextGardenAds = await Garden.find(condition)
       .populate("userId", "firstName lastName avatar reviewCount reviewMark")
       .populate("adId", "adFileName imagesFileName uploadDate duration")
       .sort({ postDate: -1 })
@@ -75,7 +86,39 @@ export const getMoreGardenAds = async (req: Request, res: Response) => {
   } catch (error) {
     return res.json({
       success: false,
-      message: "Error found while loading more homes and garden ads",
+      message: "Error found while loading more garden ads",
+    });
+  }
+};
+
+export const getCountForEachCategory = async (req: Request, res: Response) => {
+  try {
+    let condition: any = {};
+    if (req.body.countryCode != null) {
+      if (req.body.countryCode == "") {
+        condition.address = req.body.address;
+      } else {
+        condition.countryCode = req.body.countryCode;
+      }
+    }
+
+    let countList: any = [];
+    const gardenModel = await Garden.find(condition);
+    req.body.itemCategory.map((item: string, index: number) => {
+      let count = 0;
+      if (item == "All") count = gardenModel?.length;
+      else
+        count = gardenModel.filter((obj) => obj.itemCategory == item)?.length;
+      countList.push({ itemCategory: item, count });
+    });
+    return res.json({
+      success: true,
+      countList,
+    });
+  } catch (error) {
+    return res.json({
+      success: false,
+      message: "Error happened while getting data!",
     });
   }
 };

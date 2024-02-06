@@ -3,7 +3,12 @@ import Diy from "../models/Diy";
 import mongoose from "mongoose";
 import Ad from "../models/Ad";
 import User from "../models/User";
-import { generateToken } from "../service/helper";
+import {
+  calculateDistance,
+  checkPriceMatches,
+  checkSellerRatingMatches,
+  generateToken,
+} from "../service/helper";
 
 export const loadDiyInfo = async (req: Request, res: Response) => {
   try {
@@ -135,7 +140,7 @@ export const getMoreDiyAds = async (req: Request, res: Response) => {
   } catch (error) {
     return res.json({
       success: false,
-      message: "Error found while loading more food ads",
+      message: "Error found while loading more diy_craft ads",
     });
   }
 };
@@ -169,4 +174,118 @@ export const getCountForEachCategory = async (req: Request, res: Response) => {
       message: "Error happened while getting data!",
     });
   }
+};
+
+export const getCountOfEachFilter = async (req: Request, res: Response) => {
+  try {
+    let condition: any = {};
+    let condition1: any = {};
+    if (
+      req.body.centerLocationAvailable == true &&
+      req.body.filter.SearchWithin != ""
+    ) {
+      condition.countryCode = req.body.selectedLocation.countryCode;
+    } else {
+      if (req.body.countryCode != null) {
+        if (req.body.countryCode == "") {
+          condition.address = req.body.address;
+        } else {
+          condition.countryCode = req.body.countryCode;
+        }
+      }
+    }
+
+    if (req.body.itemCategory != "All" && req.body.itemCategory != "") {
+      condition.itemCategory = req.body.itemCategory;
+    }
+
+    let itemSearchRangeCountList: any = [];
+    let distanceList: any = [];
+    if (req.body.centerLocationAvailable == true) {
+      condition1.countryCode = req.body.selectedLocation.countryCode;
+      condition1.itemCategory = req.body.itemCategory;
+      const foodModelPerCountry = await Diy.find(condition1).populate(
+        "userId",
+        "firstName lastName avatar reviewCount reviewMark"
+      );
+      foodModelPerCountry
+        .filter((obj) => {
+          return (
+            checkPriceMatches(req.body.minPrice, req.body.maxPrice, obj) &&
+            checkSellerRatingMatches(req.body.filter, obj)
+          );
+        })
+        .map((item: any, index: number) => {
+          distanceList.push(
+            calculateDistance(
+              item.lat,
+              item.lng,
+              req.body.selectedLocation.lat,
+              req.body.selectedLocation.lng
+            )
+          );
+        });
+      req.body.itemSearchRange.map((item: number, index: number) => {
+        if (item == -1) {
+          itemSearchRangeCountList.push({
+            range: -1,
+            distance: distanceList?.length,
+          });
+        } else {
+          itemSearchRangeCountList.push({
+            range: item,
+            distance: distanceList.filter((dis) => dis <= item)?.length,
+          });
+        }
+      });
+    }
+
+    let diyObj = await Diy.find(condition).populate(
+      "userId",
+      "firstName lastName avatar reviewCount reviewMark"
+    );
+
+    if (
+      req.body.centerLocationAvailable == true &&
+      req.body.filter.SearchWithin != "" &&
+      req.body.filter.SearchWithin != "Nationwide"
+    ) {
+      let distance = 0;
+      if (req.body.filter.SearchWithin != "Current location")
+        distance = parseInt(req.body.filter.SearchWithin.match(/\d+/)[0]);
+      diyObj = diyObj.filter((item) => {
+        return (
+          calculateDistance(
+            item.lat,
+            item.lng,
+            req.body.selectedLocation.lat,
+            req.body.selectedLocation.lng
+          ) <= distance
+        );
+      });
+    }
+    let countPerPrice = await getCountOnMinMaxPrice(req.body, diyObj);
+
+    return res.json({
+      success: true,
+      itemPriceRange: countPerPrice,
+      itemRangeInfo: itemSearchRangeCountList,
+    });
+  } catch (error) {
+    return res.json({
+      success: false,
+      message: "Error!",
+    });
+  }
+};
+
+const getCountOnMinMaxPrice = async (mainParam, saleObj) => {
+  let countPerPrice = -1;
+  countPerPrice = saleObj.filter((obj) => {
+    return (
+      checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
+      checkSellerRatingMatches(mainParam.filter, obj)
+    );
+  })?.length;
+  return countPerPrice;
 };

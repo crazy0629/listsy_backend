@@ -3,7 +3,12 @@ import Food from "../models/Food";
 import mongoose from "mongoose";
 import Ad from "../models/Ad";
 import User from "../models/User";
-import { generateToken } from "../service/helper";
+import {
+  calculateDistance,
+  checkPriceMatches,
+  checkSellerRatingMatches,
+  generateToken,
+} from "../service/helper";
 
 export const loadFoodInfo = async (req: Request, res: Response) => {
   try {
@@ -158,6 +163,65 @@ export const getMoreFoodAds = async (req: Request, res: Response) => {
       .sort({ postDate: -1 })
       .skip(req.body.index * 50)
       .limit(50);
+    if (
+      req.body.centerLocationSelected == true &&
+      req.body.SearchWithin != "" &&
+      req.body.SearchWithin != "Nationwide"
+    ) {
+      let distance = 0;
+      if (req.body.SearchWithin != "Current location")
+        distance = parseInt(req.body.SearchWithin.match(/\d+/)[0]);
+      nextFoodAds = nextFoodAds.filter((item) => {
+        return (
+          calculateDistance(
+            item.lat,
+            item.lng,
+            req.body.selectedLocation.lat,
+            req.body.selectedLocation.lng
+          ) <= distance
+        );
+      });
+    }
+    if (req.body.sellerRating && req.body.sellerRating?.length) {
+      nextFoodAds = nextFoodAds.filter(
+        (item: any) =>
+          req.body.sellerRating.indexOf(
+            Math.floor(item.userId.reviewMark).toString() + "*"
+          ) !== -1
+      );
+    }
+    if (req.body.mealType && req.body.mealType?.length) {
+      nextFoodAds = nextFoodAds.filter(
+        (item: any) =>
+          req.body.mealType.indexOf(item.itemDetailInfo.mealType) !== -1
+      );
+    }
+    if (req.body.dietaryPreferences && req.body.dietaryPreferences?.length) {
+      nextFoodAds = nextFoodAds.filter(
+        (item: any) =>
+          req.body.dietaryPreferences.indexOf(
+            item.itemDetailInfo.dietaryPreferences
+          ) !== -1
+      );
+    }
+    if (req.body.deliveryOptions && req.body.deliveryOptions?.length) {
+      nextFoodAds = nextFoodAds.filter(
+        (item: any) =>
+          req.body.deliveryOptions.indexOf(
+            item.itemDetailInfo.deliveryOptions
+          ) !== -1
+      );
+    }
+    if (req.body.minPrice && req.body.minPrice != "") {
+      nextFoodAds = nextFoodAds.filter(
+        (item: any) => Number(req.body.minPrice) <= item.price
+      );
+    }
+    if (req.body.maxPrice && req.body.maxPrice != "") {
+      nextFoodAds = nextFoodAds.filter(
+        (item: any) => Number(req.body.maxPrice) >= item.price
+      );
+    }
     return res.json({
       success: true,
       message: "Successfully loaded!",
@@ -189,7 +253,272 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
         }
       }
     }
+
+    if (req.body.itemCategory != "All" && req.body.itemCategory != "") {
+      condition.itemCategory = req.body.itemCategory;
+    }
+
+    let itemSearchRangeCountList: any = [];
+    let distanceList: any = [];
+    if (req.body.centerLocationAvailable == true) {
+      condition1.countryCode = req.body.selectedLocation.countryCode;
+      condition1.itemCategory = req.body.itemCategory;
+      const foodModelPerCountry = await Food.find(condition1).populate(
+        "userId",
+        "firstName lastName avatar reviewCount reviewMark"
+      );
+      foodModelPerCountry
+        .filter((obj) => {
+          return (
+            checkPriceMatches(req.body.minPrice, req.body.maxPrice, obj) &&
+            checkMealTypeMatches(req.body.filter, obj) &&
+            checkDietaryPreferenceMatches(req.body.filter, obj) &&
+            checkDeliveryOptionsMatches(req.body.filter, obj) &&
+            checkSellerRatingMatches(req.body.filter, obj)
+          );
+        })
+        .map((item: any, index: number) => {
+          distanceList.push(
+            calculateDistance(
+              item.lat,
+              item.lng,
+              req.body.selectedLocation.lat,
+              req.body.selectedLocation.lng
+            )
+          );
+        });
+      req.body.itemSearchRange.map((item: number, index: number) => {
+        if (item == -1) {
+          itemSearchRangeCountList.push({
+            range: -1,
+            distance: distanceList?.length,
+          });
+        } else {
+          itemSearchRangeCountList.push({
+            range: item,
+            distance: distanceList.filter((dis) => dis <= item)?.length,
+          });
+        }
+      });
+    }
+
+    let foodObj = await Food.find(condition).populate(
+      "userId",
+      "firstName lastName avatar reviewCount reviewMark"
+    );
+
+    if (
+      req.body.centerLocationAvailable == true &&
+      req.body.filter.SearchWithin != "" &&
+      req.body.filter.SearchWithin != "Nationwide"
+    ) {
+      let distance = 0;
+      if (req.body.filter.SearchWithin != "Current location")
+        distance = parseInt(req.body.filter.SearchWithin.match(/\d+/)[0]);
+      foodObj = foodObj.filter((item) => {
+        return (
+          calculateDistance(
+            item.lat,
+            item.lng,
+            req.body.selectedLocation.lat,
+            req.body.selectedLocation.lng
+          ) <= distance
+        );
+      });
+    }
+    let countPerPrice = await getCountOnMinMaxPrice(req.body, foodObj);
+    let itemMealTypeCountList = [];
+    let itemDietaryPreferencesCountList = [];
+    let itemDeliveryOptionsCountList = [];
+    let itemSellerRatingCountList = [];
+
+    if (req.body.itemMealType) {
+      itemMealTypeCountList = await getCountOnMealType(req.body, foodObj);
+    }
+    if (req.body.itemDietaryPreferences) {
+      itemDietaryPreferencesCountList = await getCountOnDietaryPreferences(
+        req.body,
+        foodObj
+      );
+    }
+    if (req.body.itemDeliveryOptions) {
+      itemDeliveryOptionsCountList = await getCountOnDeliveryOptions(
+        req.body,
+        foodObj
+      );
+    }
+
+    if (req.body.itemSellerRating) {
+      itemSellerRatingCountList = await getCountOnSellerRating(
+        req.body,
+        foodObj
+      );
+    }
+
+    return res.json({
+      success: true,
+      itemPriceRange: countPerPrice,
+      itemRangeInfo: itemSearchRangeCountList,
+      itemMealType: itemMealTypeCountList,
+      itemDietaryPreferences: itemDietaryPreferencesCountList,
+      itemDeliveryOptions: itemDeliveryOptionsCountList,
+      itemSellerRating: itemSellerRatingCountList,
+    });
   } catch (error) {
     console.log(error);
   }
+};
+
+const checkDietaryPreferenceMatches = (filter, obj) => {
+  const selectedDietaryPreferenceCondition =
+    filter.dietaryPreferences?.length > 0;
+  const dietaryPreferenceMatches = selectedDietaryPreferenceCondition
+    ? filter.dietaryPreferences.includes(
+        (obj as any)?.itemDetailInfo?.dietaryPreferences
+      )
+    : true;
+  return dietaryPreferenceMatches;
+};
+
+const checkMealTypeMatches = (filter, obj) => {
+  const selectedMealTypeCondition = filter.mealType?.length > 0;
+  const mealTypeMatches = selectedMealTypeCondition
+    ? filter.mealType.includes((obj as any)?.itemDetailInfo?.mealType)
+    : true;
+  return mealTypeMatches;
+};
+
+const checkDeliveryOptionsMatches = (filter, obj) => {
+  const selectedDeliveryOptionsCondition = filter.deliveryOptions?.length > 0;
+  const deliveryOptionsMatches = selectedDeliveryOptionsCondition
+    ? filter.deliveryOptions.includes(
+        (obj as any)?.itemDetailInfo?.deliveryOptions
+      )
+    : true;
+  return deliveryOptionsMatches;
+};
+
+const getCountOnMinMaxPrice = async (mainParam, saleObj) => {
+  let countPerPrice = -1;
+  countPerPrice = saleObj.filter((obj) => {
+    return (
+      checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
+      checkMealTypeMatches(mainParam.filter, obj) &&
+      checkDietaryPreferenceMatches(mainParam.filter, obj) &&
+      checkDeliveryOptionsMatches(mainParam.filter, obj) &&
+      checkSellerRatingMatches(mainParam.filter, obj)
+    );
+  })?.length;
+  return countPerPrice;
+};
+
+const getCountOnDietaryPreferences = async (mainParam, foodObj) => {
+  let itemDietaryPreferenceCountList: any = [];
+
+  mainParam?.itemDietaryPreferences.map((item: string, index: number) => {
+    let count = 0;
+    count = foodObj.filter((obj) => {
+      const isMatchingDietaryPreference =
+        (obj as any)?.itemDetailInfo?.dietaryPreferences == item;
+      const isMatchingItemCategory =
+        (obj as any).itemCategory == mainParam.itemCategory;
+
+      return (
+        isMatchingDietaryPreference &&
+        isMatchingItemCategory &&
+        checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
+        checkMealTypeMatches(mainParam.filter, obj) &&
+        checkDeliveryOptionsMatches(mainParam.filter, obj) &&
+        checkSellerRatingMatches(mainParam.filter, obj)
+      );
+    })?.length;
+    itemDietaryPreferenceCountList.push({
+      itemDietaryPreferences: item,
+      count,
+    });
+  });
+  return itemDietaryPreferenceCountList;
+};
+
+const getCountOnMealType = async (mainParam, foodObj) => {
+  let itemMealTypeCountList: any = [];
+
+  mainParam?.itemMealType.map((item: string, index: number) => {
+    let count = 0;
+    count = foodObj.filter((obj) => {
+      const isMatchingMealType = (obj as any)?.itemDetailInfo?.mealType == item;
+      const isMatchingItemCategory =
+        (obj as any).itemCategory == mainParam.itemCategory;
+
+      return (
+        isMatchingMealType &&
+        isMatchingItemCategory &&
+        checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
+        checkDietaryPreferenceMatches(mainParam.filter, obj) &&
+        checkDeliveryOptionsMatches(mainParam.filter, obj) &&
+        checkSellerRatingMatches(mainParam.filter, obj)
+      );
+    })?.length;
+    itemMealTypeCountList.push({
+      itemMealType: item,
+      count,
+    });
+  });
+  return itemMealTypeCountList;
+};
+
+const getCountOnDeliveryOptions = async (mainParam, foodObj) => {
+  let itemDeliveryOptionsCountList: any = [];
+
+  mainParam?.itemDeliveryOptions.map((item: string, index: number) => {
+    let count = 0;
+    count = foodObj.filter((obj) => {
+      const isMatchingDeliveryOptions =
+        (obj as any)?.itemDetailInfo?.deliveryOptions == item;
+      const isMatchingItemCategory =
+        (obj as any).itemCategory == mainParam.itemCategory;
+
+      return (
+        isMatchingDeliveryOptions &&
+        isMatchingItemCategory &&
+        checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
+        checkDietaryPreferenceMatches(mainParam.filter, obj) &&
+        checkMealTypeMatches(mainParam.filter, obj) &&
+        checkSellerRatingMatches(mainParam.filter, obj)
+      );
+    })?.length;
+    itemDeliveryOptionsCountList.push({
+      itemDeliveryOptions: item,
+      count,
+    });
+  });
+  return itemDeliveryOptionsCountList;
+};
+
+const getCountOnSellerRating = async (mainParam, foodObj) => {
+  let itemSellerRatingCountList: any = [];
+
+  mainParam?.itemSellerRating.map((item: string, index: number) => {
+    let rating = Number(item.at(0));
+    let count = 0;
+    count = foodObj.filter((obj) => {
+      const isMatchingRating =
+        Math.floor((obj as any)?.userId.reviewMark) == rating;
+      const isMatchingItemCategory =
+        (obj as any).itemCategory == mainParam.itemCategory;
+
+      return (
+        isMatchingRating &&
+        isMatchingItemCategory &&
+        checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
+        checkDietaryPreferenceMatches(mainParam.filter, obj) &&
+        checkMealTypeMatches(mainParam.filter, obj) &&
+        checkDeliveryOptionsMatches(mainParam.filter, obj)
+      );
+    })?.length;
+
+    itemSellerRatingCountList.push({ itemSellerRating: item, count });
+  });
+
+  return itemSellerRatingCountList;
 };
