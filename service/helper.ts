@@ -76,3 +76,11 @@ export const checkSellerRatingMatches = (filter, obj) => {
     : true;
   return sellerRatingMatches;
 };
+
+export const checkItemConditionMatches = (filter, obj) => {
+  const selectedItemCondition = filter.itemCondition?.length > 0;
+  const itemConditionMatches = selectedItemCondition
+    ? filter.itemCondition.includes((obj as any)?.itemDetailInfo?.itemCondition)
+    : true;
+  return itemConditionMatches;
+};
