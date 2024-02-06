@@ -5,6 +5,7 @@ import Ad from "../models/Ad";
 import User from "../models/User";
 import {
   calculateDistance,
+  checkItemConditionMatches,
   checkPriceMatches,
   checkSellerRatingMatches,
   generateToken,
@@ -132,6 +133,63 @@ export const getMoreDiyAds = async (req: Request, res: Response) => {
       .sort({ postDate: -1 })
       .skip(req.body.index * 50)
       .limit(50);
+
+    if (
+      req.body.centerLocationSelected == true &&
+      req.body.SearchWithin != "" &&
+      req.body.SearchWithin != "Nationwide"
+    ) {
+      let distance = 0;
+      if (req.body.SearchWithin != "Current location")
+        distance = parseInt(req.body.SearchWithin.match(/\d+/)[0]);
+      nextDiyAds = nextDiyAds.filter((item) => {
+        return (
+          calculateDistance(
+            item.lat,
+            item.lng,
+            req.body.selectedLocation.lat,
+            req.body.selectedLocation.lng
+          ) <= distance
+        );
+      });
+    }
+    if (req.body.sellerRating && req.body.sellerRating?.length) {
+      nextDiyAds = nextDiyAds.filter(
+        (item: any) =>
+          req.body.sellerRating.indexOf(
+            Math.floor(item.userId.reviewMark).toString() + "*"
+          ) !== -1
+      );
+    }
+    if (req.body.itemCondition && req.body.itemCondition?.length) {
+      nextDiyAds = nextDiyAds.filter(
+        (item: any) =>
+          req.body.itemCondition.indexOf(item.itemDetailInfo.itemCondition) !==
+          -1
+      );
+    }
+    if (req.body.sellerType && req.body.sellerType?.length) {
+      nextDiyAds = nextDiyAds.filter(
+        (item: any) =>
+          req.body.sellerType.indexOf(item.itemDetailInfo.sellerType) !== -1
+      );
+    }
+    if (req.body.itemAge && req.body.itemAge?.length) {
+      nextDiyAds = nextDiyAds.filter(
+        (item: any) =>
+          req.body.itemAge.indexOf(item.itemDetailInfo.itemAge) !== -1
+      );
+    }
+    if (req.body.minPrice && req.body.minPrice != "") {
+      nextDiyAds = nextDiyAds.filter(
+        (item: any) => Number(req.body.minPrice) <= item.price
+      );
+    }
+    if (req.body.maxPrice && req.body.maxPrice != "") {
+      nextDiyAds = nextDiyAds.filter(
+        (item: any) => Number(req.body.maxPrice) >= item.price
+      );
+    }
     return res.json({
       success: true,
       message: "Successfully loaded!",
@@ -212,7 +270,10 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
         .filter((obj) => {
           return (
             checkPriceMatches(req.body.minPrice, req.body.maxPrice, obj) &&
-            checkSellerRatingMatches(req.body.filter, obj)
+            checkSellerRatingMatches(req.body.filter, obj) &&
+            checkItemConditionMatches(req.body.filter, obj) &&
+            checkItemAgeMatches(req.body.filter, obj) &&
+            checkSellerTypeMatches(req.body.filter, obj)
           );
         })
         .map((item: any, index: number) => {
@@ -265,11 +326,39 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
       });
     }
     let countPerPrice = await getCountOnMinMaxPrice(req.body, diyObj);
+    let itemSellerRatingCountList = [];
+    let itemConditionCountList = [];
+    let itemAgeCountList = [];
+    let itemSellerTypeCountList = [];
+
+    if (req.body.itemSellerRating) {
+      itemSellerRatingCountList = await getCountOnSellerRating(
+        req.body,
+        diyObj
+      );
+    }
+
+    if (req.body.itemCondition) {
+      itemConditionCountList = await getCountOnItemCondition(req.body, diyObj);
+    }
+    if (req.body.itemAge) {
+      itemAgeCountList = await getCountOnItemAge(req.body, diyObj);
+    }
+    if (req.body.itemSellerType) {
+      itemSellerTypeCountList = await getCountOnItemSellerType(
+        req.body,
+        diyObj
+      );
+    }
 
     return res.json({
       success: true,
       itemPriceRange: countPerPrice,
       itemRangeInfo: itemSearchRangeCountList,
+      itemSellerRating: itemSellerRatingCountList,
+      itemCondition: itemConditionCountList,
+      itemAge: itemAgeCountList,
+      itemSellerType: itemSellerTypeCountList,
     });
   } catch (error) {
     return res.json({
@@ -279,13 +368,137 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
   }
 };
 
+const checkItemAgeMatches = (filter, obj) => {
+  const selectedItemAgeCondition = filter.itemAge?.length > 0;
+  const itemAgeMatches = selectedItemAgeCondition
+    ? filter.itemAge.includes((obj as any)?.itemDetailInfo?.itemAge)
+    : true;
+  return itemAgeMatches;
+};
+
+const checkSellerTypeMatches = (filter, obj) => {
+  const selectedSellerTypeCondition = filter.sellerType?.length > 0;
+  const sellerTypeMatches = selectedSellerTypeCondition
+    ? filter.sellerType.includes((obj as any)?.itemDetailInfo?.sellerType)
+    : true;
+  return sellerTypeMatches;
+};
+
 const getCountOnMinMaxPrice = async (mainParam, saleObj) => {
   let countPerPrice = -1;
   countPerPrice = saleObj.filter((obj) => {
     return (
       checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
-      checkSellerRatingMatches(mainParam.filter, obj)
+      checkSellerRatingMatches(mainParam.filter, obj) &&
+      checkItemConditionMatches(mainParam.filter, obj) &&
+      checkItemAgeMatches(mainParam.filter, obj) &&
+      checkSellerTypeMatches(mainParam.filter, obj)
     );
   })?.length;
   return countPerPrice;
+};
+
+const getCountOnSellerRating = async (mainParam, diyObj) => {
+  let itemSellerRatingCountList: any = [];
+  mainParam?.itemSellerRating.map((item: string, index: number) => {
+    let rating = Number(item.at(0));
+    let count = 0;
+    count = diyObj.filter((obj) => {
+      const isMatchingRating =
+        Math.floor((obj as any)?.userId.reviewMark) == rating;
+      const isMatchingItemCategory =
+        (obj as any).itemCategory == mainParam.itemCategory;
+
+      return (
+        isMatchingRating &&
+        isMatchingItemCategory &&
+        checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
+        checkItemConditionMatches(mainParam.filter, obj) &&
+        checkItemAgeMatches(mainParam.filter, obj) &&
+        checkSellerTypeMatches(mainParam.filter, obj)
+      );
+    })?.length;
+
+    itemSellerRatingCountList.push({ itemSellerRating: item, count });
+  });
+  return itemSellerRatingCountList;
+};
+
+const getCountOnItemCondition = async (mainParam, diyObj) => {
+  let itemConditionCountList: any = [];
+  mainParam?.itemCondition.map((item: string, index: number) => {
+    let count = 0;
+    count = diyObj.filter((obj) => {
+      const isMatchingItemCondition =
+        (obj as any)?.itemDetailInfo?.itemCondition == item;
+      const isMatchingItemCategory =
+        (obj as any).itemCategory == mainParam.itemCategory;
+
+      return (
+        isMatchingItemCondition &&
+        isMatchingItemCategory &&
+        checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
+        checkSellerRatingMatches(mainParam.filter, obj) &&
+        checkItemAgeMatches(mainParam.filter, obj) &&
+        checkSellerTypeMatches(mainParam.filter, obj)
+      );
+    })?.length;
+    itemConditionCountList.push({
+      itemCondition: item,
+      count,
+    });
+  });
+  return itemConditionCountList;
+};
+
+const getCountOnItemAge = async (mainParam, diyObj) => {
+  let itemAgeCountList: any = [];
+  mainParam?.itemAge.map((item: string, index: number) => {
+    let count = 0;
+    count = diyObj.filter((obj) => {
+      const isMatchingItemAge = (obj as any)?.itemDetailInfo?.itemAge == item;
+      const isMatchingItemCategory =
+        (obj as any).itemCategory == mainParam.itemCategory;
+      return (
+        isMatchingItemAge &&
+        isMatchingItemCategory &&
+        checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
+        checkSellerRatingMatches(mainParam.filter, obj) &&
+        checkItemConditionMatches(mainParam.filter, obj) &&
+        checkSellerTypeMatches(mainParam.filter, obj)
+      );
+    })?.length;
+    itemAgeCountList.push({
+      itemAge: item,
+      count,
+    });
+  });
+  return itemAgeCountList;
+};
+
+const getCountOnItemSellerType = async (mainParam, diyObj) => {
+  let itemSellerTypeCountList: any = [];
+
+  mainParam?.itemSellerType.map((item: string, index: number) => {
+    let count = 0;
+    count = diyObj.filter((obj) => {
+      const isMatchingSellerType =
+        (obj as any)?.itemDetailInfo?.sellerType == item;
+      const isMatchingItemCategory =
+        (obj as any).itemCategory == mainParam.itemCategory;
+      return (
+        isMatchingSellerType &&
+        isMatchingItemCategory &&
+        checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
+        checkSellerRatingMatches(mainParam.filter, obj) &&
+        checkItemConditionMatches(mainParam.filter, obj) &&
+        checkItemAgeMatches(mainParam.filter, obj)
+      );
+    })?.length;
+    itemSellerTypeCountList.push({
+      itemSellerType: item,
+      count,
+    });
+  });
+  return itemSellerTypeCountList;
 };

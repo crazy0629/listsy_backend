@@ -3,7 +3,13 @@ import ForSale from "../models/ForSale";
 import mongoose from "mongoose";
 import Ad from "../models/Ad";
 import User from "../models/User";
-import { calculateDistance, generateToken } from "../service/helper";
+import {
+  calculateDistance,
+  checkItemConditionMatches,
+  checkPriceMatches,
+  checkSellerRatingMatches,
+  generateToken,
+} from "../service/helper";
 
 /**
  * This function is called when users upload items for sale ads.
@@ -19,14 +25,6 @@ const checkBrandMatches = (filter, obj) => {
     ? filter.brand.includes((obj as any)?.itemDetailInfo?.brand)
     : true;
   return brandMatches;
-};
-
-const checkItemConditionMatches = (filter, obj) => {
-  const selectedItemCondition = filter.itemCondition?.length > 0;
-  const itemConditionMatches = selectedItemCondition
-    ? filter.itemCondition.includes((obj as any)?.itemDetailInfo?.itemCondition)
-    : true;
-  return itemConditionMatches;
 };
 
 const checkScreenSizeMatches = (filter, obj) => {
@@ -59,26 +57,6 @@ const checkColourMatches = (filter, obj) => {
     ? filter.colour.includes((obj as any)?.itemDetailInfo.colour)
     : true;
   return colourMatches;
-};
-
-const checkPriceMatches = (minPrice, maxPrice, obj) => {
-  let minPriceCondition = true;
-  let maxPriceCondition = true;
-  if (minPrice != "")
-    minPriceCondition = (obj as any).price >= Number(minPrice);
-  if (maxPrice != "")
-    maxPriceCondition = (obj as any).price <= Number(maxPrice);
-  return minPriceCondition && maxPriceCondition;
-};
-
-const checkSellerRatingMatches = (filter, obj) => {
-  const selectedSellerRatingCondition = filter.sellerRating?.length > 0;
-  const sellerRatingMatches = selectedSellerRatingCondition
-    ? filter.sellerRating.includes(
-        parseInt((obj as any)?.userId.reviewMark).toString() + "*"
-      )
-    : true;
-  return sellerRatingMatches;
 };
 
 const checkBatteryLifeMatches = (filter, obj) => {
