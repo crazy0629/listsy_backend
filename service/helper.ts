@@ -56,3 +56,23 @@ export const calculateDistance = (lat1, lon1, lat2, lon2) => {
 
   return distance;
 };
+
+export const checkPriceMatches = (minPrice, maxPrice, obj) => {
+  let minPriceCondition = true;
+  let maxPriceCondition = true;
+  if (minPrice != "")
+    minPriceCondition = (obj as any).price >= Number(minPrice);
+  if (maxPrice != "")
+    maxPriceCondition = (obj as any).price <= Number(maxPrice);
+  return minPriceCondition && maxPriceCondition;
+};
+
+export const checkSellerRatingMatches = (filter, obj) => {
+  const selectedSellerRatingCondition = filter.sellerRating?.length > 0;
+  const sellerRatingMatches = selectedSellerRatingCondition
+    ? filter.sellerRating.includes(
+        parseInt((obj as any)?.userId.reviewMark).toString() + "*"
+      )
+    : true;
+  return sellerRatingMatches;
+};

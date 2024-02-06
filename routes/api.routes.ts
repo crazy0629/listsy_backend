@@ -162,6 +162,7 @@ router.post("/diy/loadDiyInfo", diy.loadDiyInfo);
 router.post("/diy/getAdDetailInfo", diy.getAdDetailInfo);
 router.post("/diy/getDiyAds", diy.getMoreDiyAds);
 router.post("/diy/getCountForEachCategory", diy.getCountForEachCategory);
+router.post("/diy/getCountOfEachFilter", diy.getCountOfEachFilter);
 
 // ForSale
 

@@ -3,7 +3,12 @@ import Food from "../models/Food";
 import mongoose from "mongoose";
 import Ad from "../models/Ad";
 import User from "../models/User";
-import { calculateDistance, generateToken } from "../service/helper";
+import {
+  calculateDistance,
+  checkPriceMatches,
+  checkSellerRatingMatches,
+  generateToken,
+} from "../service/helper";
 
 export const loadFoodInfo = async (req: Request, res: Response) => {
   try {
@@ -158,6 +163,65 @@ export const getMoreFoodAds = async (req: Request, res: Response) => {
       .sort({ postDate: -1 })
       .skip(req.body.index * 50)
       .limit(50);
+    if (
+      req.body.centerLocationSelected == true &&
+      req.body.SearchWithin != "" &&
+      req.body.SearchWithin != "Nationwide"
+    ) {
+      let distance = 0;
+      if (req.body.SearchWithin != "Current location")
+        distance = parseInt(req.body.SearchWithin.match(/\d+/)[0]);
+      nextFoodAds = nextFoodAds.filter((item) => {
+        return (
+          calculateDistance(
+            item.lat,
+            item.lng,
+            req.body.selectedLocation.lat,
+            req.body.selectedLocation.lng
+          ) <= distance
+        );
+      });
+    }
+    if (req.body.sellerRating && req.body.sellerRating?.length) {
+      nextFoodAds = nextFoodAds.filter(
+        (item: any) =>
+          req.body.sellerRating.indexOf(
+            Math.floor(item.userId.reviewMark).toString() + "*"
+          ) !== -1
+      );
+    }
+    if (req.body.mealType && req.body.mealType?.length) {
+      nextFoodAds = nextFoodAds.filter(
+        (item: any) =>
+          req.body.mealType.indexOf(item.itemDetailInfo.mealType) !== -1
+      );
+    }
+    if (req.body.dietaryPreferences && req.body.dietaryPreferences?.length) {
+      nextFoodAds = nextFoodAds.filter(
+        (item: any) =>
+          req.body.dietaryPreferences.indexOf(
+            item.itemDetailInfo.dietaryPreferences
+          ) !== -1
+      );
+    }
+    if (req.body.deliveryOptions && req.body.deliveryOptions?.length) {
+      nextFoodAds = nextFoodAds.filter(
+        (item: any) =>
+          req.body.deliveryOptions.indexOf(
+            item.itemDetailInfo.deliveryOptions
+          ) !== -1
+      );
+    }
+    if (req.body.minPrice && req.body.minPrice != "") {
+      nextFoodAds = nextFoodAds.filter(
+        (item: any) => Number(req.body.minPrice) <= item.price
+      );
+    }
+    if (req.body.maxPrice && req.body.maxPrice != "") {
+      nextFoodAds = nextFoodAds.filter(
+        (item: any) => Number(req.body.maxPrice) >= item.price
+      );
+    }
     return res.json({
       success: true,
       message: "Successfully loaded!",
@@ -305,16 +369,6 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
   }
 };
 
-const checkPriceMatches = (minPrice, maxPrice, obj) => {
-  let minPriceCondition = true;
-  let maxPriceCondition = true;
-  if (minPrice != "")
-    minPriceCondition = (obj as any).price >= Number(minPrice);
-  if (maxPrice != "")
-    maxPriceCondition = (obj as any).price <= Number(maxPrice);
-  return minPriceCondition && maxPriceCondition;
-};
-
 const checkDietaryPreferenceMatches = (filter, obj) => {
   const selectedDietaryPreferenceCondition =
     filter.dietaryPreferences?.length > 0;
@@ -342,16 +396,6 @@ const checkDeliveryOptionsMatches = (filter, obj) => {
       )
     : true;
   return deliveryOptionsMatches;
-};
-
-const checkSellerRatingMatches = (filter, obj) => {
-  const selectedSellerRatingCondition = filter.sellerRating?.length > 0;
-  const sellerRatingMatches = selectedSellerRatingCondition
-    ? filter.sellerRating.includes(
-        parseInt((obj as any)?.userId.reviewMark).toString() + "*"
-      )
-    : true;
-  return sellerRatingMatches;
 };
 
 const getCountOnMinMaxPrice = async (mainParam, saleObj) => {
