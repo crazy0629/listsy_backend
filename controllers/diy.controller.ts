@@ -169,12 +169,16 @@ export const getMoreDiyAds = async (req: Request, res: Response) => {
       );
     }
     if (req.body.sellerType && req.body.sellerType?.length) {
+      let index = req.body.sellerType.indexOf("Not Specified");
+      req.body.sellerType[index] = "";
       nextDiyAds = nextDiyAds.filter(
         (item: any) =>
           req.body.sellerType.indexOf(item.itemDetailInfo.sellerType) !== -1
       );
     }
     if (req.body.itemAge && req.body.itemAge?.length) {
+      let index = req.body.itemAge.indexOf("Not Specified");
+      req.body.itemAge[index] = "";
       nextDiyAds = nextDiyAds.filter(
         (item: any) =>
           req.body.itemAge.indexOf(item.itemDetailInfo.itemAge) !== -1
@@ -229,7 +233,7 @@ export const getCountForEachCategory = async (req: Request, res: Response) => {
   } catch (error) {
     return res.json({
       success: false,
-      message: "Error happened while getting data!",
+      message: "Error found!",
     });
   }
 };
@@ -370,6 +374,10 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
 
 const checkItemAgeMatches = (filter, obj) => {
   const selectedItemAgeCondition = filter.itemAge?.length > 0;
+  let index = filter.itemAge.indexOf("Not Specified");
+  if (index > -1) {
+    filter.itemAge[index] = "";
+  }
   const itemAgeMatches = selectedItemAgeCondition
     ? filter.itemAge.includes((obj as any)?.itemDetailInfo?.itemAge)
     : true;
@@ -378,6 +386,10 @@ const checkItemAgeMatches = (filter, obj) => {
 
 const checkSellerTypeMatches = (filter, obj) => {
   const selectedSellerTypeCondition = filter.sellerType?.length > 0;
+  let index = filter.sellerType.indexOf("Not Specified");
+  if (index > -1) {
+    filter.sellerType[index] = "";
+  }
   const sellerTypeMatches = selectedSellerTypeCondition
     ? filter.sellerType.includes((obj as any)?.itemDetailInfo?.sellerType)
     : true;
@@ -454,9 +466,13 @@ const getCountOnItemCondition = async (mainParam, diyObj) => {
 const getCountOnItemAge = async (mainParam, diyObj) => {
   let itemAgeCountList: any = [];
   mainParam?.itemAge.map((item: string, index: number) => {
-    let count = 0;
+    let count = 0,
+      temp = "";
+    if (item != "Not Specified") {
+      temp = item;
+    }
     count = diyObj.filter((obj) => {
-      const isMatchingItemAge = (obj as any)?.itemDetailInfo?.itemAge == item;
+      const isMatchingItemAge = (obj as any)?.itemDetailInfo?.itemAge == temp;
       const isMatchingItemCategory =
         (obj as any).itemCategory == mainParam.itemCategory;
       return (
@@ -480,10 +496,14 @@ const getCountOnItemSellerType = async (mainParam, diyObj) => {
   let itemSellerTypeCountList: any = [];
 
   mainParam?.itemSellerType.map((item: string, index: number) => {
-    let count = 0;
+    let count = 0,
+      temp = "";
+    if (item != "Not Specified") {
+      temp = item;
+    }
     count = diyObj.filter((obj) => {
       const isMatchingSellerType =
-        (obj as any)?.itemDetailInfo?.sellerType == item;
+        (obj as any)?.itemDetailInfo?.sellerType == temp;
       const isMatchingItemCategory =
         (obj as any).itemCategory == mainParam.itemCategory;
       return (
