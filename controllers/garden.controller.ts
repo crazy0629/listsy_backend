@@ -118,7 +118,7 @@ export const getCountForEachCategory = async (req: Request, res: Response) => {
   } catch (error) {
     return res.json({
       success: false,
-      message: "Error happened while getting data!",
+      message: "Error found!",
     });
   }
 };

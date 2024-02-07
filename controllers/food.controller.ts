@@ -132,7 +132,7 @@ export const getCountForEachCategory = async (req: Request, res: Response) => {
   } catch (error) {
     return res.json({
       success: false,
-      message: "Error happened while getting data!",
+      message: "Error found!",
     });
   }
 };
@@ -197,6 +197,8 @@ export const getMoreFoodAds = async (req: Request, res: Response) => {
       );
     }
     if (req.body.dietaryPreferences && req.body.dietaryPreferences?.length) {
+      let index = req.body.dietaryPreferences.indexOf("Not Specified");
+      req.body.dietaryPreferences[index] = "";
       nextFoodAds = nextFoodAds.filter(
         (item: any) =>
           req.body.dietaryPreferences.indexOf(
@@ -205,6 +207,8 @@ export const getMoreFoodAds = async (req: Request, res: Response) => {
       );
     }
     if (req.body.deliveryOptions && req.body.deliveryOptions?.length) {
+      let index = req.body.deliveryOptions.indexOf("Not Specified");
+      req.body.deliveryOptions[index] = "";
       nextFoodAds = nextFoodAds.filter(
         (item: any) =>
           req.body.deliveryOptions.indexOf(
@@ -372,6 +376,10 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
 const checkDietaryPreferenceMatches = (filter, obj) => {
   const selectedDietaryPreferenceCondition =
     filter.dietaryPreferences?.length > 0;
+  let index = filter.dietaryPreferences.indexOf("Not Specified");
+  if (index > -1) {
+    filter.dietaryPreferences[index] = "";
+  }
   const dietaryPreferenceMatches = selectedDietaryPreferenceCondition
     ? filter.dietaryPreferences.includes(
         (obj as any)?.itemDetailInfo?.dietaryPreferences
@@ -390,6 +398,11 @@ const checkMealTypeMatches = (filter, obj) => {
 
 const checkDeliveryOptionsMatches = (filter, obj) => {
   const selectedDeliveryOptionsCondition = filter.deliveryOptions?.length > 0;
+  let index = filter.deliveryOptions.indexOf("Not Specified");
+  if (index > -1) {
+    filter.deliveryOptions[index] = "";
+  }
+
   const deliveryOptionsMatches = selectedDeliveryOptionsCondition
     ? filter.deliveryOptions.includes(
         (obj as any)?.itemDetailInfo?.deliveryOptions
@@ -416,10 +429,14 @@ const getCountOnDietaryPreferences = async (mainParam, foodObj) => {
   let itemDietaryPreferenceCountList: any = [];
 
   mainParam?.itemDietaryPreferences.map((item: string, index: number) => {
-    let count = 0;
+    let count = 0,
+      temp = "";
+    if (item != "Not Specified") {
+      temp = item;
+    }
     count = foodObj.filter((obj) => {
       const isMatchingDietaryPreference =
-        (obj as any)?.itemDetailInfo?.dietaryPreferences == item;
+        (obj as any)?.itemDetailInfo?.dietaryPreferences == temp;
       const isMatchingItemCategory =
         (obj as any).itemCategory == mainParam.itemCategory;
 
@@ -471,10 +488,14 @@ const getCountOnDeliveryOptions = async (mainParam, foodObj) => {
   let itemDeliveryOptionsCountList: any = [];
 
   mainParam?.itemDeliveryOptions.map((item: string, index: number) => {
-    let count = 0;
+    let count = 0,
+      temp = "";
+    if (item != "Not Specified") {
+      temp = item;
+    }
     count = foodObj.filter((obj) => {
       const isMatchingDeliveryOptions =
-        (obj as any)?.itemDetailInfo?.deliveryOptions == item;
+        (obj as any)?.itemDetailInfo?.deliveryOptions == temp;
       const isMatchingItemCategory =
         (obj as any).itemCategory == mainParam.itemCategory;
 
