@@ -185,6 +185,7 @@ router.post("/garden/loadGardenInfo", garden.loadGardenInfo);
 router.post("/garden/getGardenAds", garden.getMoreGardenAds);
 router.post("/garden/getAdDetailInfo", garden.getAdDetailInfo);
 router.post("/garden/getCountForEachCategory", garden.getCountForEachCategory);
+router.post("/garden/getCountOfEachFilter", garden.getCountOfEachFilter);
 
 // Fashion
 

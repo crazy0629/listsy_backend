@@ -36,7 +36,7 @@ export const generateToken = (user: IUser) => {
 };
 
 export const calculateDistance = (lat1, lon1, lat2, lon2) => {
-  const earthRadiusMiles = 3958.8; // Earth's radius in miles
+  const earthRadiusMiles = 3958.8;
 
   function toRadians(degrees) {
     return degrees * (Math.PI / 180);
@@ -67,6 +67,30 @@ export const checkPriceMatches = (minPrice, maxPrice, obj) => {
   return minPriceCondition && maxPriceCondition;
 };
 
+export const checkSellerTypeMatches = (filter, obj) => {
+  const selectedSellerTypeCondition = filter.sellerType?.length > 0;
+  let index = filter.sellerType.indexOf("Not Specified");
+  if (index > -1) {
+    filter.sellerType[index] = "";
+  }
+  const sellerTypeMatches = selectedSellerTypeCondition
+    ? filter.sellerType.includes((obj as any)?.itemDetailInfo?.sellerType)
+    : true;
+  return sellerTypeMatches;
+};
+
+export const checkBrandMatches = (filter, obj) => {
+  const selectedBrandCondition = filter.brand?.length > 0;
+  let index = filter.brand.indexOf("Not Specified");
+  if (index > -1) {
+    filter.brand[index] = "";
+  }
+  const brandMatches = selectedBrandCondition
+    ? filter.brand.includes((obj as any)?.itemDetailInfo?.brand)
+    : true;
+  return brandMatches;
+};
+
 export const checkSellerRatingMatches = (filter, obj) => {
   const selectedSellerRatingCondition = filter.sellerRating?.length > 0;
   const sellerRatingMatches = selectedSellerRatingCondition
@@ -83,4 +107,117 @@ export const checkItemConditionMatches = (filter, obj) => {
     ? filter.itemCondition.includes((obj as any)?.itemDetailInfo?.itemCondition)
     : true;
   return itemConditionMatches;
+};
+
+export const getConditionToCountry = (data) => {
+  let condition: any = {};
+  if (data.centerLocationSelected == true && data.SearchWithin != "") {
+    condition.countryCode = data.selectedLocation.countryCode;
+  } else {
+    if (data.countryCode != null) {
+      if (data.countryCode == "") {
+        condition.address = data.address;
+      } else {
+        condition.countryCode = data.countryCode;
+      }
+    }
+  }
+  if (data.itemCategory != "All" && data.itemCategory != "") {
+    condition.itemCategory = data.itemCategory;
+  }
+
+  return condition;
+};
+
+export const locationFilterDistanceAds = (data, adsList) => {
+  if (
+    data.centerLocationSelected == true &&
+    data.SearchWithin != "" &&
+    data.SearchWithin != "Nationwide"
+  ) {
+    let distance = 0;
+    if (data.SearchWithin != "Current location")
+      distance = parseInt(data.SearchWithin.match(/\d+/)[0]);
+    adsList = adsList.filter((item) => {
+      return (
+        calculateDistance(
+          item.lat,
+          item.lng,
+          data.selectedLocation.lat,
+          data.selectedLocation.lng
+        ) <= distance
+      );
+    });
+  }
+  return adsList;
+};
+
+export const sellerRatingFilterAds = (data, adsList) => {
+  if (data.sellerRating && data.sellerRating?.length) {
+    adsList = adsList.filter(
+      (item: any) =>
+        data.sellerRating.indexOf(
+          Math.floor(item.userId.reviewMark).toString() + "*"
+        ) !== -1
+    );
+  }
+  return adsList;
+};
+
+export const priceFilterAds = (data, adsList) => {
+  if (data.minPrice && data.minPrice != "") {
+    adsList = adsList.filter(
+      (item: any) => Number(data.minPrice) <= item.price
+    );
+  }
+  if (data.maxPrice && data.maxPrice != "") {
+    adsList = adsList.filter(
+      (item: any) => Number(data.maxPrice) >= item.price
+    );
+  }
+  return adsList;
+};
+
+export const itemConditionFilterAds = (data, adsList) => {
+  if (data.itemCondition && data.itemCondition?.length) {
+    adsList = adsList.filter(
+      (item: any) =>
+        data.itemCondition.indexOf(item.itemDetailInfo.itemCondition) !== -1
+    );
+  }
+  return adsList;
+};
+
+export const sellerTypeFilterAds = (data, adsList) => {
+  if (data.sellerType && data.sellerType?.length) {
+    let index = data.sellerType.indexOf("Not Specified");
+    data.sellerType[index] = "";
+    adsList = adsList.filter(
+      (item: any) =>
+        data.sellerType.indexOf(item.itemDetailInfo.sellerType) !== -1
+    );
+  }
+  return adsList;
+};
+
+export const brandFilterAds = (data, adsList) => {
+  if (data.brand && data.brand?.length) {
+    let index = data.brand.indexOf("Not Specified");
+    data.brand[index] = "";
+    adsList = adsList.filter(
+      (item: any) => data.brand.indexOf(item.itemDetailInfo.brand) !== -1
+    );
+  }
+  return adsList;
+};
+
+export const itemAgeFilterAds = (data, adsList) => {
+  if (data.itemAge && data.itemAge?.length) {
+    let index = data.itemAge.indexOf("Not Specified");
+    data.itemAge[index] = "";
+    adsList = adsList.filter(
+      (item: any) => data.itemAge.indexOf(item.itemDetailInfo.itemAge) !== -1
+    );
+  }
+  return adsList;
 };

@@ -8,6 +8,10 @@ import {
   checkPriceMatches,
   checkSellerRatingMatches,
   generateToken,
+  getConditionToCountry,
+  locationFilterDistanceAds,
+  priceFilterAds,
+  sellerRatingFilterAds,
 } from "../service/helper";
 
 export const loadFoodInfo = async (req: Request, res: Response) => {
@@ -69,7 +73,7 @@ export const loadFoodInfo = async (req: Request, res: Response) => {
     }
     return res.json({
       success: true,
-      message: "Successfully saved pet information!",
+      message: "Successfully saved food information!",
       data: userModel,
       token: generateToken(userModel),
     });
@@ -103,6 +107,10 @@ export const getAdDetailInfo = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.log(error);
+    res.json({
+      success: false,
+      message: "Error",
+    });
   }
 };
 
@@ -139,57 +147,18 @@ export const getCountForEachCategory = async (req: Request, res: Response) => {
 
 export const getMoreFoodAds = async (req: Request, res: Response) => {
   try {
-    let condition: any = {};
-    if (
-      req.body.centerLocationSelected == true &&
-      req.body.SearchWithin != ""
-    ) {
-      condition.countryCode = req.body.selectedLocation.countryCode;
-    } else {
-      if (req.body.countryCode != null) {
-        if (req.body.countryCode == "") {
-          condition.address = req.body.address;
-        } else {
-          condition.countryCode = req.body.countryCode;
-        }
-      }
-    }
-    if (req.body.itemCategory != "All" && req.body.itemCategory != "") {
-      condition.itemCategory = req.body.itemCategory;
-    }
+    let condition = getConditionToCountry(req.body);
     let nextFoodAds = await Food.find(condition)
       .populate("userId", "firstName lastName avatar reviewCount reviewMark")
       .populate("adId", "adFileName imagesFileName uploadDate duration")
       .sort({ postDate: -1 })
       .skip(req.body.index * 50)
       .limit(50);
-    if (
-      req.body.centerLocationSelected == true &&
-      req.body.SearchWithin != "" &&
-      req.body.SearchWithin != "Nationwide"
-    ) {
-      let distance = 0;
-      if (req.body.SearchWithin != "Current location")
-        distance = parseInt(req.body.SearchWithin.match(/\d+/)[0]);
-      nextFoodAds = nextFoodAds.filter((item) => {
-        return (
-          calculateDistance(
-            item.lat,
-            item.lng,
-            req.body.selectedLocation.lat,
-            req.body.selectedLocation.lng
-          ) <= distance
-        );
-      });
-    }
-    if (req.body.sellerRating && req.body.sellerRating?.length) {
-      nextFoodAds = nextFoodAds.filter(
-        (item: any) =>
-          req.body.sellerRating.indexOf(
-            Math.floor(item.userId.reviewMark).toString() + "*"
-          ) !== -1
-      );
-    }
+
+    nextFoodAds = locationFilterDistanceAds(req.body, nextFoodAds);
+    nextFoodAds = sellerRatingFilterAds(req.body, nextFoodAds);
+    nextFoodAds = priceFilterAds(req.body, nextFoodAds);
+
     if (req.body.mealType && req.body.mealType?.length) {
       nextFoodAds = nextFoodAds.filter(
         (item: any) =>
@@ -216,16 +185,7 @@ export const getMoreFoodAds = async (req: Request, res: Response) => {
           ) !== -1
       );
     }
-    if (req.body.minPrice && req.body.minPrice != "") {
-      nextFoodAds = nextFoodAds.filter(
-        (item: any) => Number(req.body.minPrice) <= item.price
-      );
-    }
-    if (req.body.maxPrice && req.body.maxPrice != "") {
-      nextFoodAds = nextFoodAds.filter(
-        (item: any) => Number(req.body.maxPrice) >= item.price
-      );
-    }
+
     return res.json({
       success: true,
       message: "Successfully loaded!",
@@ -411,9 +371,9 @@ const checkDeliveryOptionsMatches = (filter, obj) => {
   return deliveryOptionsMatches;
 };
 
-const getCountOnMinMaxPrice = async (mainParam, saleObj) => {
+const getCountOnMinMaxPrice = async (mainParam, foodObj) => {
   let countPerPrice = -1;
-  countPerPrice = saleObj.filter((obj) => {
+  countPerPrice = foodObj.filter((obj) => {
     return (
       checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
       checkMealTypeMatches(mainParam.filter, obj) &&
