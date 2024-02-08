@@ -8,7 +8,15 @@ import {
   checkItemConditionMatches,
   checkPriceMatches,
   checkSellerRatingMatches,
+  checkSellerTypeMatches,
   generateToken,
+  getConditionToCountry,
+  itemAgeFilterAds,
+  itemConditionFilterAds,
+  locationFilterDistanceAds,
+  priceFilterAds,
+  sellerRatingFilterAds,
+  sellerTypeFilterAds,
 } from "../service/helper";
 
 export const loadDiyInfo = async (req: Request, res: Response) => {
@@ -70,7 +78,7 @@ export const loadDiyInfo = async (req: Request, res: Response) => {
     }
     return res.json({
       success: true,
-      message: "Successfully saved pet information!",
+      message: "Successfully saved diy and craft information!",
       data: userModel,
       token: generateToken(userModel),
     });
@@ -109,24 +117,7 @@ export const getAdDetailInfo = async (req: Request, res: Response) => {
 
 export const getMoreDiyAds = async (req: Request, res: Response) => {
   try {
-    let condition: any = {};
-    if (
-      req.body.centerLocationSelected == true &&
-      req.body.SearchWithin != ""
-    ) {
-      condition.countryCode = req.body.selectedLocation.countryCode;
-    } else {
-      if (req.body.countryCode != null) {
-        if (req.body.countryCode == "") {
-          condition.address = req.body.address;
-        } else {
-          condition.countryCode = req.body.countryCode;
-        }
-      }
-    }
-    if (req.body.itemCategory != "All" && req.body.itemCategory != "") {
-      condition.itemCategory = req.body.itemCategory;
-    }
+    let condition = getConditionToCountry(req.body);
     let nextDiyAds = await Diy.find(condition)
       .populate("userId", "firstName lastName avatar reviewCount reviewMark")
       .populate("adId", "adFileName imagesFileName uploadDate duration")
@@ -134,48 +125,13 @@ export const getMoreDiyAds = async (req: Request, res: Response) => {
       .skip(req.body.index * 50)
       .limit(50);
 
-    if (
-      req.body.centerLocationSelected == true &&
-      req.body.SearchWithin != "" &&
-      req.body.SearchWithin != "Nationwide"
-    ) {
-      let distance = 0;
-      if (req.body.SearchWithin != "Current location")
-        distance = parseInt(req.body.SearchWithin.match(/\d+/)[0]);
-      nextDiyAds = nextDiyAds.filter((item) => {
-        return (
-          calculateDistance(
-            item.lat,
-            item.lng,
-            req.body.selectedLocation.lat,
-            req.body.selectedLocation.lng
-          ) <= distance
-        );
-      });
-    }
-    if (req.body.sellerRating && req.body.sellerRating?.length) {
-      nextDiyAds = nextDiyAds.filter(
-        (item: any) =>
-          req.body.sellerRating.indexOf(
-            Math.floor(item.userId.reviewMark).toString() + "*"
-          ) !== -1
-      );
-    }
-    if (req.body.itemCondition && req.body.itemCondition?.length) {
-      nextDiyAds = nextDiyAds.filter(
-        (item: any) =>
-          req.body.itemCondition.indexOf(item.itemDetailInfo.itemCondition) !==
-          -1
-      );
-    }
-    if (req.body.sellerType && req.body.sellerType?.length) {
-      let index = req.body.sellerType.indexOf("Not Specified");
-      req.body.sellerType[index] = "";
-      nextDiyAds = nextDiyAds.filter(
-        (item: any) =>
-          req.body.sellerType.indexOf(item.itemDetailInfo.sellerType) !== -1
-      );
-    }
+    nextDiyAds = locationFilterDistanceAds(req.body, nextDiyAds);
+    nextDiyAds = sellerRatingFilterAds(req.body, nextDiyAds);
+    nextDiyAds = priceFilterAds(req.body, nextDiyAds);
+    nextDiyAds = itemConditionFilterAds(req.body, nextDiyAds);
+    nextDiyAds = sellerTypeFilterAds(req.body, nextDiyAds);
+    nextDiyAds = itemAgeFilterAds(req.body, nextDiyAds);
+
     if (req.body.itemAge && req.body.itemAge?.length) {
       let index = req.body.itemAge.indexOf("Not Specified");
       req.body.itemAge[index] = "";
@@ -184,16 +140,7 @@ export const getMoreDiyAds = async (req: Request, res: Response) => {
           req.body.itemAge.indexOf(item.itemDetailInfo.itemAge) !== -1
       );
     }
-    if (req.body.minPrice && req.body.minPrice != "") {
-      nextDiyAds = nextDiyAds.filter(
-        (item: any) => Number(req.body.minPrice) <= item.price
-      );
-    }
-    if (req.body.maxPrice && req.body.maxPrice != "") {
-      nextDiyAds = nextDiyAds.filter(
-        (item: any) => Number(req.body.maxPrice) >= item.price
-      );
-    }
+
     return res.json({
       success: true,
       message: "Successfully loaded!",
@@ -382,18 +329,6 @@ const checkItemAgeMatches = (filter, obj) => {
     ? filter.itemAge.includes((obj as any)?.itemDetailInfo?.itemAge)
     : true;
   return itemAgeMatches;
-};
-
-const checkSellerTypeMatches = (filter, obj) => {
-  const selectedSellerTypeCondition = filter.sellerType?.length > 0;
-  let index = filter.sellerType.indexOf("Not Specified");
-  if (index > -1) {
-    filter.sellerType[index] = "";
-  }
-  const sellerTypeMatches = selectedSellerTypeCondition
-    ? filter.sellerType.includes((obj as any)?.itemDetailInfo?.sellerType)
-    : true;
-  return sellerTypeMatches;
 };
 
 const getCountOnMinMaxPrice = async (mainParam, saleObj) => {
