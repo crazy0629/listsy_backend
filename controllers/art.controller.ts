@@ -37,7 +37,7 @@ export const loadArtInfo = async (req: Request, res: Response) => {
       await newArt.save();
       return res.json({
         success: true,
-        message: "Successfully saved collectiables and art media information!",
+        message: "Upload Successful!",
       });
     }
   );

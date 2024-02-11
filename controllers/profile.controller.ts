@@ -70,7 +70,7 @@ export const changePhoneNumberShare = async (req: Request, res: Response) => {
       if (!model) {
         return res.json({
           success: false,
-          message: "Error happened while changing setting your profile!",
+          message: "Error found!",
         });
       }
       model.phoneNumberShare = req.body.phoneNumberShare;
@@ -92,7 +92,7 @@ export const editProfile = async (req: Request, res: Response) => {
       if (!model) {
         return res.json({
           success: false,
-          message: "Error happened while changing setting your profile!",
+          message: "Error found!",
         });
       }
       model.firstName = req.body.firstName;
@@ -147,7 +147,7 @@ export const changePassword = async (req: Request, res: Response) => {
       if (!model) {
         return res.json({
           success: false,
-          message: "Error happened while changing your password!",
+          message: "Error found!",
         });
       }
       const isMatch = await bcrypt.compare(

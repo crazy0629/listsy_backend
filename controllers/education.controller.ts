@@ -37,7 +37,7 @@ export const loadEducationInfo = async (req: Request, res: Response) => {
       await newEducation.save();
       return res.json({
         success: true,
-        message: "Successfully saved book and education media information!",
+        message: "Upload Successful!",
       });
     }
   );

@@ -89,7 +89,7 @@ export const uploadJob = async (req: Request, res: Response) => {
     console.log(error);
     return res.json({
       success: false,
-      message: "Error happened while uploading job",
+      message: "Error found!",
     });
   }
 };

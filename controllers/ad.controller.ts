@@ -36,7 +36,7 @@ export const getLocationList = async (req: Request, res: Response) => {
       res.json({ success: true, data: result });
     });
   } catch (error) {
-    res.json({ success: false, message: "Error happened while loading data" });
+    res.json({ success: false, message: "Error found!" });
   }
 };
 
@@ -49,32 +49,37 @@ export const getLocationList = async (req: Request, res: Response) => {
  */
 
 export const uploadAd = async (req: Request, res: Response) => {
-  const multerReq = req as Request & { file?: Multer.File };
-  if (!multerReq?.file) {
-    // No file was uploaded, handle error
-    res.status(400).json({ success: false, message: "No file uploaded" });
-    return;
+  try {
+    const multerReq = req as Request & { file?: Multer.File };
+    if (!multerReq?.file) {
+      res.status(400).json({ success: false, message: "No file uploaded" });
+      return;
+    }
+
+    const { filename, originalname } = multerReq.file;
+
+    const newAd = new Ad();
+    newAd.fileType = req.body.fileType;
+    newAd.adFileName = "/uploads/ads/" + filename;
+    newAd.uploadDate = req.body.uploadDate;
+    newAd.state = "Active";
+    const ad_dir = path.join(__dirname, "../uploads/ads/" + filename);
+    newAd.duration = await getVideoDurationInSeconds(ad_dir);
+    await newAd.save();
+
+    res.json({
+      success: true,
+      message: "Upload Successful!",
+      filename,
+      originalname,
+      model: newAd,
+    });
+  } catch (eror) {
+    res.json({
+      success: false,
+      message: "Ad publishing unsuccessful. Try again or contact support!",
+    });
   }
-
-  const { filename, originalname } = multerReq.file;
-
-  const newAd = new Ad();
-  newAd.fileType = req.body.fileType;
-  newAd.adFileName = "/uploads/ads/" + filename;
-  newAd.uploadDate = req.body.uploadDate;
-  newAd.state = "Active";
-  const ad_dir = path.join(__dirname, "../uploads/ads/" + filename);
-  newAd.duration = await getVideoDurationInSeconds(ad_dir);
-  await newAd.save();
-
-  res.json({
-    success: true,
-    message:
-      "Success! Your video has been uploaded and is now part of your advert. We're excited to help showcase your content.",
-    filename,
-    originalname,
-    model: newAd,
-  });
 };
 
 /**
@@ -85,43 +90,52 @@ export const uploadAd = async (req: Request, res: Response) => {
  */
 
 export const uploadImages = async (req: Request, res: Response) => {
-  Ad.findById(new mongoose.Types.ObjectId(req.body.adId)).then(
-    async (model: any) => {
-      if (!model) {
+  try {
+    Ad.findById(new mongoose.Types.ObjectId(req.body.adId)).then(
+      async (model: any) => {
+        if (!model) {
+          return res.json({
+            success: false,
+            message:
+              "Ad publishing unsuccessful. Try again or contact support!",
+          });
+        }
+
+        const multerReq = req as Request & { files?: Multer.Files };
+
+        let imageNames: any = [];
+        for (let index = 0; index < multerReq.files.length; index++) {
+          const { filename } = multerReq.files[index];
+          imageNames.push("/uploads/images/" + filename);
+        }
+        model.imagesFileName = imageNames;
+        await model.save();
+
+        const user = await User.findById(
+          new mongoose.Types.ObjectId(req.body.userId)
+        );
+        if (!user) {
+          return res.json({
+            success: false,
+            message:
+              "Ad publishing unsuccessful. Try again or contact support!",
+          });
+        }
+        user.adCount = user.adCount + 1;
+        await user.save();
+
         return res.json({
-          success: false,
-          message: "Error happened while loading data!",
+          success: true,
+          message: "Ad Published Successfully!",
         });
       }
-
-      const multerReq = req as Request & { files?: Multer.Files };
-
-      let imageNames: any = [];
-      for (let index = 0; index < multerReq.files.length; index++) {
-        const { filename } = multerReq.files[index];
-        imageNames.push("/uploads/images/" + filename);
-      }
-      model.imagesFileName = imageNames;
-      await model.save();
-
-      const user = await User.findById(
-        new mongoose.Types.ObjectId(req.body.userId)
-      );
-      if (!user) {
-        return res.json({
-          success: false,
-          message: "Error happened while uploading ad.",
-        });
-      }
-      user.adCount = user.adCount + 1;
-      await user.save();
-
-      return res.json({
-        success: true,
-        message: "Images are successfully uploaded",
-      });
-    }
-  );
+    );
+  } catch (eror) {
+    res.json({
+      success: false,
+      message: "Ad publishing unsuccessful. Try again or contact support!",
+    });
+  }
 };
 
 /**

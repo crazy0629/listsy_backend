@@ -86,7 +86,7 @@ export const getProposalListPerJob = async (req: Request, res: Response) => {
   } catch (error) {
     res.json({
       success: false,
-      message: "Error happened while loading proposals",
+      message: "Error found!",
     });
   }
 };

@@ -147,7 +147,7 @@ export const resendVeriEmail = async (req: Request, res: Response) => {
   if (!user) {
     return res.json({
       success: false,
-      message: "Error happened while resending verification email",
+      message: "Error found!",
     });
   }
   const token = crypto.randomBytes(20).toString("hex");
@@ -241,7 +241,7 @@ export const checkSignUpVerificationToken = async (
   if (!user) {
     return res.json({
       success: false,
-      message: "Error happened while doing verification your email",
+      message: "Error found!",
     });
   }
 

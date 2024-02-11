@@ -37,7 +37,7 @@ export const loadChildrenInfo = async (req: Request, res: Response) => {
       await newChildren.save();
       return res.json({
         success: true,
-        message: "Successfully saved sale media information!",
+        message: "Upload Successful!",
       });
     }
   );
