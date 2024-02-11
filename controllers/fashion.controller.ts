@@ -37,7 +37,7 @@ export const loadFashionInfo = async (req: Request, res: Response) => {
       await newFashion.save();
       return res.json({
         success: true,
-        message: "Successfully saved sale media information!",
+        message: "Upload Successful!",
       });
     }
   );

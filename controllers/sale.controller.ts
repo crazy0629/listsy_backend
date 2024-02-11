@@ -312,7 +312,7 @@ export const loadForSaleInfo = async (req: Request, res: Response) => {
 
       return res.json({
         success: true,
-        message: "Successfully saved sale media information!",
+        message: "Upload Successful!",
         data: model,
         token: generateToken(model),
       });

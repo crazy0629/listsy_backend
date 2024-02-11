@@ -36,7 +36,7 @@ export const loadSportsInfo = async (req: Request, res: Response) => {
       await newSports.save();
       return res.json({
         success: true,
-        message: "Successfully saved sale media information!",
+        message: "Upload Successful!",
       });
     }
   );

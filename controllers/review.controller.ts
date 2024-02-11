@@ -34,7 +34,7 @@ export const addReview = async (req: Request, res: Response) => {
     if (!user) {
       return res.json({
         success: false,
-        message: "Error happened while working on db!",
+        message: "Error found!",
       });
     }
     user.reviewCount = user.reviewCount + 1;
@@ -51,7 +51,7 @@ export const addReview = async (req: Request, res: Response) => {
   } catch (error) {
     return res.json({
       success: false,
-      message: "Error happened while working on db!",
+      message: "Error found!",
     });
   }
 };

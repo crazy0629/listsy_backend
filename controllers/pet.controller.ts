@@ -130,7 +130,7 @@ export const loadPetInfo = async (req: Request, res: Response) => {
 
       return res.json({
         success: true,
-        message: "Successfully saved pet information!",
+        message: "Upload Successful!",
         data: model,
         token: generateToken(model),
       });

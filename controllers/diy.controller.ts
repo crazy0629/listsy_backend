@@ -27,7 +27,7 @@ export const loadDiyInfo = async (req: Request, res: Response) => {
     if (diyModel.length) {
       return res.json({
         success: false,
-        message: "Error found!",
+        message: "Ad publishing unsuccessful. Try again or contact support!",
       });
     }
     const adModel = await Ad.findById(
@@ -36,7 +36,7 @@ export const loadDiyInfo = async (req: Request, res: Response) => {
     if (!adModel) {
       return res.json({
         success: false,
-        message: "Error found!",
+        message: "Ad publishing unsuccessful. Try again or contact support!",
       });
     }
     adModel.address = req.body.address;
@@ -68,7 +68,7 @@ export const loadDiyInfo = async (req: Request, res: Response) => {
     if (!userModel) {
       return res.json({
         success: false,
-        message: "Error found!",
+        message: "Ad publishing unsuccessful. Try again or contact support!",
       });
     }
     if (userModel.telephoneNumber == undefined) {
@@ -78,12 +78,15 @@ export const loadDiyInfo = async (req: Request, res: Response) => {
     }
     return res.json({
       success: true,
-      message: "Successfully saved diy and craft information!",
+      message: "Upload Successful!",
       data: userModel,
       token: generateToken(userModel),
     });
   } catch (error) {
-    console.log(error);
+    res.json({
+      success: false,
+      message: "Ad publishing unsuccessful. Try again or contact support!",
+    });
   }
 };
 
