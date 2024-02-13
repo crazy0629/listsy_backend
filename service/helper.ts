@@ -200,6 +200,63 @@ export const sellerTypeFilterAds = (data, adsList) => {
   return adsList;
 };
 
+export const genderFilterAds = (data, adsList) => {
+  if (data.gender && data.gender?.length) {
+    let index = data.gender.indexOf("Not Specified");
+    data.gender[index] = "";
+    adsList = adsList.filter(
+      (item: any) => data.gender.indexOf(item.itemDetailInfo.gender) !== -1
+    );
+  }
+  return adsList;
+};
+
+export const skinFilterAds = (data, adsList) => {
+  if (data.skin && data.skin?.length) {
+    let index = data.skin.indexOf("Not Specified");
+    data.skin[index] = "";
+    adsList = adsList.filter(
+      (item: any) => data.skin.indexOf(item.itemDetailInfo.skinHairType) !== -1
+    );
+  }
+  return adsList;
+};
+
+export const ingredientsFilterAds = (data, adsList) => {
+  if (data.ingredients && data.ingredients?.length) {
+    let index = data.ingredients.indexOf("Not Specified");
+    data.ingredients[index] = "";
+    adsList = adsList.filter(
+      (item: any) =>
+        data.ingredients.indexOf(item.itemDetailInfo.ingredients) !== -1
+    );
+  }
+  return adsList;
+};
+
+export const sizeFilterAds = (data, adsList) => {
+  if (data.size && data.size?.length) {
+    let index = data.size.indexOf("Not Specified");
+    data.size[index] = "";
+    adsList = adsList.filter(
+      (item: any) => data.size.indexOf(item.itemDetailInfo.sizeVolume) !== -1
+    );
+  }
+  return adsList;
+};
+
+export const certificationsFilterAds = (data, adsList) => {
+  if (data.certifications && data.certifications?.length) {
+    let index = data.certifications.indexOf("Not Specified");
+    data.certifications[index] = "";
+    adsList = adsList.filter(
+      (item: any) =>
+        data.certifications.indexOf(item.itemDetailInfo.certifications) !== -1
+    );
+  }
+  return adsList;
+};
+
 export const brandFilterAds = (data, adsList) => {
   if (data.brand && data.brand?.length) {
     let index = data.brand.indexOf("Not Specified");
