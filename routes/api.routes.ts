@@ -19,6 +19,7 @@ import * as pet from "../controllers/pet.controller";
 import * as chat from "../controllers/chat.controller";
 import * as food from "../controllers/food.controller";
 import * as diy from "../controllers/diy.controller";
+import * as beauty from "../controllers/beauty.controller";
 
 import multer from "multer";
 import { v4 as uuidv4 } from "uuid";
@@ -155,6 +156,11 @@ router.post("/food/getAdDetailInfo", food.getAdDetailInfo);
 router.post("/food/getCountForEachCategory", food.getCountForEachCategory);
 router.post("/food/getFoodAds", food.getMoreFoodAds);
 router.post("/food/getCountOfEachFilter", food.getCountOfEachFilter);
+
+// Beauty
+
+router.post("/beauty/loadBeautyInfo", beauty.loadBeautyInfo);
+router.post("/beauty/getAdDetailInfo", beauty.getAdDetailInfo);
 
 // Diy
 
