@@ -161,6 +161,9 @@ router.post("/food/getCountOfEachFilter", food.getCountOfEachFilter);
 
 router.post("/beauty/loadBeautyInfo", beauty.loadBeautyInfo);
 router.post("/beauty/getAdDetailInfo", beauty.getAdDetailInfo);
+router.post("/beauty/getCountForEachCategory", beauty.getCountForEachCategory);
+router.post("/beauty/getBeautyAds", beauty.getMoreBeautyAds);
+router.post("/beauty/getCountOfEachFilter", beauty.getCountOfEachFilter);
 
 // Diy
 
