@@ -268,6 +268,17 @@ export const brandFilterAds = (data, adsList) => {
   return adsList;
 };
 
+export const itemBrandFilterAds = (data, adsList) => {
+  if (data.itemBrand && data.itemBrand?.length) {
+    let index = data.itemBrand.indexOf("Not Specified");
+    data.itemBrand[index] = "";
+    adsList = adsList.filter(
+      (item: any) => data.itemBrand.indexOf(item.itemDetailInfo.brand) !== -1
+    );
+  }
+  return adsList;
+};
+
 export const itemAgeFilterAds = (data, adsList) => {
   if (data.itemAge && data.itemAge?.length) {
     let index = data.itemAge.indexOf("Not Specified");
@@ -275,6 +286,44 @@ export const itemAgeFilterAds = (data, adsList) => {
     adsList = adsList.filter(
       (item: any) => data.itemAge.indexOf(item.itemDetailInfo.itemAge) !== -1
     );
+  }
+  return adsList;
+};
+
+export const itemGenderFilterAds = (data, adsList) => {
+  if (data.itemGender && data.itemGender?.length) {
+    let index = data.itemGender.indexOf("Not Specified");
+    data.itemGender[index] = "";
+    adsList = adsList.filter(
+      (item: any) => data.itemGender.indexOf(item.itemDetailInfo.gender) !== -1
+    );
+  }
+  return adsList;
+};
+
+export const itemEducationFilterAds = (data, adsList) => {
+  if (data.itemEducation && data.itemEducation?.length) {
+    let index = data.itemEducation.indexOf("Not Specified");
+    data.itemEducation[index] = "";
+    adsList = adsList.filter(
+      (item: any) =>
+        data.itemEducation.indexOf(item.itemDetailInfo.education) !== -1
+    );
+  }
+  return adsList;
+};
+
+export const itemAgeGroupFilterAds = (data, adsList) => {
+  if (data.itemAge && data.itemAge?.length) {
+    adsList = adsList.filter((item: any) => {
+      const set = new Set(data.itemAge);
+      for (let element of item.itemDetailInfo.ageGroup) {
+        if (set.has(element)) {
+          return true;
+        }
+      }
+      return false;
+    });
   }
   return adsList;
 };

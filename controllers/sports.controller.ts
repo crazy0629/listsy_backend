@@ -99,7 +99,7 @@ export const getAdDetailInfo = async (req: Request, res: Response) => {
   if (!sportsObj)
     return res.json({
       success: false,
-      message: "Error found while loading deail info!",
+      message: "Error found while loading detail info!",
     });
 
   sportsObj.viewCount = sportsObj.viewCount + 1;

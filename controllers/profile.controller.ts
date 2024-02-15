@@ -20,6 +20,7 @@ import Pet from "../models/Pet";
 import Food from "../models/Food";
 import Diy from "../models/Diy";
 import Beauty from "../models/Beauty";
+import Toy from "../models/toys";
 
 export const setAvatar = async (req: Request, res: Response) => {
   User.findById(new mongoose.Types.ObjectId(req.body.userId))
@@ -286,6 +287,24 @@ export const getPostByUser = async (req: Request, res: Response) => {
           success: true,
           data: value,
           message: "Successfully loaded beauty ads posted by you!",
+        });
+      });
+  }
+  if (req.body.postType == "toys") {
+    Toy.find({ userId: req.body.userId })
+      .populate({ path: "adId", match: adCondition })
+      .populate("userId")
+      .skip(req.body.index * 50)
+      .limit(50)
+      .then((model: any) => {
+        const value = model.filter((item) => item.adId !== null);
+        if (!model) {
+          return res.json({ success: false, message: "Error found!" });
+        }
+        return res.json({
+          success: true,
+          data: value,
+          message: "Successfully loaded toy ads posted by you!",
         });
       });
   }

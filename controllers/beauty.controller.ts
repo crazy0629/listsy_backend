@@ -106,7 +106,7 @@ export const getAdDetailInfo = async (req: Request, res: Response) => {
     if (!beautyObj)
       return res.json({
         success: false,
-        message: "Error found while loading deail info!",
+        message: "Error found while loading detail info!",
       });
 
     beautyObj.viewCount = beautyObj.viewCount + 1;

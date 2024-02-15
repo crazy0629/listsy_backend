@@ -121,7 +121,7 @@ export const getAdDetailInfo = async (req: Request, res: Response) => {
   if (!vehicleObj)
     return res.json({
       success: false,
-      message: "Error found while loading deail info!",
+      message: "Error found while loading detail info!",
     });
 
   vehicleObj.viewCount = vehicleObj.viewCount + 1;
