@@ -20,6 +20,7 @@ import * as chat from "../controllers/chat.controller";
 import * as food from "../controllers/food.controller";
 import * as diy from "../controllers/diy.controller";
 import * as beauty from "../controllers/beauty.controller";
+import * as toy from "../controllers/toys.controller";
 
 import multer from "multer";
 import { v4 as uuidv4 } from "uuid";
@@ -148,6 +149,14 @@ router.post("/ad/getLocationList", ad.getLocationList);
 router.post("/estate/loadEstateInfo", estate.loadEstateInfo);
 router.post("/estate/getEstateObjects", estate.getMoreEstateAds);
 router.post("/estate/getAdDetailInfo", estate.getAdDetailInfo);
+
+// Toy
+
+router.post("/toys/loadToysInfo", toy.loadToysInfo);
+router.post("/toys/getAdDetailInfo", toy.getAdDetailInfo);
+router.post("/toys/getCountForEachCategory", toy.getCountForEachCategory);
+router.post("/toys/getToysAds", toy.getMoreToysAds);
+router.post("/toys/getCountOfEachFilter", toy.getCountOfEachFilter);
 
 // Food
 
