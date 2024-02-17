@@ -323,20 +323,20 @@ export const loadForSaleInfo = async (req: Request, res: Response) => {
 export const getMoreForSaleAds = async (req: Request, res: Response) => {
   try {
     let condition: any = {};
-    if (
-      req.body.centerLocationSelected == true &&
-      req.body.SearchWithin != ""
-    ) {
-      condition.countryCode = req.body.selectedLocation.countryCode;
-    } else {
-      if (req.body.countryCode != null) {
-        if (req.body.countryCode == "") {
-          condition.address = req.body.address;
-        } else {
-          condition.countryCode = req.body.countryCode;
-        }
-      }
-    }
+    // if (
+    //   req.body.centerLocationSelected == true &&
+    //   req.body.SearchWithin != ""
+    // ) {
+    //   condition.countryCode = req.body.selectedLocation.countryCode;
+    // } else {
+    //   if (req.body.countryCode != null) {
+    //     if (req.body.countryCode == "") {
+    //       condition.address = req.body.address;
+    //     } else {
+    //       condition.countryCode = req.body.countryCode;
+    //     }
+    //   }
+    // }
     if (req.body.itemCategory != "All" && req.body.itemCategory != "") {
       condition.itemCategory = req.body.itemCategory;
     }
@@ -2292,20 +2292,20 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
     let condition: any = {};
     let condition1: any = {};
 
-    if (
-      req.body.centerLocationAvailable == true &&
-      req.body.filter.SearchWithin != ""
-    ) {
-      condition.countryCode = req.body.selectedLocation.countryCode;
-    } else {
-      if (req.body.countryCode != null) {
-        if (req.body.countryCode == "") {
-          condition.address = req.body.address;
-        } else {
-          condition.countryCode = req.body.countryCode;
-        }
-      }
-    }
+    // if (
+    //   req.body.centerLocationAvailable == true &&
+    //   req.body.filter.SearchWithin != ""
+    // ) {
+    //   condition.countryCode = req.body.selectedLocation.countryCode;
+    // } else {
+    //   if (req.body.countryCode != null) {
+    //     if (req.body.countryCode == "") {
+    //       condition.address = req.body.address;
+    //     } else {
+    //       condition.countryCode = req.body.countryCode;
+    //     }
+    //   }
+    // }
     if (req.body.itemCategory != "All" && req.body.itemCategory != "") {
       condition.itemCategory = req.body.itemCategory;
     }

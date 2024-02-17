@@ -129,7 +129,7 @@ export const getCountForEachCategory = async (req: Request, res: Response) => {
     }
 
     let countList: any = [];
-    const foodModel = await Food.find(condition);
+    const foodModel = await Food.find();
     req.body.itemCategory.map((item: string, index: number) => {
       let count = 0;
       if (item == "All") count = foodModel?.length;
@@ -206,20 +206,20 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
   try {
     let condition: any = {};
     let condition1: any = {};
-    if (
-      req.body.centerLocationAvailable == true &&
-      req.body.filter.SearchWithin != ""
-    ) {
-      condition.countryCode = req.body.selectedLocation.countryCode;
-    } else {
-      if (req.body.countryCode != null) {
-        if (req.body.countryCode == "") {
-          condition.address = req.body.address;
-        } else {
-          condition.countryCode = req.body.countryCode;
-        }
-      }
-    }
+    // if (
+    //   req.body.centerLocationAvailable == true &&
+    //   req.body.filter.SearchWithin != ""
+    // ) {
+    //   condition.countryCode = req.body.selectedLocation.countryCode;
+    // } else {
+    //   if (req.body.countryCode != null) {
+    //     if (req.body.countryCode == "") {
+    //       condition.address = req.body.address;
+    //     } else {
+    //       condition.countryCode = req.body.countryCode;
+    //     }
+    //   }
+    // }
 
     if (req.body.itemCategory != "All" && req.body.itemCategory != "") {
       condition.itemCategory = req.body.itemCategory;
