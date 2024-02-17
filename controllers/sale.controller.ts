@@ -2765,13 +2765,14 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
 export const getCountForEachCategory = async (req: Request, res: Response) => {
   try {
     let condition: any = {};
-    if (req.body.countryCode != null) {
-      if (req.body.countryCode == "") {
-        condition.address = req.body.address;
-      } else {
-        condition.countryCode = req.body.countryCode;
-      }
-    }
+
+    // if (req.body.countryCode != null) {
+    //   if (req.body.countryCode == "") {
+    //     condition.address = req.body.address;
+    //   } else {
+    //     condition.countryCode = req.body.countryCode;
+    //   }
+    // }
 
     let countList: any = [];
     const saleObj = await ForSale.find(condition);
