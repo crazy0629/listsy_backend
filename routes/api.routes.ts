@@ -118,7 +118,7 @@ router.post("/community/delete", community.deleteCommunity);
 router.post("/community/getMore", community.getMoreCommunity);
 
 // Chat
-router.post("/chat/deleteConversation", chat.deleteUserConversion);
+// router.post("/chat/deleteConversation", chat.deleteUserConversion);
 
 // Profile
 

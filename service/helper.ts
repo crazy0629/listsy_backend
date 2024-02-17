@@ -111,17 +111,17 @@ export const checkItemConditionMatches = (filter, obj) => {
 
 export const getConditionToCountry = (data) => {
   let condition: any = {};
-  if (data.centerLocationSelected == true && data.SearchWithin != "") {
-    condition.countryCode = data.selectedLocation.countryCode;
-  } else {
-    if (data.countryCode != null) {
-      if (data.countryCode == "") {
-        condition.address = data.address;
-      } else {
-        condition.countryCode = data.countryCode;
-      }
-    }
-  }
+  // if (data.centerLocationSelected == true && data.SearchWithin != "") {
+  //   condition.countryCode = data.selectedLocation.countryCode;
+  // } else {
+  //   if (data.countryCode != null) {
+  //     if (data.countryCode == "") {
+  //       condition.address = data.address;
+  //     } else {
+  //       condition.countryCode = data.countryCode;
+  //     }
+  //   }
+  // }
   if (data.itemCategory != "All" && data.itemCategory != "") {
     condition.itemCategory = data.itemCategory;
   }

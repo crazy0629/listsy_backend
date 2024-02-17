@@ -9,6 +9,7 @@ const ChatConnectionSchema = new Schema(
   {
     fromUserId: { type: Schema.Types.ObjectId, ref: "User" },
     toUserId: { type: Schema.Types.ObjectId, ref: "User" },
+    adId: { type: Schema.Types.ObjectId, ref: "Ad" },
   },
   { timestamps: true }
 );

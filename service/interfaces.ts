@@ -169,4 +169,5 @@ export interface IReview extends Document {
 export interface IChatConnection extends Document {
   fromUserId: Schema.Types.ObjectId;
   toUserId: Schema.Types.ObjectId;
+  adId: Schema.Types.ObjectId;
 }

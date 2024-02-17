@@ -59,14 +59,23 @@ const addChatUser = async (data: any) => {
     if (data.receiverId != "no-user") {
       const models = await ChatConnection.find({
         $or: [
-          { fromUserId: data.senderId, toUserId: data.receiverId },
-          { fromUserId: data.receiverId, toUserId: data.senderId },
+          {
+            fromUserId: data.senderId,
+            toUserId: data.receiverId,
+            adId: data.adId,
+          },
+          {
+            fromUserId: data.receiverId,
+            toUserId: data.senderId,
+            adId: data.adId,
+          },
         ],
       });
       if (!models.length) {
         let newChatConnection = new ChatConnection();
         newChatConnection.fromUserId = data.senderId;
         newChatConnection.toUserId = data.receiverId;
+        newChatConnection.adId = data.adId;
         await newChatConnection.save();
       }
     }
@@ -216,6 +225,8 @@ const addMessage = async (data: any) => {
   }
 };
 
+/*
+
 export const deleteUserConversion = async (req: Request, res: Response) => {
   try {
     const curChatConnection = await ChatConnection.findOneAndDelete({
@@ -261,7 +272,7 @@ export const deleteUserConversion = async (req: Request, res: Response) => {
   }
 };
 
-/*
+
 export const editMessage = async (req: Request, res: Response) => {
   try {
     let chatItem = await Chat.findById(
