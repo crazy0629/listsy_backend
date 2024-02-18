@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
-import Sports from "../models/Sports";
+import Music from "../models/Music";
 import Ad from "../models/Ad";
 import User from "../models/User";
 import {
@@ -10,12 +10,12 @@ import {
   getConditionToCountry,
 } from "../service/helper";
 
-export const loadSportsInfo = async (req: Request, res: Response) => {
+export const loadMusicInfo = async (req: Request, res: Response) => {
   try {
-    const sportsModel = await Sports.find({
+    const musicModel = await Music.find({
       adId: new mongoose.Types.ObjectId(req.body.adId),
     });
-    if (sportsModel.length) {
+    if (musicModel.length) {
       return res.json({
         success: false,
         message: "Ad publishing unsuccessful. Try again or contact support!",
@@ -36,22 +36,22 @@ export const loadSportsInfo = async (req: Request, res: Response) => {
     adModel.countryCode = req.body.countryCode;
     await adModel.save();
 
-    const newSportsModel = new Sports();
-    newSportsModel.adId = req.body.adId;
-    newSportsModel.userId = req.body.userId;
-    newSportsModel.title = req.body.title;
-    newSportsModel.subTitle = req.body.subTitle;
-    newSportsModel.description = req.body.description;
-    newSportsModel.price = req.body.price;
-    newSportsModel.priceUnit = req.body.priceUnit;
-    newSportsModel.address = req.body.address;
-    newSportsModel.lat = req.body.lat;
-    newSportsModel.lng = req.body.lng;
-    newSportsModel.countryCode = req.body.countryCode;
-    newSportsModel.viewCount = 0;
-    newSportsModel.itemCategory = req.body.itemCategory;
-    newSportsModel.itemDetailInfo = req.body.itemDetailInfo;
-    await newSportsModel.save();
+    const newMusic = new Music();
+    newMusic.adId = req.body.adId;
+    newMusic.userId = req.body.userId;
+    newMusic.title = req.body.title;
+    newMusic.subTitle = req.body.subTitle;
+    newMusic.description = req.body.description;
+    newMusic.price = req.body.price;
+    newMusic.priceUnit = req.body.priceUnit;
+    newMusic.address = req.body.address;
+    newMusic.lat = req.body.lat;
+    newMusic.lng = req.body.lng;
+    newMusic.countryCode = req.body.countryCode;
+    newMusic.viewCount = 0;
+    newMusic.itemCategory = req.body.itemCategory;
+    newMusic.itemDetailInfo = req.body.itemDetailInfo;
+    await newMusic.save();
 
     const userModel = await User.findById(
       new mongoose.Types.ObjectId(req.body.userId)
@@ -83,26 +83,26 @@ export const loadSportsInfo = async (req: Request, res: Response) => {
 
 export const getAdDetailInfo = async (req: Request, res: Response) => {
   try {
-    const sportsObj = await Sports.findOne({ adId: req.body.adId })
+    const musicObj = await Music.findOne({ adId: req.body.adId })
       .populate(
         "userId",
         "firstName lastName avatar reviewCount reviewMark telephoneNumber phoneNumberShare"
       )
       .populate("adId", "adFileName imagesFileName uploadDate duration");
 
-    if (!sportsObj)
+    if (!musicObj)
       return res.json({
         success: false,
         message: "Error found while loading detail info!",
       });
 
-    sportsObj.viewCount = sportsObj.viewCount + 1;
-    await sportsObj.save();
+    musicObj.viewCount = musicObj.viewCount + 1;
+    await musicObj.save();
 
     return res.json({
       success: true,
       message: "Success",
-      data: sportsObj,
+      data: musicObj,
     });
   } catch (error) {
     console.log(error);
@@ -116,12 +116,11 @@ export const getAdDetailInfo = async (req: Request, res: Response) => {
 export const getCountForEachCategory = async (req: Request, res: Response) => {
   try {
     let countList: any = [];
-    const sportsModel = await Sports.find();
+    const music = await Music.find();
     req.body.itemCategory.map((item: string, index: number) => {
       let count = 0;
-      if (item == "All") count = sportsModel?.length;
-      else
-        count = sportsModel.filter((obj) => obj.itemCategory == item)?.length;
+      if (item == "All") count = music?.length;
+      else count = music.filter((obj) => obj.itemCategory == item)?.length;
       countList.push({ itemCategory: item, count });
     });
     return res.json({
@@ -142,13 +141,13 @@ export const getSubCountForEachCategory = async (
 ) => {
   try {
     let countList: any = [];
-    const sportsObj: any = await Sports.find({
+    const musicObj: any = await Music.find({
       itemCategory: req.body.itemCategory,
     });
     req.body.itemSubCategory.map((item: string, index: number) => {
       let count = 0;
-      if (item == "All") count = sportsObj?.length;
-      count = sportsObj.filter(
+      if (item == "All") count = musicObj?.length;
+      count = musicObj.filter(
         (obj) => obj.itemDetailInfo?.itemSubCategory == item
       )?.length;
       countList.push({ itemSubCategory: item, count });
@@ -165,10 +164,10 @@ export const getSubCountForEachCategory = async (
   }
 };
 
-export const getMoreSportsAds = async (req: Request, res: Response) => {
+export const getMoreMusicAds = async (req: Request, res: Response) => {
   try {
     let condition = getConditionToCountry(req.body);
-    let nextSportsAds = await Sports.find(condition)
+    let nextMusicAds = await Music.find(condition)
       .populate("userId", "firstName lastName avatar reviewCount reviewMark")
       .populate("adId", "adFileName imagesFileName uploadDate duration")
       .sort({ postDate: -1 })
@@ -178,7 +177,7 @@ export const getMoreSportsAds = async (req: Request, res: Response) => {
     return res.json({
       success: true,
       message: "Successfully loaded!",
-      data: nextSportsAds,
+      data: nextMusicAds,
     });
   } catch (error) {
     return res.json({
@@ -205,11 +204,11 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
       condition1.countryCode = req.body.selectedLocation.countryCode;
       condition1.itemCategory = req.body.itemCategory;
       condition1.itemDetailInfo.itemSubCategory = req.body.itemSubCategory;
-      const sportsModelPerCountry = await Sports.find(condition1).populate(
+      const musicModelPerCountry = await Music.find(condition1).populate(
         "userId",
         "firstName lastName avatar reviewCount reviewMark"
       );
-      sportsModelPerCountry
+      musicModelPerCountry
         .filter((obj) => {
           return checkPriceMatches(req.body.minPrice, req.body.maxPrice, obj);
         })
@@ -237,7 +236,7 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
         }
       });
     }
-    let sportsModel = await Sports.find(condition).populate(
+    let musicObj = await Music.find(condition).populate(
       "userId",
       "firstName lastName avatar reviewCount reviewMark"
     );
@@ -249,7 +248,7 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
       let distance = 0;
       if (req.body.filter.SearchWithin != "Current location")
         distance = parseInt(req.body.filter.SearchWithin.match(/\d+/)[0]);
-      sportsModel = sportsModel.filter((item) => {
+      musicObj = musicObj.filter((item) => {
         return (
           calculateDistance(
             item.lat,
@@ -260,7 +259,7 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
         );
       });
     }
-    let countPerPrice = await getCountOnMinMaxPrice(req.body, sportsModel);
+    let countPerPrice = await getCountOnMinMaxPrice(req.body, musicObj);
     return res.json({
       success: true,
       itemPriceRange: countPerPrice,

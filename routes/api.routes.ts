@@ -21,6 +21,7 @@ import * as food from "../controllers/food.controller";
 import * as diy from "../controllers/diy.controller";
 import * as beauty from "../controllers/beauty.controller";
 import * as toy from "../controllers/toys.controller";
+import * as music from "../controllers/music.controller";
 
 import multer from "multer";
 import { v4 as uuidv4 } from "uuid";
@@ -166,6 +167,16 @@ router.post("/food/getCountForEachCategory", food.getCountForEachCategory);
 router.post("/food/getFoodAds", food.getMoreFoodAds);
 router.post("/food/getCountOfEachFilter", food.getCountOfEachFilter);
 
+// Music
+router.post("/music/loadMusicInfo", music.loadMusicInfo);
+router.post("/music/getAdDetailInfo", music.getAdDetailInfo);
+router.post("/music/getCountForEachCategory", music.getCountForEachCategory);
+router.post(
+  "/music/getSubCountForEachCategory",
+  music.getSubCountForEachCategory
+);
+router.post("/music/getMusicAds", music.getMoreMusicAds);
+
 // Beauty
 
 router.post("/beauty/loadBeautyInfo", beauty.loadBeautyInfo);
@@ -220,7 +231,6 @@ router.post("/truck/getAdDetailInfo", vehicle.getAdDetailInfo);
 // Sports
 
 router.post("/sports/loadSportsInfo", sports.loadSportsInfo);
-router.post("/sports/getMoreSportsAds", sports.getMoreSportsAds);
 router.post("/sports/getAdDetailInfo", sports.getAdDetailInfo);
 
 // Children

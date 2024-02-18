@@ -128,13 +128,9 @@ export const getCountForEachCategory = async (req: Request, res: Response) => {
   try {
     let condition: any = {};
 
-    // if (req.body.countryCode != null) {
-    //   if (req.body.countryCode == "") {
-    //     condition.address = req.body.address;
-    //   } else {
-    //     condition.countryCode = req.body.countryCode;
-    //   }
-    // }
+    if (req.body.countryCode != null) {
+      condition.countryCode = req.body.countryCode;
+    }
 
     let countList: any = [];
     const toyModel = await Toy.find(condition);
@@ -193,20 +189,8 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
   try {
     let condition: any = {};
     let condition1: any = {};
-    // if (
-    //   req.body.centerLocationAvailable == true &&
-    //   req.body.filter.SearchWithin != ""
-    // ) {
-    //   condition.countryCode = req.body.selectedLocation.countryCode;
-    // } else {
-    //   if (req.body.countryCode != null) {
-    //     if (req.body.countryCode == "") {
-    //       condition.address = req.body.address;
-    //     } else {
-    //       condition.countryCode = req.body.countryCode;
-    //     }
-    //   }
-    // }
+
+    condition.countryCode = req.body.countryCode;
 
     if (req.body.itemCategory != "All" && req.body.itemCategory != "") {
       condition.itemCategory = req.body.itemCategory;
@@ -410,10 +394,13 @@ const getCountOnBrand = async (mainParam, toyObj) => {
   let itemBrandCountList: any = [];
 
   mainParam?.itemBrand.map((item: string, index: number) => {
-    let count = 0;
-
+    let count = 0,
+      temp = "";
+    if (item != "Not Specified") {
+      temp = item;
+    }
     count = toyObj.filter((obj) => {
-      const isMatchingBrand = (obj as any)?.itemDetailInfo?.brand == item;
+      const isMatchingBrand = (obj as any)?.itemDetailInfo?.brand == temp;
       const isMatchingItemCategory =
         (obj as any).itemCategory == mainParam.itemCategory;
       return (
