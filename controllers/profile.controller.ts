@@ -12,7 +12,7 @@ import Job from "../models/Job";
 import ForSale from "../models/ForSale";
 import Garden from "../models/Garden";
 import Fashion from "../models/Fashion";
-import Sports from "../models/Sports1";
+import Sports from "../models/Sports";
 import Children from "../models/Children";
 import Art from "../models/Art";
 import Education from "../models/Education";
