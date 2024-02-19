@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
-import Sports from "../models/Sports1";
+import Sports from "../models/Sports";
 import Ad from "../models/Ad";
 import User from "../models/User";
 import {
