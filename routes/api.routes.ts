@@ -171,11 +171,8 @@ router.post("/food/getCountOfEachFilter", food.getCountOfEachFilter);
 router.post("/music/loadMusicInfo", music.loadMusicInfo);
 router.post("/music/getAdDetailInfo", music.getAdDetailInfo);
 router.post("/music/getCountForEachCategory", music.getCountForEachCategory);
-router.post(
-  "/music/getSubCountForEachCategory",
-  music.getSubCountForEachCategory
-);
 router.post("/music/getMusicAds", music.getMoreMusicAds);
+router.post("/music/getCountOfEachFilter", music.getCountOfEachFilter);
 
 // Beauty
 
@@ -273,4 +270,5 @@ router.post("/review/addReview", review.addReview);
 router.post("/review/deleteReview", review.deleteReview);
 router.post("/review/changeReview", review.changeReview);
 router.post("/review/getAllReviews", review.getAllRviews);
+
 export default router;

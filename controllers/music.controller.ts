@@ -5,10 +5,20 @@ import Ad from "../models/Ad";
 import User from "../models/User";
 import {
   calculateDistance,
+  checkItemConditionMatches,
   checkPriceMatches,
+  checkSellerRatingMatches,
+  checkSellerTypeMatches,
   generateToken,
   getConditionToCountry,
+  itemBrandFilterAds,
+  itemConditionFilterAds,
+  locationFilterDistanceAds,
+  priceFilterAds,
+  sellerRatingFilterAds,
+  sellerTypeFilterAds,
 } from "../service/helper";
+import { get } from "http";
 
 export const loadMusicInfo = async (req: Request, res: Response) => {
   try {
@@ -115,6 +125,11 @@ export const getAdDetailInfo = async (req: Request, res: Response) => {
 
 export const getCountForEachCategory = async (req: Request, res: Response) => {
   try {
+    let condition: any = {};
+    if (req.body.countryCode != null) {
+      condition.countryCode = req.body.countryCode;
+    }
+
     let countList: any = [];
     const music = await Music.find();
     req.body.itemCategory.map((item: string, index: number) => {
@@ -135,56 +150,48 @@ export const getCountForEachCategory = async (req: Request, res: Response) => {
   }
 };
 
-export const getSubCountForEachCategory = async (
-  req: Request,
-  res: Response
-) => {
-  try {
-    let countList: any = [];
-    const musicObj: any = await Music.find({
-      itemCategory: req.body.itemCategory,
-    });
-    req.body.itemSubCategory.map((item: string, index: number) => {
-      let count = 0;
-      if (item == "All") count = musicObj?.length;
-      count = musicObj.filter(
-        (obj) => obj.itemDetailInfo?.itemSubCategory == item
-      )?.length;
-      countList.push({ itemSubCategory: item, count });
-    });
-    return res.json({
-      success: true,
-      countList,
-    });
-  } catch (error) {
-    return res.json({
-      success: false,
-      message: "Error found!",
-    });
-  }
-};
-
 export const getMoreMusicAds = async (req: Request, res: Response) => {
   try {
     let condition = getConditionToCountry(req.body);
-    console.log(condition);
     let nextMusicAds = await Music.find(condition)
       .populate("userId", "firstName lastName avatar reviewCount reviewMark")
       .populate("adId", "adFileName imagesFileName uploadDate duration")
-      .sort({ postDate: -1 });
-    if (req.body.itemCategory !== "All") {
+      .sort({ postDate: -1 })
+      .skip(req.body.index * 50)
+      .limit(50);
+
+    nextMusicAds = locationFilterDistanceAds(req.body, nextMusicAds);
+    nextMusicAds = priceFilterAds(req.body, nextMusicAds);
+    nextMusicAds = sellerRatingFilterAds(req.body, nextMusicAds);
+    nextMusicAds = itemConditionFilterAds(req.body, nextMusicAds);
+    nextMusicAds = sellerTypeFilterAds(req.body, nextMusicAds);
+
+    if (req.body.instrumentType && req.body.instrumentType?.length) {
       nextMusicAds = nextMusicAds.filter(
         (item: any) =>
-          item.itemDetailInfo.itemSubCategory.toLowerCase() ==
-          req.body.itemSubCategory.toLowerCase()
+          req.body.instrumentType.indexOf(
+            item.itemDetailInfo.itemSubCategory
+          ) !== -1
       );
     }
 
-    nextMusicAds = nextMusicAds.slice(
-      req.body.index * 50,
-      req.body.index * 50 + 50
-    );
+    if (req.body.age && req.body.age?.length) {
+      let index = req.body.age.indexOf("Not Specified");
+      req.body.age[index] = "";
 
+      nextMusicAds = nextMusicAds.filter(
+        (item: any) => req.body.age.indexOf(item.itemDetailInfo.age) !== -1
+      );
+    }
+
+    if (req.body.brand && req.body.brand?.length) {
+      let index = req.body.brand.indexOf("Not Specified");
+      req.body.brand[index] = "";
+
+      nextMusicAds = nextMusicAds.filter(
+        (item: any) => req.body.brand.indexOf(item.itemDetailInfo.brand) !== -1
+      );
+    }
     return res.json({
       success: true,
       message: "Successfully loaded!",
@@ -194,7 +201,7 @@ export const getMoreMusicAds = async (req: Request, res: Response) => {
     console.log(error);
     return res.json({
       success: false,
-      message: "Error found while loading more food ads",
+      message: "Error found while loading more music ads!",
     });
   }
 };
@@ -203,26 +210,32 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
   try {
     let condition: any = {};
     let condition1: any = {};
+    condition.countryCode = req.body.countryCode;
 
     if (req.body.itemCategory != "All" && req.body.itemCategory != "") {
       condition.itemCategory = req.body.itemCategory;
     }
-    if (req.body.itemSubCategory != "All" && req.body.itemSubCategory != "") {
-      condition.itemDetailInfo.itemSubCategory = req.body.itemSubCategory;
-    }
+
     let itemSearchRangeCountList: any = [];
     let distanceList: any = [];
     if (req.body.centerLocationAvailable == true) {
       condition1.countryCode = req.body.selectedLocation.countryCode;
       condition1.itemCategory = req.body.itemCategory;
-      condition1.itemDetailInfo.itemSubCategory = req.body.itemSubCategory;
       const musicModelPerCountry = await Music.find(condition1).populate(
         "userId",
         "firstName lastName avatar reviewCount reviewMark"
       );
       musicModelPerCountry
         .filter((obj) => {
-          return checkPriceMatches(req.body.minPrice, req.body.maxPrice, obj);
+          return (
+            checkPriceMatches(req.body.minPrice, req.body.maxPrice, obj) &&
+            checkSellerRatingMatches(req.body.filter, obj) &&
+            checkInstrumentTypeMatches(req.body.filter, obj) &&
+            checkItemConditionMatches(req.body.filter, obj) &&
+            checkAgeMatches(req.body.filter, obj) &&
+            checkBrandMatches(req.body.filter, obj) &&
+            checkSellerTypeMatches(req.body.filter, obj)
+          );
         })
         .map((item: any, index: number) => {
           distanceList.push(
@@ -272,12 +285,56 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
       });
     }
     let countPerPrice = await getCountOnMinMaxPrice(req.body, musicObj);
+    let itemSellerRatingCountList = [];
+    let itemInstrumentTypeCountList = [];
+    let itemConditionCountList = [];
+    let itemAgeCountList = [];
+    let itemBrandCountList = [];
+    let itemSellerTypeCountList = [];
+
+    if (req.body.itemSellerRating) {
+      itemSellerRatingCountList = await getCountOnSellerRating(
+        req.body,
+        musicObj
+      );
+    }
+
+    if (req.body.itemInstrumentType) {
+      itemInstrumentTypeCountList = await getCountOnInstrumentType(
+        req.body,
+        musicObj
+      );
+    }
+
+    if (req.body.itemCondition) {
+      itemConditionCountList = await getCountOnCondition(req.body, musicObj);
+    }
+
+    if (req.body.itemAge) {
+      itemAgeCountList = await getCountOnAge(req.body, musicObj);
+    }
+
+    if (req.body.itemBrand) {
+      itemBrandCountList = await getCountOnBrand(req.body, musicObj);
+    }
+
+    if (req.body.itemSellerType) {
+      itemSellerTypeCountList = await getCountOnSellerType(req.body, musicObj);
+    }
+
     return res.json({
       success: true,
       itemPriceRange: countPerPrice,
       itemRangeInfo: itemSearchRangeCountList,
+      itemSellerRating: itemSellerRatingCountList,
+      itemInstrumentType: itemInstrumentTypeCountList,
+      itemCondition: itemConditionCountList,
+      itemAge: itemAgeCountList,
+      itemBrand: itemBrandCountList,
+      itemSellerType: itemSellerTypeCountList,
     });
   } catch (error) {
+    console.log(error);
     return res.json({
       success: false,
       message: "Error found!",
@@ -288,7 +345,237 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
 const getCountOnMinMaxPrice = async (mainParam, foodObj) => {
   let countPerPrice = -1;
   countPerPrice = foodObj.filter((obj) => {
-    return checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj);
+    return (
+      checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
+      checkSellerRatingMatches(mainParam.filter, obj) &&
+      checkInstrumentTypeMatches(mainParam.filter, obj) &&
+      checkItemConditionMatches(mainParam.filter, obj) &&
+      checkAgeMatches(mainParam.filter, obj) &&
+      checkBrandMatches(mainParam.filter, obj) &&
+      checkSellerTypeMatches(mainParam.filter, obj)
+    );
   })?.length;
   return countPerPrice;
+};
+
+const getCountOnSellerRating = async (mainParam, musicObj) => {
+  let itemSellerRatingCountList: any = [];
+
+  mainParam?.itemSellerRating.map((item: string, index: number) => {
+    let rating = Number(item.at(0));
+    let count = 0;
+    count = musicObj.filter((obj) => {
+      const isMatchingRating =
+        Math.floor((obj as any)?.userId.reviewMark) == rating;
+      const isMatchingItemCategory =
+        (obj as any).itemCategory == mainParam.itemCategory;
+
+      return (
+        isMatchingRating &&
+        isMatchingItemCategory &&
+        checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
+        checkInstrumentTypeMatches(mainParam.filter, obj) &&
+        checkItemConditionMatches(mainParam.filter, obj) &&
+        checkAgeMatches(mainParam.filter, obj) &&
+        checkBrandMatches(mainParam.filter, obj) &&
+        checkSellerTypeMatches(mainParam.filter, obj)
+      );
+    })?.length;
+
+    itemSellerRatingCountList.push({ itemSellerRating: item, count });
+  });
+
+  return itemSellerRatingCountList;
+};
+
+const getCountOnInstrumentType = async (mainParam, musicObj) => {
+  let itemInstrumentTypeCountList: any = [];
+
+  mainParam?.itemInstrumentType.map((item: string, index: number) => {
+    let count = 0;
+
+    count = musicObj.filter((obj) => {
+      const isMatchingInstrumentType =
+        (obj as any)?.itemDetailInfo?.itemSubCategory == item;
+      const isMatchingItemCategory =
+        (obj as any).itemCategory == mainParam.itemCategory;
+
+      return (
+        isMatchingInstrumentType &&
+        isMatchingItemCategory &&
+        checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
+        checkSellerRatingMatches(mainParam.filter, obj) &&
+        checkItemConditionMatches(mainParam.filter, obj) &&
+        checkAgeMatches(mainParam.filter, obj) &&
+        checkBrandMatches(mainParam.filter, obj) &&
+        checkSellerTypeMatches(mainParam.filter, obj)
+      );
+    })?.length;
+    itemInstrumentTypeCountList.push({
+      itemInstrumentType: item,
+      count,
+    });
+  });
+  return itemInstrumentTypeCountList;
+};
+
+const getCountOnCondition = async (mainParam, musicObj) => {
+  let itemConditionCountList: any = [];
+
+  mainParam?.itemCondition.map((item: string, index: number) => {
+    let count = 0;
+
+    count = musicObj.filter((obj) => {
+      const isMatchingCondition =
+        (obj as any)?.itemDetailInfo?.itemCondition == item;
+      const isMatchingItemCategory =
+        (obj as any).itemCategory == mainParam.itemCategory;
+
+      return (
+        isMatchingCondition &&
+        isMatchingItemCategory &&
+        checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
+        checkSellerRatingMatches(mainParam.filter, obj) &&
+        checkInstrumentTypeMatches(mainParam.filter, obj) &&
+        checkAgeMatches(mainParam.filter, obj) &&
+        checkBrandMatches(mainParam.filter, obj) &&
+        checkSellerTypeMatches(mainParam.filter, obj)
+      );
+    })?.length;
+    itemConditionCountList.push({
+      itemCondition: item,
+      count,
+    });
+  });
+  return itemConditionCountList;
+};
+
+const getCountOnAge = async (mainParam, musicObj) => {
+  let itemAgeCountList: any = [];
+
+  mainParam?.itemAge.map((item: string, index: number) => {
+    let count = 0,
+      temp = "";
+    if (item != "Not Specified") {
+      temp = item;
+    }
+    count = musicObj.filter((obj) => {
+      const isMatchingAge = (obj as any)?.itemDetailInfo?.age == temp;
+      const isMatchingItemCategory =
+        (obj as any).itemCategory == mainParam.itemCategory;
+
+      return (
+        isMatchingAge &&
+        isMatchingItemCategory &&
+        checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
+        checkSellerRatingMatches(mainParam.filter, obj) &&
+        checkInstrumentTypeMatches(mainParam.filter, obj) &&
+        checkItemConditionMatches(mainParam.filter, obj) &&
+        checkBrandMatches(mainParam.filter, obj) &&
+        checkSellerTypeMatches(mainParam.filter, obj)
+      );
+    })?.length;
+    itemAgeCountList.push({
+      itemAge: item,
+      count,
+    });
+  });
+  return itemAgeCountList;
+};
+
+const getCountOnBrand = async (mainParam, musicObj) => {
+  let itemBrandCountList: any = [];
+  mainParam?.itemBrand.map((item: string, index: number) => {
+    let count = 0,
+      temp = "";
+    if (item != "Not Specified") {
+      temp = item;
+    }
+    count = musicObj.filter((obj) => {
+      const isMatchingBrand = (obj as any)?.itemDetailInfo?.brand == temp;
+      const isMatchingItemCategory =
+        (obj as any).itemCategory == mainParam.itemCategory;
+      return (
+        isMatchingBrand &&
+        isMatchingItemCategory &&
+        checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
+        checkSellerRatingMatches(mainParam.filter, obj) &&
+        checkInstrumentTypeMatches(mainParam.filter, obj) &&
+        checkItemConditionMatches(mainParam.filter, obj) &&
+        checkAgeMatches(mainParam.filter, obj) &&
+        checkSellerTypeMatches(mainParam.filter, obj)
+      );
+    })?.length;
+    itemBrandCountList.push({
+      itemBrand: item,
+      count,
+    });
+  });
+  return itemBrandCountList;
+};
+
+const getCountOnSellerType = async (mainParam, musicObj) => {
+  let itemSellerTypeCountList: any = [];
+  mainParam?.itemSellerType.map((item: string, index: number) => {
+    let count = 0,
+      temp = "";
+    if (item != "Not Specified") {
+      temp = item;
+    }
+    count = musicObj.filter((obj) => {
+      const isMatchingSellerType =
+        (obj as any)?.itemDetailInfo?.sellerType == temp;
+      const isMatchingItemCategory =
+        (obj as any).itemCategory == mainParam.itemCategory;
+      return (
+        isMatchingSellerType &&
+        isMatchingItemCategory &&
+        checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
+        checkSellerRatingMatches(mainParam.filter, obj) &&
+        checkInstrumentTypeMatches(mainParam.filter, obj) &&
+        checkItemConditionMatches(mainParam.filter, obj) &&
+        checkAgeMatches(mainParam.filter, obj) &&
+        checkBrandMatches(mainParam.filter, obj)
+      );
+    })?.length;
+    itemSellerTypeCountList.push({
+      itemSellerType: item,
+      count,
+    });
+  });
+  return itemSellerTypeCountList;
+};
+
+const checkInstrumentTypeMatches = (filter, obj) => {
+  const selectedInstrumentTypeCondition = filter.instrumentType?.length > 0;
+  const instrumentTypeMatches = selectedInstrumentTypeCondition
+    ? filter.instrumentType.includes(
+        (obj as any)?.itemDetailInfo?.itemSubCategory
+      )
+    : true;
+  return instrumentTypeMatches;
+};
+
+const checkAgeMatches = (filter, obj) => {
+  const selectedAgeCondition = filter.age?.length > 0;
+  let index = filter.age.indexOf("Not Specified");
+  if (index > -1) {
+    filter.age[index] = "";
+  }
+  const ageMatches = selectedAgeCondition
+    ? filter.age.includes((obj as any)?.itemDetailInfo?.age)
+    : true;
+  return ageMatches;
+};
+
+const checkBrandMatches = (filter, obj) => {
+  const selectedBrandCondition = filter.brand?.length > 0;
+  let index = filter.brand.indexOf("Not Specified");
+  if (index > -1) {
+    filter.brand[index] = "";
+  }
+  const brandMatches = selectedBrandCondition
+    ? filter.brand.includes((obj as any)?.itemDetailInfo?.brand)
+    : true;
+  return brandMatches;
 };

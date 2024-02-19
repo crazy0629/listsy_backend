@@ -111,13 +111,13 @@ export const checkItemConditionMatches = (filter, obj) => {
 
 export const getConditionToCountry = (data) => {
   let condition: any = {};
-  if (data.centerLocationSelected == true && data.SearchWithin != "") {
-    condition.countryCode = data.selectedLocation.countryCode;
-  } else {
-    if (data.countryCode != null) {
-      condition.countryCode = data.countryCode;
-    }
+  // if (data.centerLocationSelected == true && data.SearchWithin != "") {
+  //   condition.countryCode = data.selectedLocation.countryCode;
+  // } else {
+  if (data.countryCode != null) {
+    condition.countryCode = data.countryCode;
   }
+  // }
   if (data.itemCategory != "All" && data.itemCategory != "") {
     condition.itemCategory = data.itemCategory;
   }
