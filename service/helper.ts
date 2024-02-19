@@ -121,13 +121,6 @@ export const getConditionToCountry = (data) => {
   if (data.itemCategory != "All" && data.itemCategory != "") {
     condition.itemCategory = data.itemCategory;
   }
-  if (
-    data.itemSubCategory &&
-    data.itemSubCategory != "All" &&
-    data.itemSubCatgory != ""
-  ) {
-    condition.itemDetailInfo.itemSubCategory = data.itemSubCategory;
-  }
   return condition;
 };
 

@@ -167,12 +167,23 @@ export const getSubCountForEachCategory = async (
 export const getMoreMusicAds = async (req: Request, res: Response) => {
   try {
     let condition = getConditionToCountry(req.body);
+    console.log(condition);
     let nextMusicAds = await Music.find(condition)
       .populate("userId", "firstName lastName avatar reviewCount reviewMark")
       .populate("adId", "adFileName imagesFileName uploadDate duration")
-      .sort({ postDate: -1 })
-      .skip(req.body.index * 50)
-      .limit(50);
+      .sort({ postDate: -1 });
+    if (req.body.itemCategory !== "All") {
+      nextMusicAds = nextMusicAds.filter(
+        (item: any) =>
+          item.itemDetailInfo.itemSubCategory.toLowerCase() ==
+          req.body.itemSubCategory.toLowerCase()
+      );
+    }
+
+    nextMusicAds = nextMusicAds.slice(
+      req.body.index * 50,
+      req.body.index * 50 + 50
+    );
 
     return res.json({
       success: true,
@@ -180,6 +191,7 @@ export const getMoreMusicAds = async (req: Request, res: Response) => {
       data: nextMusicAds,
     });
   } catch (error) {
+    console.log(error);
     return res.json({
       success: false,
       message: "Error found while loading more food ads",
