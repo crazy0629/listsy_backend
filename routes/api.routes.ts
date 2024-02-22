@@ -229,6 +229,9 @@ router.post("/truck/getAdDetailInfo", vehicle.getAdDetailInfo);
 
 router.post("/sports/loadSportsInfo", sports.loadSportsInfo);
 router.post("/sports/getAdDetailInfo", sports.getAdDetailInfo);
+router.post("/sports/getCountForEachCategory", sports.getCountForEachCategory);
+router.post("/sports/getSportsAds", sports.getMoreSportsAds);
+router.post("/sports/getCountOfEachFilter", sports.getCountOfEachFilter);
 
 // Children
 
