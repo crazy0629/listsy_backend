@@ -11,14 +11,12 @@ import {
   checkSellerTypeMatches,
   generateToken,
   getConditionToCountry,
-  itemBrandFilterAds,
   itemConditionFilterAds,
   locationFilterDistanceAds,
   priceFilterAds,
   sellerRatingFilterAds,
   sellerTypeFilterAds,
 } from "../service/helper";
-import { get } from "http";
 
 export const loadMusicInfo = async (req: Request, res: Response) => {
   try {
