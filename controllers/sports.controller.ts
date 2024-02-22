@@ -8,12 +8,14 @@ import {
   checkItemConditionMatches,
   checkPriceMatches,
   checkSellerRatingMatches,
+  checkSellerTypeMatches,
   generateToken,
   getConditionToCountry,
   itemConditionFilterAds,
   locationFilterDistanceAds,
   priceFilterAds,
   sellerRatingFilterAds,
+  sellerTypeFilterAds,
 } from "../service/helper";
 
 export const loadSportsInfo = async (req: Request, res: Response) => {
@@ -161,6 +163,7 @@ export const getMoreSportsAds = async (req: Request, res: Response) => {
     nextSportsAds = priceFilterAds(req.body, nextSportsAds);
     nextSportsAds = sellerRatingFilterAds(req.body, nextSportsAds);
     nextSportsAds = itemConditionFilterAds(req.body, nextSportsAds);
+    nextSportsAds = sellerTypeFilterAds(req.body, nextSportsAds);
 
     if (req.body.equipmentType && req.body.equipmentType?.length) {
       nextSportsAds = nextSportsAds.filter(
@@ -168,6 +171,15 @@ export const getMoreSportsAds = async (req: Request, res: Response) => {
           req.body.equipmentType.indexOf(
             item.itemDetailInfo.itemSubCategory
           ) !== -1
+      );
+    }
+
+    if (req.body.gender && req.body.gender?.length) {
+      let index = req.body.gender.indexOf("Not Specified");
+      req.body.gender[index] = "";
+      nextSportsAds = nextSportsAds.filter(
+        (item: any) =>
+          req.body.gender.indexOf(item.itemDetailInfo.gender) !== -1
       );
     }
 
@@ -218,7 +230,9 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
             checkSellerRatingMatches(req.body.filter, obj) &&
             checkEquipmentTypeMatches(req.body.filter, obj) &&
             checkItemConditionMatches(req.body.filter, obj) &&
-            checkBrandMatches(req.body.filter, obj)
+            checkBrandMatches(req.body.filter, obj) &&
+            checkGenderMatches(req.body.filter, obj) &&
+            checkSellerTypeMatches(req.body.filter, obj)
           );
         })
         .map((item: any, index: number) => {
@@ -273,6 +287,8 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
     let itemEquipmentTypeCountList = [];
     let itemConditionCountList = [];
     let itemBrandCountList = [];
+    let itemGenderCountList = [];
+    let itemSellerTypeCountList = [];
 
     if (req.body.itemSellerRating) {
       itemSellerRatingCountList = await getCountOnSellerRating(
@@ -296,6 +312,17 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
       itemBrandCountList = await getCountOnBrand(req.body, sportsModel);
     }
 
+    if (req.body.itemGender) {
+      itemGenderCountList = await getCountOnGender(req.body, sportsModel);
+    }
+
+    if (req.body.itemSellerType) {
+      itemSellerTypeCountList = await getCountOnSellerType(
+        req.body,
+        sportsModel
+      );
+    }
+
     return res.json({
       success: true,
       itemPriceRange: countPerPrice,
@@ -304,6 +331,8 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
       itemEquipmentType: itemEquipmentTypeCountList,
       itemCondition: itemConditionCountList,
       itemBrand: itemBrandCountList,
+      itemGender: itemGenderCountList,
+      itemSellerType: itemSellerTypeCountList,
     });
   } catch (error) {
     return res.json({
@@ -321,7 +350,9 @@ const getCountOnMinMaxPrice = async (mainParam, foodObj) => {
       checkSellerRatingMatches(mainParam.filter, obj) &&
       checkEquipmentTypeMatches(mainParam.filter, obj) &&
       checkItemConditionMatches(mainParam.filter, obj) &&
-      checkBrandMatches(mainParam.filter, obj)
+      checkBrandMatches(mainParam.filter, obj) &&
+      checkGenderMatches(mainParam.filter, obj) &&
+      checkSellerTypeMatches(mainParam.filter, obj)
     );
   })?.length;
   return countPerPrice;
@@ -345,7 +376,9 @@ const getCountOnSellerRating = async (mainParam, sportsObj) => {
         checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
         checkEquipmentTypeMatches(mainParam.filter, obj) &&
         checkItemConditionMatches(mainParam.filter, obj) &&
-        checkBrandMatches(mainParam.filter, obj)
+        checkBrandMatches(mainParam.filter, obj) &&
+        checkGenderMatches(mainParam.filter, obj) &&
+        checkSellerTypeMatches(mainParam.filter, obj)
       );
     })?.length;
 
@@ -373,7 +406,9 @@ const getCountOnEquipmentType = async (mainParam, sportsObj) => {
         checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
         checkSellerRatingMatches(mainParam.filter, obj) &&
         checkItemConditionMatches(mainParam.filter, obj) &&
-        checkBrandMatches(mainParam.filter, obj)
+        checkBrandMatches(mainParam.filter, obj) &&
+        checkGenderMatches(mainParam.filter, obj) &&
+        checkSellerTypeMatches(mainParam.filter, obj)
       );
     })?.length;
     itemEquipmentTypeCountList.push({
@@ -402,7 +437,9 @@ const getCountOnCondition = async (mainParam, sportsObj) => {
         checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
         checkSellerRatingMatches(mainParam.filter, obj) &&
         checkEquipmentTypeMatches(mainParam.filter, obj) &&
-        checkBrandMatches(mainParam.filter, obj)
+        checkBrandMatches(mainParam.filter, obj) &&
+        checkGenderMatches(mainParam.filter, obj) &&
+        checkSellerTypeMatches(mainParam.filter, obj)
       );
     })?.length;
     itemConditionCountList.push({
@@ -431,7 +468,9 @@ const getCountOnBrand = async (mainParam, sportsObj) => {
         checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
         checkSellerRatingMatches(mainParam.filter, obj) &&
         checkEquipmentTypeMatches(mainParam.filter, obj) &&
-        checkItemConditionMatches(mainParam.filter, obj)
+        checkItemConditionMatches(mainParam.filter, obj) &&
+        checkGenderMatches(mainParam.filter, obj) &&
+        checkSellerTypeMatches(mainParam.filter, obj)
       );
     })?.length;
     itemBrandCountList.push({
@@ -440,6 +479,71 @@ const getCountOnBrand = async (mainParam, sportsObj) => {
     });
   });
   return itemBrandCountList;
+};
+
+const getCountOnGender = async (mainParam, sportsObj) => {
+  let itemGenderCountList: any = [];
+
+  mainParam?.itemGender.map((item: string, index: number) => {
+    let count = 0,
+      temp = "";
+    if (item != "Not Specified") {
+      temp = item;
+    }
+    count = sportsObj.filter((obj) => {
+      const isMatchingGender = (obj as any)?.itemDetailInfo?.gender == temp;
+      const isMatchingItemCategory =
+        (obj as any).itemCategory == mainParam.itemCategory;
+
+      return (
+        isMatchingGender &&
+        isMatchingItemCategory &&
+        checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
+        checkSellerRatingMatches(mainParam.filter, obj) &&
+        checkEquipmentTypeMatches(mainParam.filter, obj) &&
+        checkItemConditionMatches(mainParam.filter, obj) &&
+        checkBrandMatches(mainParam.filter, obj) &&
+        checkSellerTypeMatches(mainParam.filter, obj)
+      );
+    })?.length;
+    itemGenderCountList.push({
+      itemGender: item,
+      count,
+    });
+  });
+  return itemGenderCountList;
+};
+
+const getCountOnSellerType = async (mainParam, sportsObj) => {
+  let itemSellerTypeCountList: any = [];
+  mainParam?.itemSellerType.map((item: string, index: number) => {
+    let count = 0,
+      temp = "";
+    if (item != "Not Specified") {
+      temp = item;
+    }
+    count = sportsObj.filter((obj) => {
+      const isMatchingSellerType =
+        (obj as any)?.itemDetailInfo?.sellerType == temp;
+      const isMatchingItemCategory =
+        (obj as any).itemCategory == mainParam.itemCategory;
+      return (
+        isMatchingSellerType &&
+        isMatchingItemCategory &&
+        checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
+        checkSellerRatingMatches(mainParam.filter, obj) &&
+        checkEquipmentTypeMatches(mainParam.filter, obj) &&
+        checkItemConditionMatches(mainParam.filter, obj) &&
+        checkBrandMatches(mainParam.filter, obj) &&
+        checkGenderMatches(mainParam.filter, obj)
+      );
+    })?.length;
+    itemSellerTypeCountList.push({
+      itemSellerType: item,
+      count,
+    });
+  });
+  return itemSellerTypeCountList;
 };
 
 const checkEquipmentTypeMatches = (filter, obj) => {
@@ -462,4 +566,16 @@ const checkBrandMatches = (filter, obj) => {
     ? filter.brand.includes((obj as any)?.itemDetailInfo?.brand)
     : true;
   return brandMatches;
+};
+
+const checkGenderMatches = (filter, obj) => {
+  const selectedGenderCondition = filter.gender?.length > 0;
+  let index = filter.gender.indexOf("Not Specified");
+  if (index > -1) {
+    filter.gender[index] = "";
+  }
+  const genderMatches = selectedGenderCondition
+    ? filter.gender.includes((obj as any)?.itemDetailInfo?.gender)
+    : true;
+  return genderMatches;
 };
