@@ -24,7 +24,6 @@ export const loadSportsInfo = async (req: Request, res: Response) => {
       adId: new mongoose.Types.ObjectId(req.body.adId),
     });
     if (sportsModel.length) {
-      console.log("sportsModel is not empty");
       return res.json({
         success: false,
         message: "Ad publishing unsuccessful. Try again or contact support!",
@@ -34,7 +33,6 @@ export const loadSportsInfo = async (req: Request, res: Response) => {
       new mongoose.Types.ObjectId(req.body.adId)
     );
     if (!adModel) {
-      console.log("adModel is undefined");
       return res.json({
         success: false,
         message: "Ad publishing unsuccessful. Try again or contact support!",
@@ -67,7 +65,6 @@ export const loadSportsInfo = async (req: Request, res: Response) => {
       new mongoose.Types.ObjectId(req.body.userId)
     );
     if (!userModel) {
-      console.log("User not found");
       return res.json({
         success: false,
         message: "Ad publishing unsuccessful. Try again or contact support!",
