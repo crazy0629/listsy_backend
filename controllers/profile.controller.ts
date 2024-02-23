@@ -22,6 +22,7 @@ import Diy from "../models/Diy";
 import Beauty from "../models/Beauty";
 import Toy from "../models/toys";
 import Music from "../models/Music";
+import Furniture from "../models/Furniture";
 
 export const setAvatar = async (req: Request, res: Response) => {
   User.findById(new mongoose.Types.ObjectId(req.body.userId))
@@ -395,7 +396,7 @@ export const getPostByUser = async (req: Request, res: Response) => {
         return res.json({
           success: true,
           data: value,
-          message: "Successfully loaded estate ads posted by you!",
+          message: "Successfully loaded education ads posted by you!",
         });
       });
   }
@@ -413,7 +414,25 @@ export const getPostByUser = async (req: Request, res: Response) => {
         return res.json({
           success: true,
           data: value,
-          message: "Successfully loaded estate ads posted by you!",
+          message: "Successfully loaded sports ads posted by you!",
+        });
+      });
+  }
+  if (req.body.postType == "furniture") {
+    Furniture.find({ userId: req.body.userId })
+      .populate({ path: "adId", match: adCondition })
+      .populate("userId")
+      .skip(req.body.index * 50)
+      .limit(50)
+      .then((model: any) => {
+        const value = model.filter((item) => item.adId !== null);
+        if (!model) {
+          return res.json({ success: false, message: "Error found!" });
+        }
+        return res.json({
+          success: true,
+          data: value,
+          message: "Successfully loaded furniture ads posted by you!",
         });
       });
   }
