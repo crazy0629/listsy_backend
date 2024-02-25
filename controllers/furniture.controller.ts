@@ -76,3 +76,35 @@ export const loadFurnitureInfo = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const getAdDetailInfo = async (req: Request, res: Response) => {
+  try {
+    const furnitureObj = await Furniture.findOne({ adId: req.body.adId })
+      .populate(
+        "userId",
+        "firstName lastName avatar reviewCount reviewMark telephoneNumber phoneNumberShare"
+      )
+      .populate("adId", "adFileName imagesFileName uploadDate duration");
+
+    if (!furnitureObj)
+      return res.json({
+        success: false,
+        message: "Error found while loading detail info!",
+      });
+
+    furnitureObj.viewCount = furnitureObj.viewCount + 1;
+    await furnitureObj.save();
+
+    return res.json({
+      success: true,
+      message: "Success",
+      data: furnitureObj,
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      success: false,
+      message: "Error",
+    });
+  }
+};
