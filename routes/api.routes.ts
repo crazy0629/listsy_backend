@@ -237,6 +237,11 @@ router.post("/sports/getCountOfEachFilter", sports.getCountOfEachFilter);
 // Furniture
 router.post("/furniture/loadFurnitureInfo", furniture.loadFurnitureInfo);
 router.post("/furniture/getAdDetailInfo", furniture.getAdDetailInfo);
+router.post(
+  "/furniture/getCountForEachCategory",
+  furniture.getCountForEachCategory
+);
+router.post("/furniture/getFurnitureAds", furniture.getMoreFurnitureAds);
 
 // Children
 

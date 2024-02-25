@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import Furniture from "../models/Furniture";
 import Ad from "../models/Ad";
 import User from "../models/User";
-import { generateToken } from "../service/helper";
+import { generateToken, getConditionToCountry } from "../service/helper";
 
 export const loadFurnitureInfo = async (req: Request, res: Response) => {
   try {
@@ -105,6 +105,58 @@ export const getAdDetailInfo = async (req: Request, res: Response) => {
     res.json({
       success: false,
       message: "Error",
+    });
+  }
+};
+
+export const getCountForEachCategory = async (req: Request, res: Response) => {
+  try {
+    let condition: any = {};
+    if (req.body.countryCode != null) {
+      condition.countryCode = req.body.countryCode;
+    }
+
+    let countList: any = [];
+    const furnitureObj = await Furniture.find();
+    req.body.itemCategory.map((item: string, index: number) => {
+      let count = 0;
+      if (item == "All") count = furnitureObj?.length;
+      else
+        count = furnitureObj.filter((obj) => obj.itemCategory == item)?.length;
+      countList.push({ itemCategory: item, count });
+    });
+    return res.json({
+      success: true,
+      countList,
+    });
+  } catch (error) {
+    return res.json({
+      success: false,
+      message: "Error found!",
+    });
+  }
+};
+
+export const getMoreFurnitureAds = async (req: Request, res: Response) => {
+  try {
+    let condition = getConditionToCountry(req.body);
+    let nextFurnitureAds = await Furniture.find(condition)
+      .populate("userId", "firstName lastName avatar reviewCount reviewMark")
+      .populate("adId", "adFileName imagesFileName uploadDate duration")
+      .sort({ postDate: -1 })
+      .skip(req.body.index * 50)
+      .limit(50);
+
+    return res.json({
+      success: true,
+      message: "Successfully loaded!",
+      data: nextFurnitureAds,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.json({
+      success: false,
+      message: "Error found while loading more furniture ads!",
     });
   }
 };
