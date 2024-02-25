@@ -242,6 +242,7 @@ router.post(
   furniture.getCountForEachCategory
 );
 router.post("/furniture/getFurnitureAds", furniture.getMoreFurnitureAds);
+router.post("/furniture/getCountOfEachFilter", furniture.getCountOfEachFilter);
 
 // Children
 

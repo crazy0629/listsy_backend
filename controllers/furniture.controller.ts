@@ -3,7 +3,20 @@ import mongoose from "mongoose";
 import Furniture from "../models/Furniture";
 import Ad from "../models/Ad";
 import User from "../models/User";
-import { generateToken, getConditionToCountry } from "../service/helper";
+import {
+  calculateDistance,
+  checkItemConditionMatches,
+  checkPriceMatches,
+  checkSellerRatingMatches,
+  checkSellerTypeMatches,
+  generateToken,
+  getConditionToCountry,
+  itemConditionFilterAds,
+  locationFilterDistanceAds,
+  priceFilterAds,
+  sellerRatingFilterAds,
+  sellerTypeFilterAds,
+} from "../service/helper";
 
 export const loadFurnitureInfo = async (req: Request, res: Response) => {
   try {
@@ -147,6 +160,21 @@ export const getMoreFurnitureAds = async (req: Request, res: Response) => {
       .skip(req.body.index * 50)
       .limit(50);
 
+    nextFurnitureAds = locationFilterDistanceAds(req.body, nextFurnitureAds);
+    nextFurnitureAds = priceFilterAds(req.body, nextFurnitureAds);
+    nextFurnitureAds = sellerRatingFilterAds(req.body, nextFurnitureAds);
+    nextFurnitureAds = itemConditionFilterAds(req.body, nextFurnitureAds);
+    nextFurnitureAds = sellerTypeFilterAds(req.body, nextFurnitureAds);
+
+    if (req.body.furnitureType && req.body.furnitureType?.length) {
+      nextFurnitureAds = nextFurnitureAds.filter(
+        (item: any) =>
+          req.body.furnitureType.indexOf(
+            item.itemDetailInfo.itemSubCategory
+          ) !== -1
+      );
+    }
+
     return res.json({
       success: true,
       message: "Successfully loaded!",
@@ -159,4 +187,269 @@ export const getMoreFurnitureAds = async (req: Request, res: Response) => {
       message: "Error found while loading more furniture ads!",
     });
   }
+};
+
+export const getCountOfEachFilter = async (req: Request, res: Response) => {
+  try {
+    let condition: any = {};
+    let condition1: any = {};
+    condition.countryCode = req.body.countryCode;
+
+    if (req.body.itemCategory != "All" && req.body.itemCategory != "") {
+      condition.itemCategory = req.body.itemCategory;
+    }
+
+    let itemSearchRangeCountList: any = [];
+    let distanceList: any = [];
+    if (req.body.centerLocationAvailable == true) {
+      condition1.countryCode = req.body.selectedLocation.countryCode;
+      condition1.itemCategory = req.body.itemCategory;
+      const musicModelPerCountry = await Furniture.find(condition1).populate(
+        "userId",
+        "firstName lastName avatar reviewCount reviewMark"
+      );
+      musicModelPerCountry
+        .filter((obj) => {
+          return (
+            checkPriceMatches(req.body.minPrice, req.body.maxPrice, obj) &&
+            checkSellerRatingMatches(req.body.filter, obj) &&
+            checkFurnitureTypeMatches(req.body.filter, obj) &&
+            checkItemConditionMatches(req.body.filter, obj) &&
+            checkSellerTypeMatches(req.body.filter, obj)
+          );
+        })
+        .map((item: any, index: number) => {
+          distanceList.push(
+            calculateDistance(
+              item.lat,
+              item.lng,
+              req.body.selectedLocation.lat,
+              req.body.selectedLocation.lng
+            )
+          );
+        });
+      req.body.itemSearchRange.map((item: number, index: number) => {
+        if (item == -1) {
+          itemSearchRangeCountList.push({
+            range: -1,
+            distance: distanceList?.length,
+          });
+        } else {
+          itemSearchRangeCountList.push({
+            range: item,
+            distance: distanceList.filter((dis) => dis <= item)?.length,
+          });
+        }
+      });
+    }
+    let furnitureObj = await Furniture.find(condition).populate(
+      "userId",
+      "firstName lastName avatar reviewCount reviewMark"
+    );
+    if (
+      req.body.centerLocationAvailable == true &&
+      req.body.filter.SearchWithin != "" &&
+      req.body.filter.SearchWithin != "Nationwide"
+    ) {
+      let distance = 0;
+      if (req.body.filter.SearchWithin != "Current location")
+        distance = parseInt(req.body.filter.SearchWithin.match(/\d+/)[0]);
+      furnitureObj = furnitureObj.filter((item) => {
+        return (
+          calculateDistance(
+            item.lat,
+            item.lng,
+            req.body.selectedLocation.lat,
+            req.body.selectedLocation.lng
+          ) <= distance
+        );
+      });
+    }
+
+    let countPerPrice = await getCountOnMinMaxPrice(req.body, furnitureObj);
+    let itemSellerRatingCountList = [];
+    let itemFurnitureTypeCountList = [];
+    let itemConditionCountList = [];
+    let itemSellerTypeCountList = [];
+
+    if (req.body.itemSellerRating) {
+      itemSellerRatingCountList = await getCountOnSellerRating(
+        req.body,
+        furnitureObj
+      );
+    }
+
+    if (req.body.itemFurnitureType) {
+      itemFurnitureTypeCountList = await getCountOnFurnitureType(
+        req.body,
+        furnitureObj
+      );
+    }
+
+    if (req.body.itemCondition) {
+      itemConditionCountList = await getCountOnCondition(
+        req.body,
+        furnitureObj
+      );
+    }
+
+    if (req.body.itemSellerType) {
+      itemSellerTypeCountList = await getCountOnSellerType(
+        req.body,
+        furnitureObj
+      );
+    }
+
+    return res.json({
+      success: true,
+      itemPriceRange: countPerPrice,
+      itemRangeInfo: itemSearchRangeCountList,
+      itemSellerRating: itemSellerRatingCountList,
+      itemFurnitureType: itemFurnitureTypeCountList,
+      itemCondition: itemConditionCountList,
+      itemSellerType: itemSellerTypeCountList,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.json({
+      success: false,
+      message: "Error found!",
+    });
+  }
+};
+
+const checkFurnitureTypeMatches = (filter, obj) => {
+  const selectedFurnitureTypeCondition = filter.furnitureType?.length > 0;
+  const furnitureTypeMatches = selectedFurnitureTypeCondition
+    ? filter.furnitureType.includes(
+        (obj as any)?.itemDetailInfo?.itemSubCategory
+      )
+    : true;
+  return furnitureTypeMatches;
+};
+
+const getCountOnMinMaxPrice = async (mainParam, furnitureObj) => {
+  let countPerPrice = -1;
+  countPerPrice = furnitureObj.filter((obj) => {
+    return (
+      checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
+      checkSellerRatingMatches(mainParam.filter, obj) &&
+      checkFurnitureTypeMatches(mainParam.filter, obj) &&
+      checkItemConditionMatches(mainParam.filter, obj) &&
+      checkSellerTypeMatches(mainParam.filter, obj)
+    );
+  })?.length;
+  return countPerPrice;
+};
+
+const getCountOnSellerRating = async (mainParam, furnitureObj) => {
+  let itemSellerRatingCountList: any = [];
+
+  mainParam?.itemSellerRating.map((item: string, index: number) => {
+    let rating = Number(item.at(0));
+    let count = 0;
+    count = furnitureObj.filter((obj) => {
+      const isMatchingRating =
+        Math.floor((obj as any)?.userId.reviewMark) == rating;
+      const isMatchingItemCategory =
+        (obj as any).itemCategory == mainParam.itemCategory;
+
+      return (
+        isMatchingRating &&
+        isMatchingItemCategory &&
+        checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
+        checkFurnitureTypeMatches(mainParam.filter, obj) &&
+        checkItemConditionMatches(mainParam.filter, obj) &&
+        checkSellerTypeMatches(mainParam.filter, obj)
+      );
+    })?.length;
+
+    itemSellerRatingCountList.push({ itemSellerRating: item, count });
+  });
+
+  return itemSellerRatingCountList;
+};
+
+const getCountOnFurnitureType = async (mainParam, furnitureObj) => {
+  let itemFurnitureTypeCountList: any = [];
+
+  mainParam?.itemFurnitureType.map((item: string, index: number) => {
+    let count = 0;
+
+    count = furnitureObj.filter((obj) => {
+      const isMatchingFurnitureType =
+        (obj as any)?.itemDetailInfo?.itemSubCategory == item;
+      const isMatchingItemCategory =
+        (obj as any).itemCategory == mainParam.itemCategory;
+
+      return (
+        isMatchingFurnitureType &&
+        isMatchingItemCategory &&
+        checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
+        checkSellerRatingMatches(mainParam.filter, obj) &&
+        checkItemConditionMatches(mainParam.filter, obj) &&
+        checkSellerTypeMatches(mainParam.filter, obj)
+      );
+    })?.length;
+    itemFurnitureTypeCountList.push({
+      itemFurnitureType: item,
+      count,
+    });
+  });
+  return itemFurnitureTypeCountList;
+};
+
+const getCountOnCondition = async (mainParam, furnitureObj) => {
+  let itemConditionCountList: any = [];
+
+  mainParam?.itemCondition.map((item: string, index: number) => {
+    let count = 0;
+
+    count = furnitureObj.filter((obj) => {
+      const isMatchingCondition =
+        (obj as any)?.itemDetailInfo?.itemCondition == item;
+      const isMatchingItemCategory =
+        (obj as any).itemCategory == mainParam.itemCategory;
+
+      return (
+        isMatchingCondition &&
+        isMatchingItemCategory &&
+        checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
+        checkSellerRatingMatches(mainParam.filter, obj) &&
+        checkFurnitureTypeMatches(mainParam.filter, obj) &&
+        checkSellerTypeMatches(mainParam.filter, obj)
+      );
+    })?.length;
+    itemConditionCountList.push({
+      itemCondition: item,
+      count,
+    });
+  });
+  return itemConditionCountList;
+};
+
+const getCountOnSellerType = async (mainParam, furniture) => {
+  let itemSellerTypeCountList: any = [];
+  mainParam?.itemSellerType.map((item: string, index: number) => {
+    let count = 0;
+    count = furniture.filter((obj) => {
+      const isMatchingSellerType =
+        (obj as any)?.itemDetailInfo?.sellerType == item;
+      const isMatchingItemCategory =
+        (obj as any).itemCategory == mainParam.itemCategory;
+      return (
+        isMatchingSellerType &&
+        isMatchingItemCategory &&
+        checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
+        checkSellerRatingMatches(mainParam.filter, obj) &&
+        checkFurnitureTypeMatches(mainParam.filter, obj) &&
+        checkItemConditionMatches(mainParam.filter, obj)
+      );
+    })?.length;
+    itemSellerTypeCountList.push({
+      itemSellerType: item,
+      count,
+    });
+  });
+  return itemSellerTypeCountList;
 };
