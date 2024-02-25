@@ -340,9 +340,9 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
   }
 };
 
-const getCountOnMinMaxPrice = async (mainParam, foodObj) => {
+const getCountOnMinMaxPrice = async (mainParam, musicObj) => {
   let countPerPrice = -1;
-  countPerPrice = foodObj.filter((obj) => {
+  countPerPrice = musicObj.filter((obj) => {
     return (
       checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
       checkSellerRatingMatches(mainParam.filter, obj) &&
