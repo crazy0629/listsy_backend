@@ -253,8 +253,10 @@ router.post("/children/getAdDetailInfo", children.getAdDetailInfo);
 // Art
 
 router.post("/art/loadArtInfo", art.loadArtInfo);
-router.post("/art/getMoreArtAds", art.getMoreArtAds);
 router.post("/art/getAdDetailInfo", art.getAdDetailInfo);
+router.post("/art/getCountForEachCategory", art.getCountForEachCategory);
+router.post("/art/getArtAds", art.getMoreArtAds);
+router.post("/art/getCountOfEachFilter", art.getCountOfEachFilter);
 
 // Education
 
