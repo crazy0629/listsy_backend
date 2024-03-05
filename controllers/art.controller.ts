@@ -5,6 +5,7 @@ import Ad from "../models/Ad";
 import User from "../models/User";
 import {
   calculateDistance,
+  checkItemConditionMatches,
   checkPriceMatches,
   checkSellerRatingMatches,
   generateToken,
@@ -156,6 +157,32 @@ export const getMoreArtAds = async (req: Request, res: Response) => {
     nextArtAds = sellerRatingFilterAds(req.body, nextArtAds);
     nextArtAds = itemConditionFilterAds(req.body, nextArtAds);
 
+    if (req.body.artType && req.body.artType?.length) {
+      nextArtAds = nextArtAds.filter(
+        (item: any) =>
+          req.body.artType.indexOf(item.itemDetailInfo.itemSubCategory) !== -1
+      );
+    }
+
+    if (req.body.authenticity && req.body.authenticity?.length) {
+      let index = req.body.authenticity.indexOf("Not Specified");
+      req.body.authenticity[index] = "";
+
+      nextArtAds = nextArtAds.filter(
+        (item: any) =>
+          req.body.authenticity.indexOf(item.itemDetailInfo.authenticity) !== -1
+      );
+    }
+
+    if (req.body.age && req.body.age?.length) {
+      let index = req.body.age.indexOf("Not Specified");
+      req.body.age[index] = "";
+
+      nextArtAds = nextArtAds.filter(
+        (item: any) => req.body.age.indexOf(item.itemDetailInfo.age) !== -1
+      );
+    }
+
     return res.json({
       success: true,
       message: "Successfully loaded!",
@@ -192,7 +219,11 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
         .filter((obj) => {
           return (
             checkPriceMatches(req.body.minPrice, req.body.maxPrice, obj) &&
-            checkSellerRatingMatches(req.body.filter, obj)
+            checkSellerRatingMatches(req.body.filter, obj) &&
+            checkTypeMatches(req.body.filter, obj) &&
+            checkItemConditionMatches(req.body.filter, obj) &&
+            checkAuthenticityMatches(req.body.filter, obj) &&
+            checkAgeMatches(req.body.filter, obj)
           );
         })
         .map((item: any, index: number) => {
@@ -247,6 +278,9 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
     let countPerPrice = await getCountOnMinMaxPrice(req.body, artObj);
     let itemSellerRatingCountList = [];
     let itemTypeCountList = [];
+    let itemConditionCountList = [];
+    let itemAuthenticityCountList = [];
+    let itemAgeCountList = [];
 
     if (req.body.itemSellerRating) {
       itemSellerRatingCountList = await getCountOnSellerRating(
@@ -259,12 +293,29 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
       itemTypeCountList = await getCountOnItemType(req.body, artObj);
     }
 
+    if (req.body.itemCondition) {
+      itemConditionCountList = await getCountOnCondition(req.body, artObj);
+    }
+
+    if (req.body.itemAuthenticity) {
+      itemAuthenticityCountList = await getCountOnAuthenticity(
+        req.body,
+        artObj
+      );
+    }
+
+    if (req.body.itemAge) {
+      itemAgeCountList = await getCountOnAge(req.body, artObj);
+    }
     return res.json({
       success: true,
       itemPriceRange: countPerPrice,
       itemRangeInfo: itemSearchRangeCountList,
       itemSellerRating: itemSellerRatingCountList,
       itemType: itemTypeCountList,
+      itemCondition: itemConditionCountList,
+      itemAuthenticity: itemAuthenticityCountList,
+      itemAge: itemAgeCountList,
     });
   } catch (error) {
     console.log(error);
@@ -274,8 +325,14 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
 const getCountOnMinMaxPrice = async (mainParam, artObj) => {
   let countPerPrice = -1;
   countPerPrice = artObj.filter((obj) => {
-    return checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj);
-    // checkSellerRatingMatches(mainParam.filter, obj)
+    return (
+      checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
+      checkSellerRatingMatches(mainParam.filter, obj) &&
+      checkTypeMatches(mainParam.filter, obj) &&
+      checkItemConditionMatches(mainParam.filter, obj) &&
+      checkAuthenticityMatches(mainParam.filter, obj) &&
+      checkAgeMatches(mainParam.filter, obj)
+    );
   })?.length;
   return countPerPrice;
 };
@@ -295,7 +352,11 @@ const getCountOnSellerRating = async (mainParam, artObj) => {
       return (
         isMatchingRating &&
         isMatchingItemCategory &&
-        checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj)
+        checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
+        checkTypeMatches(mainParam.filter, obj) &&
+        checkItemConditionMatches(mainParam.filter, obj) &&
+        checkAuthenticityMatches(mainParam.filter, obj) &&
+        checkAgeMatches(mainParam.filter, obj)
       );
     })?.length;
 
@@ -321,13 +382,143 @@ const getCountOnItemType = async (mainParam, artObj) => {
         isMatchingType &&
         isMatchingItemCategory &&
         checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
-        checkSellerRatingMatches(mainParam.filter, obj)
+        checkSellerRatingMatches(mainParam.filter, obj) &&
+        checkItemConditionMatches(mainParam.filter, obj) &&
+        checkAuthenticityMatches(mainParam.filter, obj) &&
+        checkAgeMatches(mainParam.filter, obj)
       );
     })?.length;
     itemTypeCountList.push({
-      itemInstrumentType: item,
+      itemType: item,
       count,
     });
   });
   return itemTypeCountList;
+};
+
+const getCountOnCondition = async (mainParam, artObj) => {
+  let itemConditionCountList: any = [];
+
+  mainParam?.itemCondition.map((item: string, index: number) => {
+    let count = 0;
+
+    count = artObj.filter((obj) => {
+      const isMatchingCondition =
+        (obj as any)?.itemDetailInfo?.itemCondition == item;
+      const isMatchingItemCategory =
+        (obj as any).itemCategory == mainParam.itemCategory;
+
+      return (
+        isMatchingCondition &&
+        isMatchingItemCategory &&
+        checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
+        checkSellerRatingMatches(mainParam.filter, obj) &&
+        checkTypeMatches(mainParam.filter, obj) &&
+        checkAuthenticityMatches(mainParam.filter, obj) &&
+        checkAgeMatches(mainParam.filter, obj)
+      );
+    })?.length;
+    itemConditionCountList.push({
+      itemCondition: item,
+      count,
+    });
+  });
+  return itemConditionCountList;
+};
+
+const getCountOnAuthenticity = async (mainParam, artObj) => {
+  let itemAuthenticityCountList: any = [];
+
+  mainParam?.itemAuthenticity.map((item: string, index: number) => {
+    let count = 0,
+      temp = "";
+    if (item != "Not Specified") {
+      temp = item;
+    }
+    count = artObj.filter((obj) => {
+      const isMatchingAuthenticity =
+        (obj as any)?.itemDetailInfo?.authenticity == temp;
+      const isMatchingItemCategory =
+        (obj as any).itemCategory == mainParam.itemCategory;
+
+      return (
+        isMatchingAuthenticity &&
+        isMatchingItemCategory &&
+        checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
+        checkSellerRatingMatches(mainParam.filter, obj) &&
+        checkTypeMatches(mainParam.filter, obj) &&
+        checkItemConditionMatches(mainParam.filter, obj) &&
+        checkAgeMatches(mainParam.filter, obj)
+      );
+    })?.length;
+    itemAuthenticityCountList.push({
+      itemAuthenticity: item,
+      count,
+    });
+  });
+  return itemAuthenticityCountList;
+};
+
+const getCountOnAge = async (mainParam, artObj) => {
+  let itemAgeCountList: any = [];
+
+  mainParam?.itemAge.map((item: string, index: number) => {
+    let count = 0,
+      temp = "";
+    if (item != "Not Specified") {
+      temp = item;
+    }
+    count = artObj.filter((obj) => {
+      const isMatchingAge = (obj as any)?.itemDetailInfo?.age == temp;
+      const isMatchingItemCategory =
+        (obj as any).itemCategory == mainParam.itemCategory;
+
+      return (
+        isMatchingAge &&
+        isMatchingItemCategory &&
+        checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
+        checkSellerRatingMatches(mainParam.filter, obj) &&
+        checkTypeMatches(mainParam.filter, obj) &&
+        checkItemConditionMatches(mainParam.filter, obj) &&
+        checkAuthenticityMatches(mainParam.filter, obj)
+      );
+    })?.length;
+    itemAgeCountList.push({
+      itemAge: item,
+      count,
+    });
+  });
+  return itemAgeCountList;
+};
+
+const checkTypeMatches = (filter, obj) => {
+  const selectedTypeCondition = filter.artType?.length > 0;
+  const typeMatches = selectedTypeCondition
+    ? filter.artType.includes((obj as any)?.itemDetailInfo?.itemSubCategory)
+    : true;
+  return typeMatches;
+};
+
+const checkAuthenticityMatches = (filter, obj) => {
+  const selectedAuthenticityCondition = filter.authenticity?.length > 0;
+  let index = filter.authenticity.indexOf("Not Specified");
+  if (index > -1) {
+    filter.authenticity[index] = "";
+  }
+  const authenticityMatches = selectedAuthenticityCondition
+    ? filter.authenticity.includes((obj as any)?.itemDetailInfo?.authenticity)
+    : true;
+  return authenticityMatches;
+};
+
+const checkAgeMatches = (filter, obj) => {
+  const selectedAgeCondition = filter.age?.length > 0;
+  let index = filter.age.indexOf("Not Specified");
+  if (index > -1) {
+    filter.age[index] = "";
+  }
+  const ageMatches = selectedAgeCondition
+    ? filter.age.includes((obj as any)?.itemDetailInfo?.age)
+    : true;
+  return ageMatches;
 };
