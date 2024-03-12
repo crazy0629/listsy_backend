@@ -191,7 +191,7 @@ export const getMoreArtAds = async (req: Request, res: Response) => {
   } catch (error) {
     return res.json({
       success: false,
-      message: "Error found while loading more food ads",
+      message: "Error found while loading more art ads",
     });
   }
 };

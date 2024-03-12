@@ -23,6 +23,7 @@ import Beauty from "../models/Beauty";
 import Toy from "../models/toys";
 import Music from "../models/Music";
 import Furniture from "../models/Furniture";
+import Service from "../models/Service";
 
 export const setAvatar = async (req: Request, res: Response) => {
   User.findById(new mongoose.Types.ObjectId(req.body.userId))
@@ -436,12 +437,23 @@ export const getPostByUser = async (req: Request, res: Response) => {
         });
       });
   }
-  if (req.body.postType == "service") {
-    return res.json({
-      success: true,
-      data: [],
-      message: "Successfully loaded estate ads posted by you!",
-    });
+  if (req.body.postType == "services") {
+    Service.find({ userId: req.body.userId })
+      .populate({ path: "adId", match: adCondition })
+      .populate("userId")
+      .skip(req.body.index * 50)
+      .limit(50)
+      .then((model: any) => {
+        const value = model.filter((item) => item.adId !== null);
+        if (!model) {
+          return res.json({ success: false, message: "Error found!" });
+        }
+        return res.json({
+          success: true,
+          data: value,
+          message: "Successfully loaded service ads posted by you!",
+        });
+      });
   }
   if (req.body.postType == "estate") {
     Estate.find({ userId: req.body.userId })

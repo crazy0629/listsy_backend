@@ -23,6 +23,7 @@ import * as beauty from "../controllers/beauty.controller";
 import * as toy from "../controllers/toys.controller";
 import * as music from "../controllers/music.controller";
 import * as furniture from "../controllers/furniture.controller";
+import * as service from "../controllers/service.controller";
 
 import multer from "multer";
 import { v4 as uuidv4 } from "uuid";
@@ -220,7 +221,7 @@ router.post("/fashion/loadFashionInfo", fashion.loadFashionInfo);
 router.post("/fashion/getFashionAds", fashion.getMoreFashionAds);
 router.post("/fashion/getAdDetailInfo", fashion.getAdDetailInfo);
 
-// Vehcile
+// Vehicle
 
 router.post("/truck/loadVehicleInfo", vehicle.loadVehicleInfo);
 router.post("/truck/getMoreVehicleAds", vehicle.getMoreVehicleAds);
@@ -235,6 +236,7 @@ router.post("/sports/getSportsAds", sports.getMoreSportsAds);
 router.post("/sports/getCountOfEachFilter", sports.getCountOfEachFilter);
 
 // Furniture
+
 router.post("/furniture/loadFurnitureInfo", furniture.loadFurnitureInfo);
 router.post("/furniture/getAdDetailInfo", furniture.getAdDetailInfo);
 router.post(
@@ -258,6 +260,15 @@ router.post("/art/getCountForEachCategory", art.getCountForEachCategory);
 router.post("/art/getArtAds", art.getMoreArtAds);
 router.post("/art/getCountOfEachFilter", art.getCountOfEachFilter);
 
+// Service
+
+router.post("/services/loadServiceInfo", service.loadServiceInfo);
+router.post("/services/getAdDetailInfo", service.getAdDetailInfo);
+router.post(
+  "/services/getCountForEachCategory",
+  service.getCountForEachCategory
+);
+router.post("/services/getServiceAds", service.getMoreServiceAds);
 // Education
 
 router.post("/education/loadEducationInfo", education.loadEducationInfo);
