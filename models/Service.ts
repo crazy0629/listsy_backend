@@ -5,7 +5,7 @@ import { IForSale } from "../service/interfaces";
  * Create a new Schema from mongoose
  */
 
-const ArtSchema = new Schema(
+const ServiceSchema = new Schema(
   {
     userId: { type: Schema.Types.ObjectId, ref: "User" },
     adId: { type: Schema.Types.ObjectId, ref: "Ad" },
@@ -26,7 +26,7 @@ const ArtSchema = new Schema(
 );
 
 /**
- * Art Interface Document class inheritance
+ * Service Interface Document class inheritance
  */
 
-export default model<IForSale>("art", ArtSchema);
+export default model<IForSale>("service", ServiceSchema);
