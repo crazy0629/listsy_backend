@@ -193,7 +193,7 @@ export const getAdDetailInfo = async (req: Request, res: Response) => {
     gardenObj.viewCount = gardenObj.viewCount + 1;
     await gardenObj.save();
 
-    const emotCount = await getEmotCount();
+    const emotCount = await getEmotCount(req.body.adId);
 
     return res.json({
       success: true,

@@ -9,6 +9,9 @@ import {
   checkSellerRatingMatches,
   generateToken,
   getConditionToCountry,
+  locationFilterDistanceAds,
+  priceFilterAds,
+  sellerRatingFilterAds,
 } from "../service/helper";
 import UserEmot from "../models/UserEmot";
 import { getEmotCount } from "./userEmot.controller";
@@ -102,7 +105,7 @@ export const getAdDetailInfo = async (req: Request, res: Response) => {
     serviceObj.viewCount = serviceObj.viewCount + 1;
     await serviceObj.save();
 
-    const emotCount = await getEmotCount();
+    const emotCount = await getEmotCount(req.body.adId);
 
     return res.json({
       success: true,
@@ -152,6 +155,47 @@ export const getMoreServiceAds = async (req: Request, res: Response) => {
       .sort({ postDate: -1 })
       .skip(req.body.index * 50)
       .limit(50);
+
+    nextServiceAds = locationFilterDistanceAds(req.body, nextServiceAds);
+    nextServiceAds = sellerRatingFilterAds(req.body, nextServiceAds);
+    nextServiceAds = priceFilterAds(req.body, nextServiceAds);
+
+    if (req.body.serviceType && req.body.serviceType?.length) {
+      nextServiceAds = nextServiceAds.filter(
+        (item: any) =>
+          req.body.serviceType.indexOf(item.itemDetailInfo.itemSubCategory) !==
+          -1
+      );
+    }
+    if (req.body.providerType && req.body.providerType?.length) {
+      nextServiceAds = nextServiceAds.filter(
+        (item: any) =>
+          req.body.providerType.indexOf(item.itemDetailInfo.providerType) !== -1
+      );
+    }
+    if (req.body.cancellationPolicy && req.body.cancellationPolicy?.length) {
+      let index = req.body.cancellationPolicy.indexOf("Not Specified");
+      req.body.cancellationPolicy[index] = "";
+
+      nextServiceAds = nextServiceAds.filter(
+        (item: any) =>
+          req.body.cancellationPolicy.indexOf(
+            item.itemDetailInfo.cancellationPolicy
+          ) !== -1
+      );
+    }
+
+    if (req.body.licenses && req.body.licenses?.length) {
+      nextServiceAds = nextServiceAds.filter((item: any) => {
+        const set = new Set(req.body.licenses);
+        for (let element of item.itemDetailInfo.licenses) {
+          if (set.has(element)) {
+            return true;
+          }
+        }
+        return false;
+      });
+    }
 
     return res.json({
       success: true,
@@ -292,6 +336,7 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
       itemProviderType: itemProviderTypeCountList,
       itemServiceType: itemServiceTypeCountList,
       itemCancellationPolicy: itemCancellationPolicyCountList,
+      itemLicensesGroup: itemLicensesGroupCountList,
     });
   } catch (error) {
     console.log(error);
@@ -411,7 +456,8 @@ const getCountOnCancellationPolicy = async (mainParam, serviceObj) => {
     }
 
     count = serviceObj.filter((obj) => {
-      const isMatchingPolicy = (obj as any)?.cancellationPolicy == temp;
+      const isMatchingPolicy =
+        (obj as any)?.itemDetailInfo.cancellationPolicy == temp;
       const isMatchingItemCategory =
         (obj as any).itemCategory == mainParam.itemCategory;
 
@@ -457,7 +503,7 @@ const getCountOnLicensesGroup = async (mainParam, serviceObj) => {
       );
     })?.length;
     itemLicensesGroupCountList.push({
-      itemLicenseGroup: item,
+      itemLicensesGroup: item,
       count,
     });
   });
@@ -467,7 +513,7 @@ const getCountOnLicensesGroup = async (mainParam, serviceObj) => {
 const checkProviderTypeMatches = (filter, obj) => {
   const selectedProviderTypeCondition = filter.providerType?.length > 0;
   const providerTypeMatches = selectedProviderTypeCondition
-    ? filter.provderType.includes((obj as any)?.itemDetailInfo?.providerType)
+    ? filter.providerType.includes((obj as any)?.itemDetailInfo?.providerType)
     : true;
   return providerTypeMatches;
 };
@@ -496,10 +542,10 @@ const checkCancellationPolicyMatches = (filter, obj) => {
 };
 
 const checkLicensesGroupMatches = (filter, obj) => {
-  const selectedLicenseGroupCondition = filter.itemLicense?.length > 0;
+  const selectedLicenseGroupCondition = filter.license?.length > 0;
 
   if (selectedLicenseGroupCondition) {
-    const set = new Set(filter.itemLicense);
+    const set = new Set(filter.license);
     for (let element of (obj as any)?.itemDetailInfo.licenses) {
       if (set.has(element)) {
         return true;
