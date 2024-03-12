@@ -24,6 +24,7 @@ import * as toy from "../controllers/toys.controller";
 import * as music from "../controllers/music.controller";
 import * as furniture from "../controllers/furniture.controller";
 import * as service from "../controllers/service.controller";
+import * as userEmot from "../controllers/userEmot.controller";
 
 import multer from "multer";
 import { v4 as uuidv4 } from "uuid";
@@ -112,6 +113,9 @@ router.post(
   "/auth/checkSignUpVerificationToken",
   auth.checkSignUpVerificationToken
 );
+
+// Ad User Emot
+router.post("/userEmot/clickEmotIcon", userEmot.clickUserEmotion);
 
 // Community
 

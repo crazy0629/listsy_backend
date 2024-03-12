@@ -20,6 +20,7 @@ import {
   sellerRatingFilterAds,
   sellerTypeFilterAds,
 } from "../service/helper";
+import { getEmotCount } from "./userEmot.controller";
 
 export const loadToysInfo = async (req: Request, res: Response) => {
   try {
@@ -110,10 +111,13 @@ export const getAdDetailInfo = async (req: Request, res: Response) => {
     toyObj.viewCount = toyObj.viewCount + 1;
     await toyObj.save();
 
+    const emotCount = await getEmotCount();
+
     return res.json({
       success: true,
       message: "Success",
       data: toyObj,
+      count: emotCount,
     });
   } catch (error) {
     console.log(error);
