@@ -108,7 +108,7 @@ export const getAdDetailInfo = async (req: Request, res: Response) => {
     musicObj.viewCount = musicObj.viewCount + 1;
     await musicObj.save();
 
-    const emotCount = await getEmotCount();
+    const emotCount = await getEmotCount(req.body.adId);
 
     return res.json({
       success: true,

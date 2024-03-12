@@ -109,7 +109,7 @@ export const getAdDetailInfo = async (req: Request, res: Response) => {
     sportsObj.viewCount = sportsObj.viewCount + 1;
     await sportsObj.save();
 
-    const emotCount = await getEmotCount();
+    const emotCount = await getEmotCount(req.body.adId);
 
     return res.json({
       success: true,

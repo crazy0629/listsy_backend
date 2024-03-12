@@ -273,6 +273,8 @@ router.post(
   service.getCountForEachCategory
 );
 router.post("/services/getServiceAds", service.getMoreServiceAds);
+router.post("/services/getCountOfEachFilter", service.getCountOfEachFilter);
+
 // Education
 
 router.post("/education/loadEducationInfo", education.loadEducationInfo);

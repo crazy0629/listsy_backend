@@ -25,7 +25,7 @@ export const clickUserEmotion = async (req: Request, res: Response) => {
         emotion: req.body.emotion,
       });
     }
-    const emotCount = await getEmotCount();
+    const emotCount = await getEmotCount(req.body.postId);
 
     res.json({
       success: true,
@@ -39,19 +39,22 @@ export const clickUserEmotion = async (req: Request, res: Response) => {
   }
 };
 
-export const getEmotCount = async () => {
-  const likeArray = await UserEmot.find({ emotion: "like" });
-  const dislikeArray = await UserEmot.find({ emotion: "dislike" });
-  const sadArray = await UserEmot.find({ emotion: "sad" });
-  const angryArray = await UserEmot.find({ emotion: "angry" });
-  const kiddingArray = await UserEmot.find({ emotion: "kidding" });
+export const getEmotCount = async (postId: string) => {
+  const heartsEyesArray = await UserEmot.find({
+    emotion: "heartsEyes",
+    postId,
+  });
+  const monocleArray = await UserEmot.find({ emotion: "monocle", postId });
+  const flameArray = await UserEmot.find({ emotion: "flame", postId });
+  const redHeartArray = await UserEmot.find({ emotion: "redHeart", postId });
+  const thumbsUpArray = await UserEmot.find({ emotion: "thumbsUp", postId });
 
   let countRes = {
-    like: likeArray.length ?? 0,
-    dislike: dislikeArray.length ?? 0,
-    sad: sadArray.length ?? 0,
-    angry: angryArray.length ?? 0,
-    kidding: kiddingArray.length ?? 0,
+    heartsEyes: heartsEyesArray.length ?? 0,
+    monocle: monocleArray.length ?? 0,
+    flame: flameArray.length ?? 0,
+    redHeart: redHeartArray.length ?? 0,
+    thumbsUp: thumbsUpArray.length ?? 0,
   };
 
   return countRes;
