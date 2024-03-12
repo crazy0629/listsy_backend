@@ -24,6 +24,12 @@ export interface ICommunity extends Document {
   postDate: Date;
 }
 
+export interface IUserEmot extends Document {
+  userId: Schema.Types.ObjectId;
+  postId: Schema.Types.ObjectId;
+  emotion: string;
+}
+
 export interface IAd extends Document {
   fileType: string;
   adFileName: string;

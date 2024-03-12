@@ -15,6 +15,7 @@ import {
   priceFilterAds,
   sellerRatingFilterAds,
 } from "../service/helper";
+import { getEmotCount } from "./userEmot.controller";
 
 export const loadArtInfo = async (req: Request, res: Response) => {
   try {
@@ -105,10 +106,13 @@ export const getAdDetailInfo = async (req: Request, res: Response) => {
     artObj.viewCount = artObj.viewCount + 1;
     await artObj.save();
 
+    const emotCount = await getEmotCount();
+
     return res.json({
       success: true,
       message: "Success",
       data: artObj,
+      count: emotCount,
     });
   } catch (error) {
     console.log(error);

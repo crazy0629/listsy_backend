@@ -19,6 +19,7 @@ import {
   sellerRatingFilterAds,
   sellerTypeFilterAds,
 } from "../service/helper";
+import { getEmotCount } from "./userEmot.controller";
 
 /**
  * This function is called when users upload items for homes and garden ads.
@@ -192,10 +193,13 @@ export const getAdDetailInfo = async (req: Request, res: Response) => {
     gardenObj.viewCount = gardenObj.viewCount + 1;
     await gardenObj.save();
 
+    const emotCount = await getEmotCount();
+
     return res.json({
       success: true,
       message: "Success",
       data: gardenObj,
+      count: emotCount,
     });
   } catch (error) {
     console.log(error);

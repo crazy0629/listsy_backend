@@ -22,6 +22,7 @@ import {
   sizeFilterAds,
   skinFilterAds,
 } from "../service/helper";
+import { getEmotCount } from "./userEmot.controller";
 
 export const loadBeautyInfo = async (req: Request, res: Response) => {
   try {
@@ -112,10 +113,13 @@ export const getAdDetailInfo = async (req: Request, res: Response) => {
     beautyObj.viewCount = beautyObj.viewCount + 1;
     await beautyObj.save();
 
+    const emotCount = await getEmotCount();
+
     return res.json({
       success: true,
       message: "Success",
       data: beautyObj,
+      count: emotCount,
     });
   } catch (error) {
     console.log(error);

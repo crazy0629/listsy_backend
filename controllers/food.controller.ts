@@ -13,6 +13,7 @@ import {
   priceFilterAds,
   sellerRatingFilterAds,
 } from "../service/helper";
+import { getEmotCount } from "./userEmot.controller";
 
 export const loadFoodInfo = async (req: Request, res: Response) => {
   try {
@@ -103,10 +104,13 @@ export const getAdDetailInfo = async (req: Request, res: Response) => {
     foodObj.viewCount = foodObj.viewCount + 1;
     await foodObj.save();
 
+    const emotCount = await getEmotCount();
+
     return res.json({
       success: true,
       message: "Success",
       data: foodObj,
+      count: emotCount,
     });
   } catch (error) {
     console.log(error);
