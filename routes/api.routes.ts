@@ -224,6 +224,11 @@ router.post("/garden/getCountOfEachFilter", garden.getCountOfEachFilter);
 router.post("/fashion/loadFashionInfo", fashion.loadFashionInfo);
 router.post("/fashion/getFashionAds", fashion.getMoreFashionAds);
 router.post("/fashion/getAdDetailInfo", fashion.getAdDetailInfo);
+router.post(
+  "/fashion/getCountForEachCategory",
+  fashion.getCountForEachCategory
+);
+router.post("/fashion/getCountOfEachFilter", fashion.getCountOfEachFilter);
 
 // Vehicle
 
