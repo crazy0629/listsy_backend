@@ -151,7 +151,7 @@ export interface IReport extends Document {
   userId: Schema.Types.ObjectId;
   mainReason: string;
   description: string;
-  startPoint: string;
+  optionalInfo: string;
 }
 
 export interface IChat extends Document {

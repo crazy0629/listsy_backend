@@ -25,6 +25,7 @@ import * as music from "../controllers/music.controller";
 import * as furniture from "../controllers/furniture.controller";
 import * as service from "../controllers/service.controller";
 import * as userEmot from "../controllers/userEmot.controller";
+import * as report from "../controllers/report.controller";
 
 import multer from "multer";
 import { v4 as uuidv4 } from "uuid";
@@ -116,6 +117,9 @@ router.post(
 
 // Ad User Emot
 router.post("/userEmot/clickEmotIcon", userEmot.clickUserEmotion);
+
+// Ad Report
+router.post("/report/reportAd", report.createReport);
 
 // Community
 

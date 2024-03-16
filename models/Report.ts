@@ -11,7 +11,7 @@ const ReportSchema = new Schema(
     userId: { type: Schema.Types.ObjectId, ref: "User" },
     mainReason: { type: String },
     description: { type: String },
-    startPoint: { type: String },
+    optionalInfo: { type: String },
   },
   { timestamps: true }
 );
