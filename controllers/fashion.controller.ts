@@ -134,7 +134,55 @@ export const getMoreFashionAds = async (req: Request, res: Response) => {
     nextFashionAds = locationFilterDistanceAds(req.body, nextFashionAds);
     nextFashionAds = sellerRatingFilterAds(req.body, nextFashionAds);
     nextFashionAds = priceFilterAds(req.body, nextFashionAds);
+    if (req.body.gender && req.body.gender?.length) {
+      nextFashionAds = nextFashionAds.filter(
+        (item: any) =>
+          req.body.gender.indexOf(item.itemDetailInfo.gender) !== -1
+      );
+    }
+    if (req.body.subCategory != "") {
+      nextFashionAds = nextFashionAds.filter(
+        (item: any) => req.body.subCategory == item.itemDetailInfo.subcategory
+      );
+    }
+    if (req.body.size && req.body.size?.length) {
+      nextFashionAds = nextFashionAds.filter(
+        (item: any) => req.body.size.indexOf(item.itemDetailInfo.size) !== -1
+      );
+    }
+    if (req.body.itemCondition && req.body.itemCondition?.length) {
+      nextFashionAds = nextFashionAds.filter(
+        (item: any) =>
+          req.body.itemCondition.indexOf(item.itemDetailInfo.itemCondition) !==
+          -1
+      );
+    }
+    if (req.body.color && req.body.color?.length) {
+      let index = req.body.color.indexOf("Not Specified");
+      req.body.color[index] = "";
 
+      nextFashionAds = nextFashionAds.filter(
+        (item: any) => req.body.color.indexOf(item.itemDetailInfo.color) !== -1
+      );
+    }
+    if (req.body.material && req.body.material?.length) {
+      let index = req.body.material.indexOf("Not Specified");
+      req.body.material[index] = "";
+
+      nextFashionAds = nextFashionAds.filter(
+        (item: any) =>
+          req.body.material.indexOf(item.itemDetailInfo.material) !== -1
+      );
+    }
+    if (req.body.sellerType && req.body.sellerType?.length) {
+      let index = req.body.sellerType.indexOf("Not Specified");
+      req.body.sellerType[index] = "";
+
+      nextFashionAds = nextFashionAds.filter(
+        (item: any) =>
+          req.body.sellerType.indexOf(item.itemDetailInfo.sellerType) !== -1
+      );
+    }
     return res.json({
       success: true,
       message: "Successfully loaded!",
@@ -201,7 +249,13 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
           return (
             checkPriceMatches(req.body.minPrice, req.body.maxPrice, obj) &&
             checkSellerRatingMatches(req.body.filter, obj) &&
-            checkGenderMatches(req.body.filter, obj)
+            checkGenderMatches(req.body.filter, obj) &&
+            checkSubCategoryMatches(req.body.filter, obj) &&
+            checkSizeMatches(req.body.filter, obj) &&
+            checkConditionMatches(req.body.filter, obj) &&
+            checkColorMatches(req.body.filter, obj) &&
+            checkMaterialMatches(req.body.filter, obj) &&
+            checkSellerTypeMatches(req.body.filter, obj)
           );
         })
         .map((item: any, index: number) => {
@@ -255,6 +309,8 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
     let countPerPrice = await getCountOnMinMaxPrice(req.body, fashionObj);
     let itemSellerRatingCountList = [];
     let itemGenderCountList = [];
+    let itemSubCategoryCountList = [];
+    let itemSizeCountList = [];
     let itemConditionCountList = [];
     let itemColorCountList = [];
     let itemMaterialCountList = [];
@@ -266,9 +322,32 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
         fashionObj
       );
     }
-
     if (req.body.itemGender) {
       itemGenderCountList = await getCountOnGender(req.body, fashionObj);
+    }
+    if (req.body.itemSubCategory) {
+      itemSubCategoryCountList = await getCountOnFashionSubCategory(
+        req.body,
+        fashionObj
+      );
+    }
+    if (req.body.itemSize) {
+      itemSizeCountList = await getCountOnSize(req.body, fashionObj);
+    }
+    if (req.body.itemCondition) {
+      itemConditionCountList = await getCountOnCondition(req.body, fashionObj);
+    }
+    if (req.body.itemColor) {
+      itemColorCountList = await getCountOnColor(req.body, fashionObj);
+    }
+    if (req.body.itemMaterial) {
+      itemMaterialCountList = await getCountOnMaterial(req.body, fashionObj);
+    }
+    if (req.body.itemSellerType) {
+      itemSellerTypeCountList = await getCountOnSellerType(
+        req.body,
+        fashionObj
+      );
     }
     return res.json({
       success: true,
@@ -276,6 +355,12 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
       itemRangeInfo: itemSearchRangeCountList,
       itemSellerRating: itemSellerRatingCountList,
       itemGender: itemGenderCountList,
+      itemSubCategory: itemSubCategoryCountList,
+      itemSize: itemSizeCountList,
+      itemCondition: itemConditionCountList,
+      itemColor: itemColorCountList,
+      itemMaterial: itemMaterialCountList,
+      itemSellerType: itemSellerTypeCountList,
     });
   } catch (error) {
     console.log(error);
@@ -292,7 +377,13 @@ const getCountOnMinMaxPrice = async (mainParam, beautyObj) => {
     return (
       checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
       checkSellerRatingMatches(mainParam.filter, obj) &&
-      checkGenderMatches(mainParam.filter, obj)
+      checkGenderMatches(mainParam.filter, obj) &&
+      checkSubCategoryMatches(mainParam.filter, obj) &&
+      checkSizeMatches(mainParam.filter, obj) &&
+      checkConditionMatches(mainParam.filter, obj) &&
+      checkColorMatches(mainParam.filter, obj) &&
+      checkMaterialMatches(mainParam.filter, obj) &&
+      checkSellerTypeMatches(mainParam.filter, obj)
     );
   })?.length;
   return countPerPrice;
@@ -314,7 +405,13 @@ const getCountOnSellerRating = async (mainParam, fashionObj) => {
         isMatchingRating &&
         isMatchingItemCategory &&
         checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
-        checkGenderMatches(mainParam.filter, obj)
+        checkGenderMatches(mainParam.filter, obj) &&
+        checkSubCategoryMatches(mainParam.filter, obj) &&
+        checkSizeMatches(mainParam.filter, obj) &&
+        checkConditionMatches(mainParam.filter, obj) &&
+        checkColorMatches(mainParam.filter, obj) &&
+        checkMaterialMatches(mainParam.filter, obj) &&
+        checkSellerTypeMatches(mainParam.filter, obj)
       );
     })?.length;
 
@@ -337,7 +434,13 @@ const getCountOnGender = async (mainParam, fashionObj) => {
         isMatchingGender &&
         isMatchingItemCategory &&
         checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
-        checkSellerRatingMatches(mainParam.filter, obj)
+        checkSellerRatingMatches(mainParam.filter, obj) &&
+        checkSubCategoryMatches(mainParam.filter, obj) &&
+        checkSizeMatches(mainParam.filter, obj) &&
+        checkConditionMatches(mainParam.filter, obj) &&
+        checkColorMatches(mainParam.filter, obj) &&
+        checkMaterialMatches(mainParam.filter, obj) &&
+        checkSellerTypeMatches(mainParam.filter, obj)
       );
     })?.length;
     itemGenderCountList.push({
@@ -348,10 +451,273 @@ const getCountOnGender = async (mainParam, fashionObj) => {
   return itemGenderCountList;
 };
 
+const getCountOnFashionSubCategory = async (mainParam, fashionObj) => {
+  let itemSubCategoryCountList: any = [];
+
+  mainParam?.itemSubCategory.map((item: string, index: number) => {
+    let count = 0;
+
+    count = fashionObj.filter((obj) => {
+      const isMatchingSubCategory =
+        (obj as any)?.itemDetailInfo?.subcategory == item;
+      const isMatchingItemCategory =
+        (obj as any).itemCategory == mainParam.itemCategory;
+      return (
+        isMatchingSubCategory &&
+        isMatchingItemCategory &&
+        checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
+        checkSellerRatingMatches(mainParam.filter, obj) &&
+        checkGenderMatches(mainParam.filter, obj) &&
+        checkSizeMatches(mainParam.filter, obj) &&
+        checkConditionMatches(mainParam.filter, obj) &&
+        checkColorMatches(mainParam.filter, obj) &&
+        checkMaterialMatches(mainParam.filter, obj) &&
+        checkSellerTypeMatches(mainParam.filter, obj)
+      );
+    })?.length;
+    itemSubCategoryCountList.push({
+      itemSubCategory: item,
+      count,
+    });
+  });
+
+  return itemSubCategoryCountList;
+};
+
+const getCountOnSize = async (mainParam, fashionObj) => {
+  let itemSizeCountList: any = [];
+
+  mainParam?.itemSize.map((item: string, index: number) => {
+    let count = 0;
+
+    count = fashionObj.filter((obj) => {
+      const isMatchingSize = (obj as any)?.itemDetailInfo?.size == item;
+      const isMatchingItemCategory =
+        (obj as any).itemCategory == mainParam.itemCategory;
+      return (
+        isMatchingSize &&
+        isMatchingItemCategory &&
+        checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
+        checkSellerRatingMatches(mainParam.filter, obj) &&
+        checkGenderMatches(mainParam.filter, obj) &&
+        checkSubCategoryMatches(mainParam.filter, obj) &&
+        checkConditionMatches(mainParam.filter, obj) &&
+        checkColorMatches(mainParam.filter, obj) &&
+        checkMaterialMatches(mainParam.filter, obj) &&
+        checkSellerTypeMatches(mainParam.filter, obj)
+      );
+    })?.length;
+    itemSizeCountList.push({
+      itemSize: item,
+      count,
+    });
+  });
+
+  return itemSizeCountList;
+};
+
+const getCountOnCondition = async (mainParam, fashionObj) => {
+  let itemConditionCountList: any = [];
+
+  mainParam?.itemCondition.map((item: string, index: number) => {
+    let count = 0;
+
+    count = fashionObj.filter((obj) => {
+      const isMatchingCondition =
+        (obj as any)?.itemDetailInfo?.itemCondition == item;
+      const isMatchingItemCategory =
+        (obj as any).itemCategory == mainParam.itemCategory;
+      return (
+        isMatchingCondition &&
+        isMatchingItemCategory &&
+        checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
+        checkSellerRatingMatches(mainParam.filter, obj) &&
+        checkGenderMatches(mainParam.filter, obj) &&
+        checkSubCategoryMatches(mainParam.filter, obj) &&
+        checkSizeMatches(mainParam.filter, obj) &&
+        checkColorMatches(mainParam.filter, obj) &&
+        checkMaterialMatches(mainParam.filter, obj) &&
+        checkSellerTypeMatches(mainParam.filter, obj)
+      );
+    })?.length;
+    itemConditionCountList.push({
+      itemCondition: item,
+      count,
+    });
+  });
+
+  return itemConditionCountList;
+};
+
+const getCountOnColor = async (mainParam, fashionObj) => {
+  let itemColorCountList: any = [];
+
+  mainParam?.itemColor.map((item: string, index: number) => {
+    let count = 0,
+      temp = "";
+    if (item != "Not Specified") {
+      temp = item;
+    }
+    count = fashionObj.filter((obj) => {
+      const isMatchingColor = (obj as any)?.itemDetailInfo?.color == temp;
+      const isMatchingItemCategory =
+        (obj as any).itemCategory == mainParam.itemCategory;
+      return (
+        isMatchingColor &&
+        isMatchingItemCategory &&
+        checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
+        checkSellerRatingMatches(mainParam.filter, obj) &&
+        checkGenderMatches(mainParam.filter, obj) &&
+        checkSubCategoryMatches(mainParam.filter, obj) &&
+        checkSizeMatches(mainParam.filter, obj) &&
+        checkConditionMatches(mainParam.filter, obj) &&
+        checkMaterialMatches(mainParam.filter, obj) &&
+        checkSellerTypeMatches(mainParam.filter, obj)
+      );
+    })?.length;
+    itemColorCountList.push({
+      itemColor: item,
+      count,
+    });
+  });
+
+  return itemColorCountList;
+};
+
+const getCountOnMaterial = async (mainParam, fashionObj) => {
+  let itemMaterialCountList: any = [];
+
+  mainParam?.itemMaterial.map((item: string, index: number) => {
+    let count = 0,
+      temp = "";
+    if (item != "Not Specified") {
+      temp = item;
+    }
+    count = fashionObj.filter((obj) => {
+      const isMatchingMaterial = (obj as any)?.itemDetailInfo?.material == temp;
+      const isMatchingItemCategory =
+        (obj as any).itemCategory == mainParam.itemCategory;
+      return (
+        isMatchingMaterial &&
+        isMatchingItemCategory &&
+        checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
+        checkSellerRatingMatches(mainParam.filter, obj) &&
+        checkGenderMatches(mainParam.filter, obj) &&
+        checkSubCategoryMatches(mainParam.filter, obj) &&
+        checkSizeMatches(mainParam.filter, obj) &&
+        checkConditionMatches(mainParam.filter, obj) &&
+        checkColorMatches(mainParam.filter, obj) &&
+        checkSellerTypeMatches(mainParam.filter, obj)
+      );
+    })?.length;
+    itemMaterialCountList.push({
+      itemMaterial: item,
+      count,
+    });
+  });
+
+  return itemMaterialCountList;
+};
+
+const getCountOnSellerType = async (mainParam, fashionObj) => {
+  let itemSellerTypeCountList: any = [];
+
+  mainParam?.itemSellerType.map((item: string, index: number) => {
+    let count = 0,
+      temp = "";
+    if (item != "Not Specified") {
+      temp = item;
+    }
+    count = fashionObj.filter((obj) => {
+      const isMatchingSellerType =
+        (obj as any)?.itemDetailInfo?.sellerType == temp;
+      const isMatchingItemCategory =
+        (obj as any).itemCategory == mainParam.itemCategory;
+      return (
+        isMatchingSellerType &&
+        isMatchingItemCategory &&
+        checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
+        checkSellerRatingMatches(mainParam.filter, obj) &&
+        checkGenderMatches(mainParam.filter, obj) &&
+        checkSubCategoryMatches(mainParam.filter, obj) &&
+        checkSizeMatches(mainParam.filter, obj) &&
+        checkConditionMatches(mainParam.filter, obj) &&
+        checkColorMatches(mainParam.filter, obj) &&
+        checkMaterialMatches(mainParam.filter, obj)
+      );
+    })?.length;
+    itemSellerTypeCountList.push({
+      itemSellerType: item,
+      count,
+    });
+  });
+
+  return itemSellerTypeCountList;
+};
+
 const checkGenderMatches = (filter, obj) => {
   const selectedGenderCondition = filter.gender?.length > 0;
   const genderMatches = selectedGenderCondition
     ? filter.gender.includes((obj as any)?.itemDetailInfo?.gender)
     : true;
   return genderMatches;
+};
+
+const checkSubCategoryMatches = (filter, obj) => {
+  if (filter.subCategory == "") return true;
+  const subCategoryMatches =
+    filter.subCategory == obj.itemDetailInfo?.subcategory;
+  return subCategoryMatches;
+};
+
+const checkSizeMatches = (filter, obj) => {
+  const selectedSizeCondition = filter.size?.length > 0;
+  const sizeMatches = selectedSizeCondition
+    ? filter.size.includes((obj as any)?.itemDetailInfo?.size)
+    : true;
+  return sizeMatches;
+};
+
+const checkConditionMatches = (filter, obj) => {
+  const selectedConditionCondition = filter.itemCondition?.length > 0;
+  const conditionMatches = selectedConditionCondition
+    ? filter.itemCondition.includes((obj as any)?.itemDetailInfo?.itemCondition)
+    : true;
+  return conditionMatches;
+};
+
+const checkColorMatches = (filter, obj) => {
+  const selectedColorCondition = filter.color?.length > 0;
+  let index = filter.color.indexOf("Not Specified");
+  if (index > -1) {
+    filter.color[index] = "";
+  }
+  const colorMatches = selectedColorCondition
+    ? filter.color.includes((obj as any)?.itemDetailInfo?.color)
+    : true;
+  return colorMatches;
+};
+
+const checkMaterialMatches = (filter, obj) => {
+  const selectedMaterialCondition = filter.material?.length > 0;
+  let index = filter.material.indexOf("Not Specified");
+  if (index > -1) {
+    filter.material[index] = "";
+  }
+  const materialMatches = selectedMaterialCondition
+    ? filter.material.includes((obj as any)?.itemDetailInfo?.material)
+    : true;
+  return materialMatches;
+};
+
+const checkSellerTypeMatches = (filter, obj) => {
+  const selectedSellerTypeCondition = filter.sellerType?.length > 0;
+  let index = filter.sellerType.indexOf("Not Specified");
+  if (index > -1) {
+    filter.sellerType[index] = "";
+  }
+  const sellerTypeMatches = selectedSellerTypeCondition
+    ? filter.sellerType.includes((obj as any)?.itemDetailInfo?.sellerType)
+    : true;
+  return sellerTypeMatches;
 };
