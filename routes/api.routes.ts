@@ -210,10 +210,11 @@ router.post("/sale/getCountOfEachFilter", sale.getCountOfEachFilter);
 
 // Pet
 
-router.post("/pet/loadPetInfo", pet.loadPetInfo);
+router.post("/pet/loadPetsInfo", pet.loadPetsInfo);
 router.post("/pet/getAdDetailInfo", pet.getAdDetailInfo);
-router.post("/pet/getCountForEachCategory", pet.getCountForEachCategory);
 router.post("/pet/getPetAds", pet.getMorePetAds);
+router.post("/pet/getCountForEachCategory", pet.getCountForEachCategory);
+router.post("/pet/getCountOfEachFilter", pet.getCountOfEachFilter);
 
 // Garden
 
