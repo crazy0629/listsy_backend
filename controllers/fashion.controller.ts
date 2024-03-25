@@ -140,7 +140,7 @@ export const getMoreFashionAds = async (req: Request, res: Response) => {
           req.body.gender.indexOf(item.itemDetailInfo.gender) !== -1
       );
     }
-    if (req.body.subCategory != "") {
+    if (req.body.subCategory != "" && req.body.subCategory != undefined) {
       nextFashionAds = nextFashionAds.filter(
         (item: any) => req.body.subCategory == item.itemDetailInfo.subcategory
       );
@@ -363,7 +363,6 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
       itemSellerType: itemSellerTypeCountList,
     });
   } catch (error) {
-    console.log(error);
     return res.json({
       success: false,
       message: "Error found!",
