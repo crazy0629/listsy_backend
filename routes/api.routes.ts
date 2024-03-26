@@ -12,9 +12,7 @@ import * as review from "../controllers/review.controller";
 import * as garden from "../controllers/garden.controller";
 import * as fashion from "../controllers/fashion.controller";
 import * as sports from "../controllers/sports.controller";
-import * as children from "../controllers/children.controller";
 import * as art from "../controllers/art.controller";
-import * as education from "../controllers/education.controller";
 import * as pet from "../controllers/pet.controller";
 import * as chat from "../controllers/chat.controller";
 import * as food from "../controllers/food.controller";
@@ -158,8 +156,10 @@ router.post("/ad/getLocationList", ad.getLocationList);
 // Real Estate
 
 router.post("/estate/loadEstateInfo", estate.loadEstateInfo);
-router.post("/estate/getEstateObjects", estate.getMoreEstateAds);
 router.post("/estate/getAdDetailInfo", estate.getAdDetailInfo);
+router.post("/estate/getCountForEachCategory", estate.getCountForEachCategory);
+router.post("/estate/getEstateAds", estate.getMoreEstateAds);
+router.post("/estate/getCountOfEachFilter", estate.getCountOfEachFilter);
 
 // Toy
 
@@ -260,12 +260,6 @@ router.post(
 router.post("/furniture/getFurnitureAds", furniture.getMoreFurnitureAds);
 router.post("/furniture/getCountOfEachFilter", furniture.getCountOfEachFilter);
 
-// Children
-
-router.post("/children/loadChildrenInfo", children.loadChildrenInfo);
-router.post("/children/getMoreChildrenAds", children.getMoreChildrenAds);
-router.post("/children/getAdDetailInfo", children.getAdDetailInfo);
-
 // Art
 
 router.post("/art/loadArtInfo", art.loadArtInfo);
@@ -284,12 +278,6 @@ router.post(
 );
 router.post("/services/getServiceAds", service.getMoreServiceAds);
 router.post("/services/getCountOfEachFilter", service.getCountOfEachFilter);
-
-// Education
-
-router.post("/education/loadEducationInfo", education.loadEducationInfo);
-router.post("/education/getMoreEducationAds", education.getMoreEducationAds);
-router.post("/education/getAdDetailInfo", education.getAdDetailInfo);
 
 // Job
 

@@ -509,9 +509,9 @@ export const getCountOfEachFilter = async (req: Request, res: Response) => {
   }
 };
 
-const getCountOnMinMaxPrice = async (mainParam, beautyObj) => {
+const getCountOnMinMaxPrice = async (mainParam, petObj) => {
   let countPerPrice = -1;
-  countPerPrice = beautyObj.filter((obj) => {
+  countPerPrice = petObj.filter((obj) => {
     return (
       checkPriceMatches(mainParam.minPrice, mainParam.maxPrice, obj) &&
       checkPetSellerRatingMatches(mainParam, obj) &&

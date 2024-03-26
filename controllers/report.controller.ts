@@ -1,7 +1,5 @@
 import { Request, Response } from "express";
 import Report from "../models/Report";
-import Ad from "../models/Ad";
-import User from "../models/User";
 
 export const createReport = async (req: Request, res: Response) => {
   try {
