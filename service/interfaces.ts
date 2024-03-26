@@ -43,36 +43,6 @@ export interface IAd extends Document {
   countryCode: string;
 }
 
-export interface IEstate extends Document {
-  userId: Schema.Types.ObjectId;
-  adId: Schema.Types.ObjectId;
-  price: number;
-  priceUnit: string;
-  address: string;
-  lat: number;
-  lng: number;
-  countryCode: string;
-  title: string;
-  subTitle: string;
-  description: string;
-  viewCount: number;
-  listingType: string;
-  propertyType: string;
-  bedroomCount: string;
-  bathroomCount: string;
-  tenure: string;
-  propertyCondition: string;
-  postCode: string;
-  yearBuilt: number;
-  builtSurface: number;
-  builtSurfaceUnit: string;
-  plotSurface: number;
-  plotSurfaceUnit: string;
-  keyFeatures: Array<string>;
-  nearestAttraction: Array<string>;
-  facilities: Array<string>;
-}
-
 export interface IVehicle extends Document {
   userId: Schema.Types.ObjectId;
   adId: Schema.Types.ObjectId;

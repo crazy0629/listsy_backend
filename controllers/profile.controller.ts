@@ -13,9 +13,7 @@ import ForSale from "../models/ForSale";
 import Garden from "../models/Garden";
 import Fashion from "../models/Fashion";
 import Sports from "../models/Sports";
-import Children from "../models/Children";
 import Art from "../models/Art";
-import Education from "../models/Education";
 import Pet from "../models/Pet";
 import Food from "../models/Food";
 import Diy from "../models/Diy";
@@ -347,24 +345,6 @@ export const getPostByUser = async (req: Request, res: Response) => {
         });
       });
   }
-  if (req.body.postType == "children") {
-    Children.find({ userId: req.body.userId })
-      .populate({ path: "adId", match: adCondition })
-      .populate("userId")
-      .skip(req.body.index * 50)
-      .limit(50)
-      .then((model: any) => {
-        const value = model.filter((item) => item.adId !== null);
-        if (!model) {
-          return res.json({ success: false, message: "Error found!" });
-        }
-        return res.json({
-          success: true,
-          data: value,
-          message: "Successfully loaded estate ads posted by you!",
-        });
-      });
-  }
   if (req.body.postType == "art") {
     Art.find({ userId: req.body.userId })
       .populate({ path: "adId", match: adCondition })
@@ -380,24 +360,6 @@ export const getPostByUser = async (req: Request, res: Response) => {
           success: true,
           data: value,
           message: "Successfully loaded estate ads posted by you!",
-        });
-      });
-  }
-  if (req.body.postType == "education") {
-    Education.find({ userId: req.body.userId })
-      .populate({ path: "adId", match: adCondition })
-      .populate("userId")
-      .skip(req.body.index * 50)
-      .limit(50)
-      .then((model: any) => {
-        const value = model.filter((item) => item.adId !== null);
-        if (!model) {
-          return res.json({ success: false, message: "Error found!" });
-        }
-        return res.json({
-          success: true,
-          data: value,
-          message: "Successfully loaded education ads posted by you!",
         });
       });
   }
